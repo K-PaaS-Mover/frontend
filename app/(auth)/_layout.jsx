@@ -14,7 +14,37 @@ const AuthLayout = () => {
           }}
         />
         <Stack.Screen
-          name="sign-up"
+          name="sign-up-agree"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="sign-up-id"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="sign-up-name"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="sign-up-job"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="sign-up-interest"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="sign-up-finish"
           options={{
             headerShown: false,
           }}

@@ -18,7 +18,7 @@ const ButtonRow = styled.View`
   margin-top: 25px;
 `;
 
-const SignUp = () => {
+const SignUpAgree = () => {
   const [isAgreed, setIsAgreed] = useState(false); // 개인정보 수집 동의 상태
   const [isMarketingAgreed, setIsMarketingAgreed] = useState(false); // 마케팅 수신 동의 상태
   const [isAllAgreed, setIsAllAgreed] = useState(false); // 모두 동의 상태
@@ -56,7 +56,7 @@ const SignUp = () => {
     if (!isAgreed) {
       Alert.alert("알림", "개인정보 수집 동의에 체크해주세요.");
     } else {
-      router.push("/"); // 동의했을 때만 다음 페이지로 이동
+      router.push("/sign-up-id"); // 동의했을 때만 다음 페이지로 이동
     }
   };
   return (
@@ -136,4 +136,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignUpAgree;
