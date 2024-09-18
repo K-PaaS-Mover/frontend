@@ -8,7 +8,6 @@ const Container = styled.View`
   justify-content: center;
   margin-top: 200px;
 `;
-
 const Circle1 = styled.View`
   width: 502px;
   height: 502px;
@@ -18,7 +17,6 @@ const Circle1 = styled.View`
   opacity: 0.05;
   position: absolute;
 `;
-
 const Circle2 = styled.View`
   width: 400px;
   height: 400px;
@@ -28,7 +26,6 @@ const Circle2 = styled.View`
   opacity: 0.13;
   position: absolute;
 `;
-
 const Circle3 = styled.View`
   width: 290px;
   height: 290px;
@@ -38,7 +35,6 @@ const Circle3 = styled.View`
   opacity: 0.19;
   position: absolute;
 `;
-
 const Circle4 = styled.View`
   width: 180px;
   height: 180px;
@@ -48,7 +44,6 @@ const Circle4 = styled.View`
   opacity: 0.35;
   position: absolute;
 `;
-
 const Circle5 = styled.View`
   width: 100px;
   height: 100px;
@@ -61,6 +56,7 @@ const Circle5 = styled.View`
 `;
 
 const Shape = styled(Animated.View)`
+  flex: 1;
   justify-content: center;
   align-items: center;
   width: 93px;
@@ -72,16 +68,26 @@ const Shape = styled(Animated.View)`
   position: absolute;
 `;
 
-const Shape1 = styled(Shape)``;
+const Shape1 = styled(Shape)`
+  /* top: -20px;
+  right: 50px; */
+`;
 const Shape2 = styled(Shape)`
+  /* top: -140px;
+  right: 50px; */
   width: 69px;
   height: 40px;
 `;
 const Shape3 = styled(Shape)`
+  /* top: 70px;
+  left: 120px; */
   width: 69px;
   height: 40px;
 `;
-const Shape4 = styled(Shape)``;
+const Shape4 = styled(Shape)`
+  /* top: -20px;
+  right: 50px; */
+`;
 
 const MyCircle = () => {
   const rotateAnim1 = useRef(new Animated.Value(0)).current;
@@ -104,16 +110,22 @@ const MyCircle = () => {
       ).start();
     };
 
-    rotateAnimation(rotateAnim1, 15000, 0);
-    rotateAnimation(rotateAnim2, 15000, 0); // Shape2는 2초 후 시작
-    rotateAnimation(rotateAnim3, 15000, 0); // Shape3는 4초 후 시작
-    rotateAnimation(rotateAnim4, 15000, 0); // Shape4는 6초 후 시작
+    rotateAnimation(rotateAnim1, 10000, 0);
+    rotateAnimation(rotateAnim2, 11000, 0); // Shape2는 2초 후 시작
+    rotateAnimation(rotateAnim3, 12000, 0); // Shape3는 4초 후 시작
+    rotateAnimation(rotateAnim4, 13000, 0); // Shape4는 6초 후 시작
   }, []);
 
-  const rotateInterpolation = (rotateAnim, outputRange) =>
+  const rotate = (rotateAnim) =>
     rotateAnim.interpolate({
       inputRange: [0, 1],
-      outputRange,
+      outputRange: ["-270deg", "90deg"],
+    });
+
+  const rotateInterpolation = (rotateAnim) =>
+    rotateAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["270deg", "-90deg"],
     });
 
   return (
@@ -126,9 +138,9 @@ const MyCircle = () => {
       <Shape1
         style={{
           transform: [
-            { rotate: rotateInterpolation(rotateAnim1, ["270deg", "-90deg"]) },
+            { rotate: rotateInterpolation(rotateAnim1) },
             { translateX: 130 },
-            { rotate: rotateInterpolation(rotateAnim1, ["-270deg", "90deg"]) }, // 직접 값을 설정
+            { rotate: rotate(rotateAnim1) },
           ],
         }}
       >
@@ -137,9 +149,9 @@ const MyCircle = () => {
       <Shape2
         style={{
           transform: [
-            { rotate: rotateInterpolation(rotateAnim2, ["180deg", "-180deg"]) },
+            { rotate: rotateInterpolation(rotateAnim2) },
             { translateX: 180 },
-            { rotate: rotateInterpolation(rotateAnim2, ["-180deg", "180deg"]) }, // 직접 값을 설정
+            { rotate: rotate(rotateAnim2) },
           ],
         }}
       >
@@ -148,9 +160,9 @@ const MyCircle = () => {
       <Shape3
         style={{
           transform: [
-            { rotate: rotateInterpolation(rotateAnim3, ["90deg", "-270deg"]) },
+            { rotate: rotateInterpolation(rotateAnim3) },
             { translateX: 80 },
-            { rotate: rotateInterpolation(rotateAnim3, ["-90deg", "270deg"]) }, // 직접 값을 설정
+            { rotate: rotate(rotateAnim3) },
           ],
         }}
       >
@@ -159,9 +171,9 @@ const MyCircle = () => {
       <Shape4
         style={{
           transform: [
-            { rotate: rotateInterpolation(rotateAnim4, ["45deg", "-315deg"]) },
+            { rotate: rotateInterpolation(rotateAnim4) },
             { translateX: 210 },
-            { rotate: rotateInterpolation(rotateAnim4, ["-45deg", "315deg"]) }, // 직접 값을 설정
+            { rotate: rotate(rotateAnim4) },
           ],
         }}
       >

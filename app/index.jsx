@@ -30,7 +30,7 @@ export default function App() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View>
           <MyCircle />
-          <Text className="text-[18px] font-pblack text-white mt-[200px] text-center">
+          <Text className="text-[18px] font-pblack text-white mt-[180px] text-center">
             당신에게 필요한 정보를 한 번에
           </Text>
           <Container>
