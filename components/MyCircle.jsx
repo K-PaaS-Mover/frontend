@@ -122,7 +122,19 @@ const MyCircle = () => {
       <Circle2 />
       <Circle3 />
       <Circle4 />
-      <Circle5 />
+      <Circle5
+        style={{
+          shadowColor: "cyan",
+          shadowOffset: {
+            width: 0,
+            height: -200,
+          },
+          shadowOpacity: 0.9,
+          shadowRadius: 10.0,
+
+          elevation: 150,
+        }}
+      />
       <Shape1
         style={{
           transform: [
