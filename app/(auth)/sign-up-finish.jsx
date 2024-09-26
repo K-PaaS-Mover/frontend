@@ -76,7 +76,7 @@ const SignUpFinish = () => {
             <CustomButton
               title="시작하기"
               handlePress={() => {
-                router.push("/");
+                router.push("/home");
               }}
               containerStyles={`w-[285px] h-[57px] mt-[165px] bg-[#50c3fa]`}
               textStyles={`text-center text-[#fff]`}

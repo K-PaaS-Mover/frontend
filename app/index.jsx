@@ -54,7 +54,7 @@ export default function App() {
               />
               <CustomButton
                 title="비회원으로 시작"
-                handlePress={() => router.push("/")}
+                handlePress={() => router.push("/home")}
                 textStyles="text-white"
               />
             </ButtonRow>
