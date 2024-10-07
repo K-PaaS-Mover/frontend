@@ -9,14 +9,6 @@ import "nativewind";
 import Status from "../../components/Status";
 import CustomButton from "../../components/CustomButton";
 
-const ButtonRow = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 85%;
-  margin-top: 25px;
-`;
-
 const SignUpJob = () => {
   // 각 드롭다운의 선택 상태 관리
   const [selectedCompany, setSelectedCompany] = useState(null);
@@ -63,7 +55,7 @@ const SignUpJob = () => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-white h-full">
       <ScrollView>
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -97,7 +89,13 @@ const SignUpJob = () => {
                 value: null,
                 color: "#989DA3",
               }}
+              // useNativeAndroidPickerStyle={false}
               value={selectedCompany}
+              style={{
+                inputAndroid: {
+                  marginLeft: -15,
+                },
+              }}
             />
           </View>
           {/* 경력 드롭다운 */}
@@ -116,6 +114,11 @@ const SignUpJob = () => {
                 color: "#989DA3",
               }}
               value={selectedCareer}
+              style={{
+                inputAndroid: {
+                  marginLeft: -15,
+                },
+              }}
             />
           </View>
           {/* 거주지 드롭다운 메뉴 */}
@@ -138,6 +141,11 @@ const SignUpJob = () => {
                 color: "#989DA3",
               }}
               value={selectedResidence}
+              style={{
+                inputAndroid: {
+                  marginLeft: -15,
+                },
+              }}
             />
           </View>
           {/* 특이사항 드롭다운 메뉴 */}
@@ -160,6 +168,11 @@ const SignUpJob = () => {
                 color: "#989DA3",
               }}
               value={selectedSpecialNote}
+              style={{
+                inputAndroid: {
+                  marginLeft: -15,
+                },
+              }}
             />
           </View>
           {/* 다음 넘어가기 */}

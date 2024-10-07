@@ -37,7 +37,7 @@ const Home = () => {
 
   return (
     <SafeAreaView className="bg-white h-full">
-      <FlatList
+      {/* <FlatList
         data={[{ id: 1 }, { id: 2 }, { id: 3 }]}
         // data={[]}
         keyExtractor={(item) => item.id.toString()}
@@ -45,56 +45,58 @@ const Home = () => {
           <Text className="text-3xl text-black">{item.id}</Text>
         )}
         ListHeaderComponent={() => (
-          <View className="my-6 px-4 space-y-6">
-            <View className="justify-between items-start flex-row mb-6">
-              <View>
-                <Text className="text-2xl font-psemibold text-gray-100">
-                  Mate
-                </Text>
+          <>
+            <View className="my-6 px-4 space-y-6">
+              <View className="justify-between items-start flex-row mb-6">
+                <View>
+                  <Text className="text-2xl font-psemibold text-gray-100">
+                    Mate
+                  </Text>
+                </View>
+                <View className="mr-[-30px]">
+                  <IconButton
+                    type={bell}
+                    style="w-[30px] h-[33px]"
+                    onPress={() => router.push("/")}
+                  />
+                </View>
               </View>
-              <View className="mr-[-30px]">
-                <IconButton
-                  type={bell}
-                  style="w-[30px] h-[33px]"
-                  onPress={() => router.push("/")}
-                />
+              <SearchInput />
+
+              <View className="w-full flex-1 pt-[24px]">
+                <ButtonRow>
+                  <Text className="text-black text-[14px] font-pbold mr-[10px]">
+                    인기
+                  </Text>
+                  <ScrollView
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                  >
+                    {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"].map(
+                      (title) => (
+                        <CustomButton
+                          key={title}
+                          title={title}
+                          handlePress={() => router.push("/")}
+                          containerStyles={`w-[40px] h-[20.74px]
+                      border-[#DFE3E7] border-[1px] rounded-[8px]}`} // 선택된 버튼에 배경색 적용
+                          textStyles={`text-center text-[#DFE3E7] text-[10px]`}
+                        />
+                      )
+                    )}
+                  </ScrollView>
+                </ButtonRow>
               </View>
+              <Trending posts={[{ id: 1 }, { id: 2 }] ?? []} />
             </View>
-
-            <SearchInput />
-
-            <View className="w-full flex-1 pt-[24px]">
-              <ButtonRow>
-                <Text className="text-black text-[14px] font-pbold mr-[10px]">
-                  인기
-                </Text>
-                <ScrollView
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                >
-                  {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"].map(
-                    (title) => (
-                      <CustomButton
-                        key={title}
-                        title={title}
-                        handlePress={() => router.push("/")}
-                        containerStyles={`w-[40px] h-[20.74px]
-                            border-[#DFE3E7] border-[1px] rounded-[8px]}`} // 선택된 버튼에 배경색 적용
-                        textStyles={`text-center text-[#DFE3E7] text-[10px]`}
-                      />
-                    )
-                  )}
-                </ScrollView>
-              </ButtonRow>
-            </View>
-            <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }] ?? []} />
-          </View>
+          </>
         )}
         // 화면을 아래로 당기면 새로고침
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      />
+      /> */}
+      <Text>hello</Text>
     </SafeAreaView>
   );
 };

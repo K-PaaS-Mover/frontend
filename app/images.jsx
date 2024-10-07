@@ -1,5 +1,5 @@
-import CheckBoxOutline from "../assets/icons/check_box_outline.png";
-import CheckBox from "../assets/icons/check_box.png";
+import CheckBoxOutline from "../assets/icons/check_box_outline.svg";
+import CheckBox from "../assets/icons/check_box.svg";
 import CheckOutline from "../assets/icons/check_outline.png";
 import Check from "../assets/icons/check.png";
 

@@ -14,5 +14,3 @@ const IconButton = ({ type, onPress }) => {
     </TouchableOpacity>
   );
 };
-
-export default IconButton;

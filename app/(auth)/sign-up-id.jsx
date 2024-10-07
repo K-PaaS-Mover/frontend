@@ -64,7 +64,7 @@ const SignUpId = () => {
     router.push("/sign-up-name");
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-white h-full">
       <ScrollView>
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}

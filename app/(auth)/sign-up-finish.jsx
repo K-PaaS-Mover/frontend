@@ -6,6 +6,12 @@ import { Link, router } from "expo-router";
 import RNPickerSelect from "react-native-picker-select";
 import "nativewind";
 
+import Welfare1 from "../../assets/images/welfare1.svg";
+import Welfare2 from "../../assets/images/welfare2.svg";
+import Welfare3 from "../../assets/images/welfare3.svg";
+import Welfare4 from "../../assets/images/welfare4.svg";
+import Welfare5 from "../../assets/images/welfare5.svg";
+
 import { images } from "../images";
 import Status from "../../components/Status";
 import CustomButton from "../../components/CustomButton";
@@ -21,7 +27,7 @@ const ButtonRow = styled.View`
 
 const SignUpFinish = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-white h-full">
       <ScrollView>
         <View
           style={{
@@ -42,33 +48,23 @@ const SignUpFinish = () => {
           </View>
           <View className="flex-1 justify-center items-center">
             <ButtonRow>
-              <Image
-                source={images.welfare1}
-                resizeMode="contain"
-                className="w-[120px] mt-[-30px]"
-              />
-              <Image
-                source={images.welfare2}
-                resizeMode="contain"
-                className="w-[120px] mt-[90px]"
-              />
-              <Image
-                source={images.welfare3}
-                resizeMode="contain"
-                className="w-[120px]"
-              />
+              <View className="mt-[-30px]">
+                <Welfare1 />
+              </View>
+              <View className="mt-[90px]">
+                <Welfare2 />
+              </View>
+              <View>
+                <Welfare3 />
+              </View>
             </ButtonRow>
             <ButtonRow className="mt-[-50px]">
-              <Image
-                source={images.welfare4}
-                resizeMode="contain"
-                className="w-[120px] mt-[20px] ml-[10px]"
-              />
-              <Image
-                source={images.welfare5}
-                resizeMode="contain"
-                className="w-[120px] mt-[50px] mr-[10px]"
-              />
+              <View className="mt-[20px] ml-[10px]">
+                <Welfare4 />
+              </View>
+              <View className="mt-[50px] mr-[10px]">
+                <Welfare5 />
+              </View>
             </ButtonRow>
           </View>
           {/* 다음 넘어가기 */}
@@ -76,7 +72,7 @@ const SignUpFinish = () => {
             <CustomButton
               title="시작하기"
               handlePress={() => {
-                router.push("/home");
+                router.replace("/home");
               }}
               containerStyles={`w-[285px] h-[57px] mt-[165px] bg-[#50c3fa]`}
               textStyles={`text-center text-[#fff]`}

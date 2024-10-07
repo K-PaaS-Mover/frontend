@@ -2,7 +2,7 @@ import { View, Text, FlatList, Image, RefreshControl } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Home = () => {
+const Profile = () => {
   return (
     <SafeAreaView className="h-full">
       <Text>hello</Text>
@@ -10,4 +10,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Profile;

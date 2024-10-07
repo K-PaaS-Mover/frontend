@@ -49,7 +49,7 @@ export default function App() {
             <ButtonRow>
               <CustomButton
                 title="회원가입"
-                handlePress={() => router.push("/sign-up-agree")}
+                handlePress={() => router.push("/sign-up-finish")}
                 textStyles="text-white"
               />
               <CustomButton

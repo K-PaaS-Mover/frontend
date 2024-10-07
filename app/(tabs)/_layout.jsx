@@ -6,29 +6,10 @@ import { Tabs, Redirect } from "expo-router";
 // import { calendar } from "../../constants/icons";
 // import { profile } from "../../constants/icons";
 
-import home from "../../assets/icons/home.png";
-import contents from "../../assets/icons/contents.png";
-import calendar from "../../assets/icons/calendar.png";
-import profile from "../../assets/icons/profile.png";
-
-const TabIcon = ({ icon, color, name, focused }) => {
-  return (
-    <View className="items-center justify-center gap-2">
-      <Image
-        source={icon}
-        resizeMode="contain"
-        tintColor={color}
-        className="w-[40px] h-[40px]"
-      />
-      <Text
-        className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`}
-        style={{ color: color }}
-      >
-        {name}
-      </Text>
-    </View>
-  );
-};
+import Home from "../../assets/icons/home.svg";
+import Contents from "../../assets/icons/contents.svg";
+import Calendar from "../../assets/icons/calendar.svg";
+import Profile from "../../assets/icons/profile.svg";
 
 const TabsLayout = () => {
   return (
@@ -53,7 +34,11 @@ const TabsLayout = () => {
             title: "Home",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <TabIcon icon={home} color={color} focused={focused} />
+              <Home
+                width={40}
+                height={40}
+                fill={focused ? "#50C3FA" : "#000"}
+              />
             ),
           }}
         />
@@ -63,7 +48,11 @@ const TabsLayout = () => {
             title: "Contents",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <TabIcon icon={contents} color={color} focused={focused} />
+              <Contents
+                width={40}
+                height={40}
+                fill={focused ? "#50C3FA" : "#000"}
+              />
             ),
           }}
         />
@@ -73,7 +62,11 @@ const TabsLayout = () => {
             title: "Calendar",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <TabIcon icon={calendar} color={color} focused={focused} />
+              <Calendar
+                width={40}
+                height={40}
+                fill={focused ? "#50C3FA" : "#000"}
+              />
             ),
           }}
         />
@@ -83,7 +76,11 @@ const TabsLayout = () => {
             title: "Profile",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <TabIcon icon={profile} color={color} focused={focused} />
+              <Profile
+                width={40}
+                height={40}
+                fill={focused ? "#50C3FA" : "#000"}
+              />
             ),
           }}
         />

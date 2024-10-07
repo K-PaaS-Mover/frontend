@@ -1,9 +1,21 @@
-import { View, Text, ScrollView, Image, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { Link, router } from "expo-router";
 import "nativewind"; // 추가: nativewind를 불러옵니다.
+
+import BoxCompleted from "../../assets/icons/check_box_outline.svg";
+import BoxUncompleted from "../../assets/icons/check_box.svg";
+import CheckCompleted from "../../assets/icons/check.svg";
+import CheckUncompleted from "../../assets/icons/check_outline.svg";
 
 import Status from "../../components/Status";
 import IconButton from "../../components/IconButton";
@@ -60,10 +72,14 @@ const SignUpAgree = () => {
     }
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-white h-full">
       <ScrollView>
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <Text className="font-semibold text-[36px] text-center pt-[60px] ">
             회원가입
@@ -81,29 +97,53 @@ const SignUpAgree = () => {
           {/* 개인 정보 수집 */}
           <View className="w-[85%]">
             <ButtonRow className="mt-[60px] w-[110px]">
-              <IconButton
-                type={isAgreed ? images.boxCompleted : images.boxUncompleted}
+              <TouchableOpacity onPress={handleAllAgreePress}>
+                {!isAgreed ? (
+                  <BoxCompleted width={24} height={24} />
+                ) : (
+                  <BoxUncompleted width={24} height={24} />
+                )}
+              </TouchableOpacity>
+              {/* <IconButton
+                type={isAgreed ? BoxCompleted : images.boxUncompleted}
                 onPress={handleAllAgreePress}
-              />
+              /> */}
               <Text className="font-semibold text-[14px] text-[#515259]">
                 모두 동의
               </Text>
             </ButtonRow>
             <View className="w-[100%] h-[1px] bg-[#DFE3E7] mt-[10px]" />
             <ButtonRow className="mt-[30px] w-[150px]">
-              <IconButton
+              {/* <IconButton
                 type={isAgreed ? images.completed : images.uncompleted} // 동의 여부에 따른 이미지 변화
                 onPress={handleAgreePress} // 누를 때 상태 변경
-              />
+              /> */}
+              <TouchableOpacity onPress={handleAllAgreePress}>
+                {!isAgreed ? (
+                  <CheckUncompleted width={24} height={24} />
+                ) : (
+                  <CheckCompleted width={24} height={24} />
+                )}
+              </TouchableOpacity>
               <Text className="font-semibold text-[14px] text-[#515259]">
                 개인정보 수집 동의
               </Text>
             </ButtonRow>
             <ButtonRow className="mt-[15px] w-[150px]">
-              <IconButton
+              {/* <IconButton
                 type={isMarketingAgreed ? images.completed : images.uncompleted} // 마케팅 수신 동의 이미지 변경
                 onPress={handleMarketingAgreePress} // 마케팅 동의 버튼 클릭 시
-              />
+              /> */}
+              <TouchableOpacity
+                onPress={handleMarketingAgreePress}
+                className="mr-[15px]"
+              >
+                {!isMarketingAgreed ? (
+                  <CheckUncompleted width={24} height={24} />
+                ) : (
+                  <CheckCompleted width={24} height={24} />
+                )}
+              </TouchableOpacity>
               <Text className="font-semibold text-[14px] text-[#515259]">
                 (선택) 마케팅 수신동의
               </Text>
