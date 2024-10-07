@@ -24,7 +24,7 @@ const TabsLayout = () => {
             borderTopWidth: 1,
             // borderTopColor: "#1B1B1E",
             shadowColor: "#1B1B1E",
-            height: 97,
+            height: 60,
           },
         }}
       >
@@ -33,10 +33,10 @@ const TabsLayout = () => {
           options={{
             title: "Home",
             headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
+            tabBarIcon: ({ focused }) => (
               <Home
-                width={40}
-                height={40}
+                // width={40}
+                // height={40}
                 fill={focused ? "#50C3FA" : "#000"}
               />
             ),
@@ -49,8 +49,8 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Contents
-                width={40}
-                height={40}
+                // width={40}
+                // height={40}
                 fill={focused ? "#50C3FA" : "#000"}
               />
             ),
@@ -63,8 +63,8 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Calendar
-                width={40}
-                height={40}
+                // width={40}
+                // height={40}
                 fill={focused ? "#50C3FA" : "#000"}
               />
             ),
@@ -77,8 +77,8 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Profile
-                width={40}
-                height={40}
+                // width={40}
+                // height={40}
                 fill={focused ? "#50C3FA" : "#000"}
               />
             ),
