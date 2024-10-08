@@ -35,8 +35,8 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ focused }) => (
               <Home
-                // width={40}
-                // height={40}
+                width={26}
+                height={26}
                 fill={focused ? "#50C3FA" : "#000"}
               />
             ),
@@ -49,8 +49,8 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Contents
-                // width={40}
-                // height={40}
+                width={26}
+                height={26}
                 fill={focused ? "#50C3FA" : "#000"}
               />
             ),
@@ -63,8 +63,8 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Calendar
-                // width={40}
-                // height={40}
+                width={26}
+                height={26}
                 fill={focused ? "#50C3FA" : "#000"}
               />
             ),
@@ -77,8 +77,8 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Profile
-                // width={40}
-                // height={40}
+                width={26}
+                height={26}
                 fill={focused ? "#50C3FA" : "#000"}
               />
             ),

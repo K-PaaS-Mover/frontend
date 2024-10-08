@@ -20,7 +20,7 @@ const Container = styled.View`
 const ButtonRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  width: 220px;
+  width: 200px;
   margin-top: 25px;
 `;
 
