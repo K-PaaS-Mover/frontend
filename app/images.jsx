@@ -2,6 +2,8 @@ import CheckBoxOutline from "../assets/icons/check_box_outline.svg";
 import CheckBox from "../assets/icons/check_box.svg";
 import CheckOutline from "../assets/icons/check_outline.png";
 import Check from "../assets/icons/check.png";
+import Visibility from "../assets/icons/visibility.svg";
+import VisibilityOff from "../assets/icons/visibility_off.svg";
 
 import Welfare1 from "../assets/images/welfare1.png";
 import Welfare2 from "../assets/images/welfare2.png";
@@ -19,4 +21,6 @@ export const images = {
   welfare3: Welfare3,
   welfare4: Welfare4,
   welfare5: Welfare5,
+  visible: Visibility,
+  unvisible: VisibilityOff,
 };

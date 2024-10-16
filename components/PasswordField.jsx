@@ -27,7 +27,7 @@ const ErrorText = styled.Text`
   margin-top: 5px;
 `;
 
-const FormField = ({
+const PasswordField = ({
   title,
   value,
   placeholder,
@@ -58,7 +58,7 @@ const FormField = ({
         />
         {title === "비밀번호" && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            {showPassword ? (
+            {!showPassword ? (
               <Visible width={24} height={24} />
             ) : (
               <UnVisible width={24} height={24} />
@@ -68,7 +68,30 @@ const FormField = ({
       </InputContainer>
       {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
     </Container>
+
+    // <View className={`space-y-2 ${otherStyles}`}>
+    //   <Text className="text-base text-gray-100 font-pmedium">{title}</Text>
+    //   <View className="border-2 border-black-200 w-full h-16 px-4rounded-2xl focus:border-secondary items-center flex-row">
+    //     <TextInput
+    //       className="flex-1 text-black font-psemibold text-base"
+    //       value={value}
+    //       placeholder={placeholder}
+    //       placeholderTextColor="#7b7b8b"
+    //       onChangeText={handleChangeText}
+    //       secureTextEntry={title === "Password" && !showPassword}
+    //     />
+    // {title === "Password" && (
+    //   <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+    //     {!showPassword ? (
+    //       <Visible width={24} height={24} />
+    //     ) : (
+    //       <UnVisible width={24} height={24} />
+    //     )}
+    //   </TouchableOpacity>
+    // )}
+    //   </View>
+    // </View>
   );
 };
 
-export default FormField;
+export default PasswordField;
