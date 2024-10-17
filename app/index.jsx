@@ -9,6 +9,7 @@ import React from "react";
 // import { images } from "../constants";
 import CustomButton from "../components/CustomButton";
 import MyCircle from "../components/MyCircle";
+import MyCircle2 from "../components/MyCircle2";
 
 const Container = styled.View`
   flex: 1;
@@ -30,6 +31,7 @@ export default function App() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View>
           <MyCircle />
+          {/* <MyCircle2 /> */}
           <Text className="text-[18px] font-pblack text-white mt-[180px] text-center">
             당신에게 필요한 정보를 한 번에
           </Text>

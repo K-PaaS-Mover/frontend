@@ -38,11 +38,11 @@ const HomeFrame = ({ title, company, period, category, views, scrap }) => {
           <ButtonRow className="w-[130px] justify-center">
             <ButtonRow className="w-[80px] justify-center">
               <Views width={20} height={20} marginRight={5} />
-              <Text className="text-[#50C3FAC4] font-pregular">{views}</Text>
+              <Text className="text-[#6D6D7A] font-pregular">{views}</Text>
             </ButtonRow>
             <ButtonRow className="w-[80px] justify-center ml-[-20px]">
               <Scrap width={20} height={20} marginRight={5} />
-              <Text className="text-[#50C3FAC4] font-pregular">{scrap}</Text>
+              <Text className="text-[#6D6D7A] font-pregular">{scrap}</Text>
             </ButtonRow>
           </ButtonRow>
         </ButtonRow>
@@ -50,11 +50,11 @@ const HomeFrame = ({ title, company, period, category, views, scrap }) => {
           {title}
         </Text>
         <Text
-          className={`mt-[9px] ml-[20px] font-pregular text-[#474A9C] text-[14px]`}
+          className={`mt-[9px] ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}
         >
           {company}
         </Text>
-        <Text className={`ml-[20px] font-pregular text-[#474A9C] text-[14px]`}>
+        <Text className={`ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}>
           기간 : {period}
         </Text>
       </View>
