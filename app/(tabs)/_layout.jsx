@@ -57,9 +57,9 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="calendar"
+          name="calendarPage"
           options={{
-            title: "Calendar",
+            title: "CalendarPage",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <Calendar
