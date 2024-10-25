@@ -10,7 +10,7 @@ import {
 import React, { useState, useEffect, useRef } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import styled from "styled-components/native";
 import { StatusBar } from "react-native-web";
 
@@ -30,13 +30,13 @@ const ButtonRow = styled.View`
   align-items: center;
   width: 95%;
   margin-top: 50px;
-  /* background-color: #faf; */
 `;
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchInputRef = useRef(null); // SearchInput의 ref 생성
+  const navigation = useNavigation();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -67,12 +67,17 @@ const Home = () => {
     }
   }, [isSearchFocused]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      setIsSearchFocused(false); // Home 탭이 포커스될 때 SearchFocus 해제
+    });
+
+    return unsubscribe; // 클린업 함수로 리스너 해제
+  }, [navigation]);
+
   return (
     <SafeAreaView className="bg-white h-full">
       {isSearchFocused ? (
-        // <View className="flex-1 justify-center items-center">
-        //   <Text className="text-4xl font-bold">hello</Text>
-        // </View>
         <SearchFocus />
       ) : (
         <FlatList
@@ -118,7 +123,6 @@ const Home = () => {
               scrap: "8K",
             },
           ]}
-          // data={[]}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <HomeFrame
@@ -130,13 +134,17 @@ const Home = () => {
               scrap={item.scrap}
             />
           )}
-          ListHeaderComponent={(item) => (
+          ListHeaderComponent={() => (
             <View className="h-[350px] my-[-25px] px-4">
               <View className="flex-1 justify-center items-center">
                 <ButtonRow>
                   <TouchableOpacity
                     activeOpacity={1}
-                    onPress={() => router.replace("/home")}
+                    onPress={() => {
+                      // Home 탭 클릭 시 메인 화면 표시
+                      setIsSearchFocused(false);
+                      router.replace("/home");
+                    }}
                   >
                     <Text className="font-pblack text-2xl text-[#50c3fac4]">
                       Mate
@@ -172,7 +180,10 @@ const Home = () => {
                       <CustomButton
                         key={title}
                         title={title}
-                        handlePress={() => router.push("/")}
+                        handlePress={() => {
+                          setIsSearchFocused(false); // SearchFocus 해제
+                          router.push("/"); // 원하는 페이지로 이동
+                        }}
                         containerStyles={`w-[90px] h-[25px]
                         border-[#DFE3E7] border-[1px] rounded-[8px] mr-[10px]`} // 선택된 버튼에 배경색 적용
                         textStyles={`text-center text-[#515259] text-[12px] font-pregular`}
@@ -187,7 +198,6 @@ const Home = () => {
             </View>
           )}
           contentContainerStyle={{ paddingBottom: 30 }} // 적절한 padding 추가
-          // 화면을 아래로 당기면 새로고침
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

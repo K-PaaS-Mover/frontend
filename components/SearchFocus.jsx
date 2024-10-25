@@ -17,13 +17,20 @@ const ButtonRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 95%;
-  margin-top: 50px;
+  width: 355px;
   /* background-color: #faf; */
 `;
 const SearchFocus = () => {
   const [refreshing, setRefreshing] = useState(false);
   const searchInputRef = useRef(null); // SearchInput의 ref 생성
+
+  const data = [
+    { id: 1, title: "인기 검색어1" },
+    { id: 2, title: "인기 검색어2" },
+    { id: 3, title: "인기 검색어3" },
+    { id: 4, title: "인기 검색어4" },
+    { id: 5, title: "인기 검색어5" },
+  ];
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -40,58 +47,36 @@ const SearchFocus = () => {
 
   return (
     <FlatList
-      data={[
-        {
-          title: "정책1",
-          company: "회사1",
-          period: "09.15 ~ 10.09",
-          id: 1,
-          name: "one",
-          category: "카테고리1",
-          views: "1M",
-          scrap: "2K",
-        },
-        {
-          title: "정책2",
-          company: "회사2",
-          period: "11.15 ~ 12.31",
-          id: 2,
-          name: "two",
-          category: "카테고리2",
-          views: "3M",
-          scrap: "4K",
-        },
-        {
-          title: "정책3",
-          company: "회사3",
-          period: "01.15 ~ 03.27",
-          id: 3,
-          name: "three",
-          category: "카테고리3",
-          views: "5M",
-          scrap: "6K",
-        },
-        {
-          title: "정책4",
-          company: "회사4",
-          period: "05.21 ~ 08.28",
-          id: 4,
-          name: "four",
-          category: "카테고리4",
-          views: "7M",
-          scrap: "8K",
-        },
-      ]}
-      // data={[]}
+      data={data}
       keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => <Text>{item.title}</Text>}
-      ListHeaderComponent={(item) => (
-        <View className="flex-1 items-center justify-center">
-          <SearchInput ref={searchInputRef} />
+      renderItem={({ item, index }) => (
+        <View className="mt-[11px] w-full items-center">
+          <ButtonRow>
+            <Text className="font-psemibold text-[14px]">
+              {item.id}. {item.title}
+            </Text>
+          </ButtonRow>
         </View>
       )}
+      ListHeaderComponent={() => (
+        <View className="mt-[20px] mb-[10px]">
+          <View className="flex-1 items-center justify-center">
+            <SearchInput ref={searchInputRef} />
+          </View>
+          <View className="flex-1 items-center justify-center mt-[40px]">
+            <View className="w-[355px]">
+              <Text className="font-pbold text-[20px]">인기 검색어</Text>
+              <Text className="font-pmedium text-[14px] text-[#989DA3]">
+                1주일 간 사람들이 찾아본 정책을 보여드릴게요.
+              </Text>
+            </View>
+          </View>
+        </View>
+      )}
+      ListFooterComponent={() => (
+        <View className="mt-[25px] h-[9px] w-full bg-[#dfe3e7] mt-[37px]"></View>
+      )}
       contentContainerStyle={{ paddingBottom: 30 }} // 적절한 padding 추가
-      // 화면을 아래로 당기면 새로고침
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }

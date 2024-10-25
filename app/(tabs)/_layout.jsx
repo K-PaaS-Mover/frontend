@@ -8,7 +8,7 @@ import { Tabs, Redirect } from "expo-router";
 
 import Home from "../../assets/icons/home.svg";
 import Contents from "../../assets/icons/contents.svg";
-import Calendar from "../../assets/icons/calendar.svg";
+import CalendarEdit from "../../assets/icons/calendar.svg";
 import Profile from "../../assets/icons/profile.svg";
 
 const TabsLayout = () => {
@@ -57,12 +57,12 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="calendarPage"
+          name="schedule"
           options={{
-            title: "CalendarPage",
+            title: "Schedule",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <Calendar
+              <CalendarEdit
                 width={26}
                 height={26}
                 fill={focused ? "#50C3FA" : "#000"}

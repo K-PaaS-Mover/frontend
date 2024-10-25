@@ -2,6 +2,8 @@ import React, { useRef, useEffect } from "react";
 import { View, Animated, Text, Easing } from "react-native";
 import styled from "styled-components/native";
 
+import Logo from "../assets/icons/logo.svg";
+
 const Container = styled.View`
   flex: 1;
   align-items: center;
@@ -58,6 +60,8 @@ const Circle5 = styled.View`
   border-width: 1px;
   opacity: 1;
   position: absolute;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Shape = styled(Animated.View)`
@@ -134,7 +138,9 @@ const MyCircle = () => {
 
           elevation: 150,
         }}
-      />
+      >
+        <Logo width={50} />
+      </Circle5>
       <Shape1
         style={{
           transform: [

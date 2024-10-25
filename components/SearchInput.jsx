@@ -34,7 +34,7 @@ const SearchInput = forwardRef(
       <View
         className="w-[355px] h-[35px] px-4 
       border-[1px] border-solid
-      border-[#50c3fa] focus:border-[#50c3fa]
+      border-[#6d6d7a] focus:border-[#6d6d7a]
       items-center flex-row space-x-4 mt-[20px]"
       >
         <TouchableOpacity>
@@ -42,7 +42,7 @@ const SearchInput = forwardRef(
         </TouchableOpacity>
         <TextInput
           ref={inputRef}
-          className="text-base text-[#9A9A9A] flex-1 font-medium"
+          className="text-base flex-1 font-medium"
           value={value}
           placeholder="검색"
           placeholderTextColor="#7b7b8b"
