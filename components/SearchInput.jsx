@@ -1,10 +1,5 @@
 import { View, Text, TextInput, Image, TouchableOpacity } from "react-native";
-import React, {
-  useState,
-  useRef,
-  useImperativeHandle,
-  forwardRef,
-} from "react";
+import React, { useState, useRef, useImperativeHandle, forwardRef } from "react";
 
 import Search from "../assets/icons/search.svg";
 
@@ -42,7 +37,7 @@ const SearchInput = forwardRef(
         </TouchableOpacity>
         <TextInput
           ref={inputRef}
-          className="text-base flex-1 font-medium"
+          className="text-base flex-1 font-pregular text-[12px]"
           value={value}
           placeholder="검색"
           placeholderTextColor="#7b7b8b"
