@@ -6,8 +6,8 @@ import { Link, router } from "expo-router";
 import RNPickerSelect from "react-native-picker-select";
 import "nativewind";
 
-import Status from "../../components/components/Status";
-import CustomButton from "../../components/components/CustomButton";
+import Status from "../../components/signComponents/Status";
+import CustomButton from "../../components/signComponents/CustomButton";
 
 const SignUpJob = () => {
   // 각 드롭다운의 선택 상태 관리

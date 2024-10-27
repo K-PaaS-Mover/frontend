@@ -5,9 +5,9 @@ import styled from "styled-components/native";
 import { Link, router } from "expo-router";
 import "nativewind"; // 추가: nativewind를 불러옵니다.
 
-import Status from "../../components/components/Status";
-import CustomButton from "../../components/components/CustomButton";
-import FormField from "../../components/components/FormField";
+import Status from "../../components/signComponents/Status";
+import CustomButton from "../../components/signComponents/CustomButton";
+import FormField from "../../components/signComponents/FormField";
 
 const ButtonRow = styled.View`
   flex-direction: row;

@@ -6,8 +6,8 @@ import { Link, router } from "expo-router";
 import RNPickerSelect from "react-native-picker-select";
 import "nativewind";
 
-import Status from "../../components/components/Status";
-import CustomButton from "../../components/components/CustomButton";
+import Status from "../../components/signComponents/Status";
+import CustomButton from "../../components/signComponents/CustomButton";
 
 const ButtonRow = styled.View`
   flex-direction: row;

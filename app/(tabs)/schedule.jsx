@@ -9,7 +9,7 @@ import moment from "moment";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Modalize } from "react-native-modalize";
 
-import HomeFrame from "../../components/components/HomeFrame";
+import HomeFrame from "../../components/policyFrame/HomeFrame";
 
 import ArrowLeft from "../../assets/icons/arrow_left.svg";
 import ArrowRight from "../../assets/icons/arrow_right.svg";

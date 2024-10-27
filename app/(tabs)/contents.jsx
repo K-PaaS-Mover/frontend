@@ -11,10 +11,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useNavigation } from "expo-router";
 import styled from "styled-components/native";
 
-import ContentsFrame from "../../components/components/ContentsFrame";
+import ContentsFrame from "../../components/policyFrame/ContentsFrame";
 
-import SearchInput from "../../components/components/SearchInput";
-import SearchFocus from "../../components/components/SearchFocus";
+import SearchInput from "../../components/search/SearchInput";
+import SearchFocus from "../../components/search/SearchFocus";
 import Bell from "../../assets/icons/bell.svg";
 import Sort from "../../assets/icons/sort.svg";
 

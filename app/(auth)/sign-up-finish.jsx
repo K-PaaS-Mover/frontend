@@ -12,8 +12,8 @@ import Welfare3 from "../../assets/images/welfare3.svg";
 import Welfare4 from "../../assets/images/welfare4.svg";
 import Welfare5 from "../../assets/images/welfare5.svg";
 
-import Status from "../../components/components/Status";
-import CustomButton from "../../components/components/CustomButton";
+import Status from "../../components/signComponents/Status";
+import CustomButton from "../../components/signComponents/CustomButton";
 
 const ButtonRow = styled.View`
   flex-direction: row;

@@ -10,8 +10,8 @@ import BoxUncompleted from "../../assets/icons/check_box.svg";
 import CheckCompleted from "../../assets/icons/check.svg";
 import CheckUncompleted from "../../assets/icons/check_outline.svg";
 
-import Status from "../../components/components/Status";
-import CustomButton from "../../components/components/CustomButton";
+import Status from "../../components/signComponents/Status";
+import CustomButton from "../../components/signComponents/CustomButton";
 
 const ButtonRow = styled.View`
   flex-direction: row;

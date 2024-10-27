@@ -5,10 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useNavigation } from "expo-router";
 import styled from "styled-components/native";
 
-import Bell from "../../assets/icons/bell.svg";
-import HomeFrameDetail from "./HomeFrameDetail";
-import Star from "../../assets/icons/star.svg";
-import StarCheck from "../../assets/icons/star_filled.svg";
+import Bell from "../../../assets/icons/bell.svg";
+import HomeFrameDetail from "../homeScreens/HomeFrameDetail";
+import Star from "../../../assets/icons/star.svg";
+import StarCheck from "../../../assets/icons/star_filled.svg";
 
 const ButtonRow = styled.View`
   flex-direction: row;

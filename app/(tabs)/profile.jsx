@@ -4,7 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
-import LookScrap from "../../components/screens/LookScrap";
+import LookScrap from "../../components/profileScreens/LookScrap";
 
 import Bell from "../../assets/icons/bell.svg";
 import Arrow from "../../assets/icons/arrow.svg";

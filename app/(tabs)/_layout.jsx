@@ -1,11 +1,6 @@
 import { View, Text, Image } from "react-native";
 import { Tabs, Redirect } from "expo-router";
 
-// import { home } from "../../constants/icons";
-// import { contents } from "../../constants/icons";
-// import { calendar } from "../../constants/icons";
-// import { profile } from "../../constants/icons";
-
 import Home from "../../assets/icons/home.svg";
 import Contents from "../../assets/icons/contents.svg";
 import CalendarEdit from "../../assets/icons/calendar.svg";
@@ -34,11 +29,7 @@ const TabsLayout = () => {
             title: "Home",
             headerShown: false,
             tabBarIcon: ({ focused }) => (
-              <Home
-                width={26}
-                height={26}
-                fill={focused ? "#50C3FA" : "#000"}
-              />
+              <Home width={26} height={26} fill={focused ? "#50C3FA" : "#000"} />
             ),
           }}
         />
@@ -48,11 +39,7 @@ const TabsLayout = () => {
             title: "Contents",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <Contents
-                width={26}
-                height={26}
-                fill={focused ? "#50C3FA" : "#000"}
-              />
+              <Contents width={26} height={26} fill={focused ? "#50C3FA" : "#000"} />
             ),
           }}
         />
@@ -62,11 +49,7 @@ const TabsLayout = () => {
             title: "Schedule",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <CalendarEdit
-                width={26}
-                height={26}
-                fill={focused ? "#50C3FA" : "#000"}
-              />
+              <CalendarEdit width={26} height={26} fill={focused ? "#50C3FA" : "#000"} />
             ),
           }}
         />
@@ -76,11 +59,7 @@ const TabsLayout = () => {
             title: "Profile",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <Profile
-                width={26}
-                height={26}
-                fill={focused ? "#50C3FA" : "#000"}
-              />
+              <Profile width={26} height={26} fill={focused ? "#50C3FA" : "#000"} />
             ),
           }}
         />

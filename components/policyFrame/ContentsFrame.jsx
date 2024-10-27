@@ -13,8 +13,6 @@ const ButtonRow = styled.View`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  /* margin-top: 50px; */
-  /* background-color: #faf; */
   padding: 0 20px;
 `;
 

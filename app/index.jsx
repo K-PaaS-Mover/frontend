@@ -6,9 +6,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import React from "react";
 
-// import { images } from "../constants";
-import CustomButton from "../components/components/CustomButton";
-import MyCircle from "../components/components/MyCircle";
+import CustomButton from "../components/signComponents/CustomButton";
+import MyCircle from "../components/mainComponents/MyCircle";
 
 const Container = styled.View`
   flex: 1;

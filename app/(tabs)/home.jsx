@@ -9,11 +9,11 @@ import { StatusBar } from "react-native-web";
 import Bell from "../../assets/icons/bell.svg";
 import Main from "../../assets/images/main.svg";
 
-import SearchInput from "../../components/components/SearchInput";
-import CustomButton from "../../components/components/CustomButton";
-import HomeFrame from "../../components/components/HomeFrame";
-import SearchFocus from "../../components/components/SearchFocus";
-import HomeFocus from "../../components/screens/HomeFocus";
+import SearchInput from "../../components/search/SearchInput";
+import SearchFocus from "../../components/search/SearchFocus";
+import CustomButton from "../../components/signComponents/CustomButton";
+import HomeFrame from "../../components/policyFrame/HomeFrame";
+import HomeFocus from "../../components/policyFrame/homeScreens/HomeFocus";
 
 const ButtonRow = styled.View`
   flex-direction: row;
