@@ -7,9 +7,8 @@ import styled from "styled-components/native";
 import React from "react";
 
 // import { images } from "../constants";
-import CustomButton from "../components/CustomButton";
-import MyCircle from "../components/MyCircle";
-import MyCircle2 from "../components/MyCircle2";
+import CustomButton from "../components/components/CustomButton";
+import MyCircle from "../components/components/MyCircle";
 
 const Container = styled.View`
   flex: 1;

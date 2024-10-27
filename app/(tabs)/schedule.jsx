@@ -1,11 +1,5 @@
 import { View, Text, BackHandler, FlatList } from "react-native";
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -15,7 +9,7 @@ import moment from "moment";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Modalize } from "react-native-modalize";
 
-import HomeFrame from "../../components/HomeFrame";
+import HomeFrame from "../../components/components/HomeFrame";
 
 import ArrowLeft from "../../assets/icons/arrow_left.svg";
 import ArrowRight from "../../assets/icons/arrow_right.svg";
@@ -47,26 +41,19 @@ const Schedule = () => {
       return false;
     };
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
     return () => backHandler.remove();
   }, [viewScrapped]);
 
   // 이전 달로 이동
   const goToPreviousMonth = useCallback(() => {
-    setCurrentDate((prevDate) =>
-      moment(prevDate).subtract(1, "months").format("YYYY-MM-DD")
-    );
+    setCurrentDate((prevDate) => moment(prevDate).subtract(1, "months").format("YYYY-MM-DD"));
   }, []);
 
   // 다음 달로 이동
   const goToNextMonth = useCallback(() => {
-    setCurrentDate((prevDate) =>
-      moment(prevDate).add(1, "months").format("YYYY-MM-DD")
-    );
+    setCurrentDate((prevDate) => moment(prevDate).add(1, "months").format("YYYY-MM-DD"));
   }, []);
 
   // 홈으로 이동 시 현재 날짜로 달력 초기화
@@ -201,15 +188,11 @@ const Schedule = () => {
               <EditCalendar width={24} height={24} />
             </ButtonRow>
             <ButtonRow className="mt-[40px] justify-between w-[387px]">
-              {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map(
-                (day, index) => (
-                  <View key={index} className="flex-1 items-center">
-                    <Text className="font-pregular text-[12px] text-white">
-                      {day}
-                    </Text>
-                  </View>
-                )
-              )}
+              {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day, index) => (
+                <View key={index} className="flex-1 items-center">
+                  <Text className="font-pregular text-[12px] text-white">{day}</Text>
+                </View>
+              ))}
             </ButtonRow>
           </View>
         </View>

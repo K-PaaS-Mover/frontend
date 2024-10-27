@@ -12,10 +12,8 @@ import Welfare3 from "../../assets/images/welfare3.svg";
 import Welfare4 from "../../assets/images/welfare4.svg";
 import Welfare5 from "../../assets/images/welfare5.svg";
 
-import { images } from "../images";
-import Status from "../../components/Status";
-import CustomButton from "../../components/CustomButton";
-import { Button } from "react-native-web";
+import Status from "../../components/components/Status";
+import CustomButton from "../../components/components/CustomButton";
 
 const ButtonRow = styled.View`
   flex-direction: row;

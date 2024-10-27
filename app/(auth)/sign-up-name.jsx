@@ -5,11 +5,9 @@ import styled from "styled-components/native";
 import { Link, router } from "expo-router";
 import "nativewind"; // 추가: nativewind를 불러옵니다.
 
-import Status from "../../components/Status";
-import IconButton from "../../components/IconButton";
-import { images } from "../images";
-import CustomButton from "../../components/CustomButton";
-import FormField from "../../components/FormField";
+import Status from "../../components/components/Status";
+import CustomButton from "../../components/components/CustomButton";
+import FormField from "../../components/components/FormField";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -31,8 +29,7 @@ const SignUpName = () => {
   const [nameErrorMessage, setNameErrorMessage] = useState("");
   const [birthDateErrorMessage, setBirthDateErrorMessage] = useState("");
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] = useState("");
-  const [verificationCodeErrorMessage, setVerificationCodeErrorMessage] =
-    useState("");
+  const [verificationCodeErrorMessage, setVerificationCodeErrorMessage] = useState("");
 
   const validateName = (name) => {
     if (name.trim().length === 0) {
@@ -71,17 +68,11 @@ const SignUpName = () => {
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text className="font-semibold text-[36px] text-center pt-[60px]">
-            회원가입
-          </Text>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Text className="font-semibold text-[36px] text-center pt-[60px]">회원가입</Text>
           <Status left="34%" />
           <View className="w-[85%]">
-            <Text className="font-semibold text-[16px] pt-[30px]">
-              정보를 입력해주세요!
-            </Text>
+            <Text className="font-semibold text-[16px] pt-[30px]">정보를 입력해주세요!</Text>
           </View>
           {/* 이름 */}
           <FormField
@@ -127,10 +118,7 @@ const SignUpName = () => {
           </ButtonRow>
           {/* 인증번호 */}
           <ButtonRow>
-            <FormField
-              handleChangeText={(text) => {}}
-              placeholder="인증번호를 입력해 주세요"
-            />
+            <FormField handleChangeText={(text) => {}} placeholder="인증번호를 입력해 주세요" />
             <CustomButton
               title="재전송"
               handlePress={() => router.push("/")} // 다음 버튼 클릭 시 확인
@@ -164,10 +152,7 @@ const SignUpName = () => {
                   : "text-[#50c3fa]"
               }`}
             />
-            <Link
-              href="/sign-in"
-              className="text-[#C1C6CD] font-pregular text-center mt-[20px]"
-            >
+            <Link href="/sign-in" className="text-[#C1C6CD] font-pregular text-center mt-[20px]">
               로그인하기
             </Link>
           </View>

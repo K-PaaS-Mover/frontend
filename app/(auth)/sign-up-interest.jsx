@@ -6,8 +6,8 @@ import { Link, router } from "expo-router";
 import RNPickerSelect from "react-native-picker-select";
 import "nativewind";
 
-import Status from "../../components/Status";
-import CustomButton from "../../components/CustomButton";
+import Status from "../../components/components/Status";
+import CustomButton from "../../components/components/CustomButton";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -34,18 +34,12 @@ const SignUpInterest = () => {
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text className="font-semibold text-[36px] text-center pt-[60px]">
-            회원가입
-          </Text>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Text className="font-semibold text-[36px] text-center pt-[60px]">회원가입</Text>
           <Status left="68%" />
           {/* 제목 */}
           <View className="w-[85%]">
-            <Text className="font-semibold text-[16px] pt-[30px]">
-              관심 분야를 선택해 주세요!
-            </Text>
+            <Text className="font-semibold text-[16px] pt-[30px]">관심 분야를 선택해 주세요!</Text>
           </View>
           {/* 관심 분야 선택 */}
           {/* 첫 줄 */}
@@ -57,9 +51,7 @@ const SignUpInterest = () => {
                   title={title}
                   handlePress={() => handleButtonPress(title)}
                   containerStyles={`w-[73px] h-[40px] mt-[10px] mr-[2px] ml-[2px] border-[#50c3fa] border-[1px] rounded-[100px] ${
-                    selectedButtons.has(title)
-                      ? "bg-[#50c3fa]"
-                      : "bg-transparent"
+                    selectedButtons.has(title) ? "bg-[#50c3fa]" : "bg-transparent"
                   }`} // 선택된 버튼에 배경색 적용
                   textStyles={`text-center ${
                     selectedButtons.has(title) ? "text-white" : "text-[#50c3fa]"
@@ -74,9 +66,7 @@ const SignUpInterest = () => {
                   title={title}
                   handlePress={() => handleButtonPress(title)}
                   containerStyles={`w-[73px] h-[40px] ml-[2px] mr-[2px] border-[#50c3fa] border-[1px] rounded-[100px] ${
-                    selectedButtons.has(title)
-                      ? "bg-[#50c3fa]"
-                      : "bg-transparent"
+                    selectedButtons.has(title) ? "bg-[#50c3fa]" : "bg-transparent"
                   }`} // 선택된 버튼에 배경색 적용
                   textStyles={`text-center ${
                     selectedButtons.has(title) ? "text-white" : "text-[#50c3fa]"
@@ -91,9 +81,7 @@ const SignUpInterest = () => {
                   title={title}
                   handlePress={() => handleButtonPress(title)}
                   containerStyles={`w-[73px] h-[40px] mr-[2px] ml-[2px] border-[#50c3fa] border-[1px] rounded-[100px] ${
-                    selectedButtons.has(title)
-                      ? "bg-[#50c3fa]"
-                      : "bg-transparent"
+                    selectedButtons.has(title) ? "bg-[#50c3fa]" : "bg-transparent"
                   }`} // 선택된 버튼에 배경색 적용
                   textStyles={`text-center ${
                     selectedButtons.has(title) ? "text-white" : "text-[#50c3fa]"
@@ -121,10 +109,7 @@ const SignUpInterest = () => {
                 selectedButtons.size > 0 ? "text-white" : "text-[#50c3fa]"
               }`} // 버튼 상태에 따른 텍스트 색상 적용
             />
-            <Link
-              href="/sign-in"
-              className="text-[#C1C6CD] font-pregular text-center mt-[20px]"
-            >
+            <Link href="/sign-in" className="text-[#C1C6CD] font-pregular text-center mt-[20px]">
               로그인하기
             </Link>
           </View>

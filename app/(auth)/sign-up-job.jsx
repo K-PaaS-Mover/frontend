@@ -6,8 +6,8 @@ import { Link, router } from "expo-router";
 import RNPickerSelect from "react-native-picker-select";
 import "nativewind";
 
-import Status from "../../components/Status";
-import CustomButton from "../../components/CustomButton";
+import Status from "../../components/components/Status";
+import CustomButton from "../../components/components/CustomButton";
 
 const SignUpJob = () => {
   // 각 드롭다운의 선택 상태 관리
@@ -19,10 +19,7 @@ const SignUpJob = () => {
 
   // 다음 버튼 활성화 여부
   const isNextButtonEnabled =
-    selectedCompany &&
-    selectedCareer &&
-    selectedResidence &&
-    selectedSpecialNote;
+    selectedCompany && selectedCareer && selectedResidence && selectedSpecialNote;
 
   // 직장 선택 시 경력 옵션 업데이트
   const handleCompanyChange = (company) => {
@@ -57,26 +54,16 @@ const SignUpJob = () => {
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text className="font-semibold text-[36px] text-center pt-[60px]">
-            회원가입
-          </Text>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Text className="font-semibold text-[36px] text-center pt-[60px]">회원가입</Text>
           <Status left="51%" />
           {/* 제목 */}
           <View className="w-[85%]">
-            <Text className="font-semibold text-[16px] pt-[30px]">
-              정보를 입력해주세요!
-            </Text>
+            <Text className="font-semibold text-[16px] pt-[30px]">정보를 입력해주세요!</Text>
           </View>
           {/* 직장 드롭다운 메뉴 */}
           <View className="w-[85%] mt-[60px] border-b-[1px] border-[#50c3fa]">
-            <Text
-              className={`font-semibold text-[16px] mb-[8px] text-[#989DA3]`}
-            >
-              직장
-            </Text>
+            <Text className={`font-semibold text-[16px] mb-[8px] text-[#989DA3]`}>직장</Text>
             <RNPickerSelect
               onValueChange={handleCompanyChange}
               items={[
@@ -100,11 +87,7 @@ const SignUpJob = () => {
           </View>
           {/* 경력 드롭다운 */}
           <View className="w-[85%] mt-[50px] border-b-[1px] border-[#50c3fa]">
-            <Text
-              className={`font-semibold text-[16px] mb-[8px] text-[#989DA3]`}
-            >
-              경력
-            </Text>
+            <Text className={`font-semibold text-[16px] mb-[8px] text-[#989DA3]`}>경력</Text>
             <RNPickerSelect
               onValueChange={(value) => setSelectedCareer(value)}
               items={careerOptions}
@@ -123,11 +106,7 @@ const SignUpJob = () => {
           </View>
           {/* 거주지 드롭다운 메뉴 */}
           <View className="w-[85%] mt-[50px] border-b-[1px] border-[#50c3fa]">
-            <Text
-              className={`font-semibold text-[16px] mb-[8px] text-[#989DA3]`}
-            >
-              거주지
-            </Text>
+            <Text className={`font-semibold text-[16px] mb-[8px] text-[#989DA3]`}>거주지</Text>
             <RNPickerSelect
               onValueChange={(value) => setSelectedResidence(value)}
               items={[
@@ -150,11 +129,7 @@ const SignUpJob = () => {
           </View>
           {/* 특이사항 드롭다운 메뉴 */}
           <View className="w-[85%] mt-[50px] border-b-[1px] border-[#50c3fa]">
-            <Text
-              className={`font-semibold text-[16px] mb-[8px] text-[#989DA3]`}
-            >
-              특이사항
-            </Text>
+            <Text className={`font-semibold text-[16px] mb-[8px] text-[#989DA3]`}>특이사항</Text>
             <RNPickerSelect
               onValueChange={(value) => setSelectedSpecialNote(value)}
               items={[
@@ -181,19 +156,12 @@ const SignUpJob = () => {
               title="다음"
               handlePress={handleSubmit} // 모든 값이 선택된 경우에만 다음 버튼 동작
               containerStyles={`w-[285px] h-[57px] mt-[165px] ${
-                isNextButtonEnabled
-                  ? "bg-[#50c3fa]"
-                  : "border-[#50c3fa] border-2"
+                isNextButtonEnabled ? "bg-[#50c3fa]" : "border-[#50c3fa] border-2"
               }`} // 활성화 상태에 따라 배경색 변경
-              textStyles={`text-center ${
-                isNextButtonEnabled ? "text-white" : "text-[#50c3fa]"
-              }`}
+              textStyles={`text-center ${isNextButtonEnabled ? "text-white" : "text-[#50c3fa]"}`}
               disabled={!isNextButtonEnabled} // 모든 드롭다운이 선택되지 않으면 비활성화
             />
-            <Link
-              href="/sign-in"
-              className="text-[#C1C6CD] font-pregular text-center mt-[20px]"
-            >
+            <Link href="/sign-in" className="text-[#C1C6CD] font-pregular text-center mt-[20px]">
               로그인하기
             </Link>
           </View>

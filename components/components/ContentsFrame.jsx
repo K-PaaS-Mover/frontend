@@ -5,8 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import styled from "styled-components/native";
 
-import Views from "../assets/icons/views.svg";
-import Scrap from "../assets/icons/scrap.svg";
+import Views from "../../assets/icons/views.svg";
+import Scrap from "../../assets/icons/scrap.svg";
 
 const ButtonRow = styled.View`
   flex-direction: row;

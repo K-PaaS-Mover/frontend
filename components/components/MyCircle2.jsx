@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { View, Animated, Text, Easing } from "react-native";
 import styled from "styled-components/native";
 
-import Logo from "../assets/icons/logo.svg";
+import Logo from "../../assets/icons/logo.svg";
 
 const Container = styled.View`
   flex: 1;
@@ -114,10 +114,7 @@ const MyCircle2 = () => {
         const y = 50 * Math.sin(angle); // 50: Circle5 반지름
 
         return (
-          <View
-            key={index}
-            style={{ position: "absolute", top: "50%", left: "50%" }}
-          >
+          <View key={index} style={{ position: "absolute", top: "50%", left: "50%" }}>
             <ShapeComponent
               style={{
                 transform: [

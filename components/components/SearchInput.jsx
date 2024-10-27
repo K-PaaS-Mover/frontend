@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Image, TouchableOpacity } from "react-native";
 import React, { useState, useRef, useImperativeHandle, forwardRef } from "react";
 
-import Search from "../assets/icons/search.svg";
+import Search from "../../assets/icons/search.svg";
 
 const SearchInput = forwardRef(
   (

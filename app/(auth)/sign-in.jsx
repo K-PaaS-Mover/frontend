@@ -1,23 +1,12 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, ScrollView, Image, Alert, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { Link, router } from "expo-router";
 import "nativewind"; // 추가: nativewind를 불러옵니다.
 
-import IconButton from "../../components/IconButton";
-import { images } from "../images";
-import CustomButton from "../../components/CustomButton";
-import FormField from "../../components/FormField";
-
-import PasswordField from "../../components/PasswordField";
+import CustomButton from "../../components/components/CustomButton";
+import FormField from "../../components/components/FormField";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -47,8 +36,7 @@ const SignIn = () => {
   };
 
   const validatePassword = (password) => {
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%#*?&])[A-Za-z\d@$!%#*?&]{10,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%#*?&])[A-Za-z\d@$!%#*?&]{10,}$/;
     if (!passwordRegex.test(password)) {
       return "비밀번호는 영어 대소문자, 숫자, 특수문자를 포함한 10자 이상이어야 합니다.";
     }
@@ -75,12 +63,8 @@ const SignIn = () => {
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text className="font-semibold text-[36px] text-center pt-[60px]">
-            로그인
-          </Text>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Text className="font-semibold text-[36px] text-center pt-[60px]">로그인</Text>
           {/* 아이디와 비밀번호 */}
           <FormField
             title="아이디"
@@ -112,18 +96,12 @@ const SignIn = () => {
               title="다음"
               handlePress={handleSubmit} // 다음 버튼 클릭 시 확인
               containerStyles={`w-[285px] h-[57px] border-2 mt-[165px] ${
-                !idErrorMessage &&
-                !passwordErrorMessage &&
-                form.id &&
-                form.password
+                !idErrorMessage && !passwordErrorMessage && form.id && form.password
                   ? "bg-[#50c3fa] border-[#50c3fa]"
                   : "border-[#50c3fa]"
               }`} // 동의 상태에 따라 배경색 변경
               textStyles={`text-center ${
-                !idErrorMessage &&
-                !passwordErrorMessage &&
-                form.id &&
-                form.password
+                !idErrorMessage && !passwordErrorMessage && form.id && form.password
                   ? "text-white"
                   : "text-[#50c3fa]"
               }`}

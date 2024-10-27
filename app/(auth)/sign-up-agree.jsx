@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, ScrollView, Image, Alert, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -17,10 +10,8 @@ import BoxUncompleted from "../../assets/icons/check_box.svg";
 import CheckCompleted from "../../assets/icons/check.svg";
 import CheckUncompleted from "../../assets/icons/check_outline.svg";
 
-import Status from "../../components/Status";
-import IconButton from "../../components/IconButton";
-import { images } from "../images";
-import CustomButton from "../../components/CustomButton";
+import Status from "../../components/components/Status";
+import CustomButton from "../../components/components/CustomButton";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -81,18 +72,12 @@ const SignUpAgree = () => {
             alignItems: "center",
           }}
         >
-          <Text className="font-semibold text-[36px] text-center pt-[60px] ">
-            회원가입
-          </Text>
+          <Text className="font-semibold text-[36px] text-center pt-[60px] ">회원가입</Text>
           <Status markStyles="left-0" />
           {/* 제목 */}
           <View className="w-[85%]">
-            <Text className="font-semibold text-[16px] pt-[30px]">
-              [제목] 서비스 이용약관에
-            </Text>
-            <Text className="font-semibold text-[16px] pt-[30px] mt-[-25px]">
-              동의해주세요.
-            </Text>
+            <Text className="font-semibold text-[16px] pt-[30px]">[제목] 서비스 이용약관에</Text>
+            <Text className="font-semibold text-[16px] pt-[30px] mt-[-25px]">동의해주세요.</Text>
           </View>
           {/* 개인 정보 수집 */}
           <View className="w-[85%]">
@@ -108,9 +93,7 @@ const SignUpAgree = () => {
                 type={isAgreed ? BoxCompleted : images.boxUncompleted}
                 onPress={handleAllAgreePress}
               /> */}
-              <Text className="font-semibold text-[14px] text-[#515259]">
-                모두 동의
-              </Text>
+              <Text className="font-semibold text-[14px] text-[#515259]">모두 동의</Text>
             </ButtonRow>
             <View className="w-[100%] h-[1px] bg-[#DFE3E7] mt-[10px]" />
             <ButtonRow className="mt-[30px] w-[150px]">
@@ -125,19 +108,14 @@ const SignUpAgree = () => {
                   <CheckCompleted width={24} height={24} />
                 )}
               </TouchableOpacity>
-              <Text className="font-semibold text-[14px] text-[#515259]">
-                개인정보 수집 동의
-              </Text>
+              <Text className="font-semibold text-[14px] text-[#515259]">개인정보 수집 동의</Text>
             </ButtonRow>
             <ButtonRow className="mt-[15px] w-[150px]">
               {/* <IconButton
                 type={isMarketingAgreed ? images.completed : images.uncompleted} // 마케팅 수신 동의 이미지 변경
                 onPress={handleMarketingAgreePress} // 마케팅 동의 버튼 클릭 시
               /> */}
-              <TouchableOpacity
-                onPress={handleMarketingAgreePress}
-                className="mr-[15px]"
-              >
+              <TouchableOpacity onPress={handleMarketingAgreePress} className="mr-[15px]">
                 {!isMarketingAgreed ? (
                   <CheckUncompleted width={24} height={24} />
                 ) : (
@@ -157,9 +135,7 @@ const SignUpAgree = () => {
               containerStyles={`w-[285px] h-[57px] border-2 mt-[200px] ${
                 isAgreed ? "bg-[#50c3fa] border-[#50c3fa]" : "border-[#50c3fa]"
               }`} // 동의 상태에 따라 배경색 변경
-              textStyles={`text-center ${
-                isAgreed ? "text-white" : "text-[#50c3fa]"
-              }`}
+              textStyles={`text-center ${isAgreed ? "text-white" : "text-[#50c3fa]"}`}
             />
             <Link
               href="/sign-in"

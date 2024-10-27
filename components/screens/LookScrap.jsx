@@ -4,9 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
-import Bell from "../assets/icons/bell.svg";
-import Views from "../assets/icons/views.svg";
-import Scrap from "../assets/icons/scrap.svg";
+import Bell from "../../assets/icons/bell.svg";
 
 const ButtonRow = styled.View`
   flex-direction: row;

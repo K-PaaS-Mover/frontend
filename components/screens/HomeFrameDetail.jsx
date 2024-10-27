@@ -2,8 +2,8 @@ import { View, Text } from "react-native";
 import React from "react";
 import styled from "styled-components/native";
 
-import Views from "../assets/icons/views.svg";
-import Scrap from "../assets/icons/scrap.svg";
+import Views from "../../assets/icons/views.svg";
+import Scrap from "../../assets/icons/scrap.svg";
 
 const ButtonRow = styled.View`
   flex-direction: row;

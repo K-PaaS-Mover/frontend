@@ -1,16 +1,10 @@
-import {
-  View,
-  Text,
-  FlatList,
-  RefreshControl,
-  BackHandler,
-} from "react-native";
+import { View, Text, FlatList, RefreshControl, BackHandler } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
-import LookScrap from "../../components/LookScrap";
+import LookScrap from "../../components/screens/LookScrap";
 
 import Bell from "../../assets/icons/bell.svg";
 import Arrow from "../../assets/icons/arrow.svg";
@@ -43,10 +37,7 @@ const Profile = () => {
       return false; // 기본 동작 수행 (앱 종료 또는 이전 화면 이동)
     };
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
     return () => backHandler.remove(); // 컴포넌트 언마운트 시 핸들러 제거
   }, [viewScrapped]);
@@ -63,34 +54,22 @@ const Profile = () => {
               <>
                 <View className="flex-1 justify-center items-center px-4">
                   <ButtonRow>
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      onPress={() => router.replace("/home")}
-                    >
-                      <Text className="font-pblack text-2xl text-[#50c3fac4]">
-                        Mate
-                      </Text>
+                    <TouchableOpacity activeOpacity={1} onPress={() => router.replace("/home")}>
+                      <Text className="font-pblack text-2xl text-[#50c3fac4]">Mate</Text>
                     </TouchableOpacity>
-                    <Text className="font-pbold text-[20px] pr-[35px]">
-                      설정
-                    </Text>
+                    <Text className="font-pbold text-[20px] pr-[35px]">설정</Text>
                     <Bell width={24} height={24} />
                   </ButtonRow>
                 </View>
                 <View className="flex-1 justify-start items-start ml-[35px] mt-[40px]">
                   <Text className="font-pregular text-[18px]">
-                    안녕하세요{" "}
-                    <Text className="text-[#50c3fac4]">uoonjudori</Text>
+                    안녕하세요 <Text className="text-[#50c3fac4]">uoonjudori</Text>
                     님,
                   </Text>
                   <Text className="font-pbold text-[20px] mt-[5px]">
-                    지금까지 <Text className="text-[#50c3fac4]">00</Text>개
-                    정책을 스크랩했어요!
+                    지금까지 <Text className="text-[#50c3fac4]">00</Text>개 정책을 스크랩했어요!
                   </Text>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => setViewScrapped(true)}
-                  >
+                  <TouchableOpacity activeOpacity={0.7} onPress={() => setViewScrapped(true)}>
                     <Text className="font-pextralight text-[12px] text-[#989DA3] mt-[20px]">
                       스크랩한 정책들을 보러 가기 →
                     </Text>
@@ -100,28 +79,19 @@ const Profile = () => {
                 <View className="flex-1 items-center mt-[-20px]">
                   <ButtonRow className="justify-between w-[325px]">
                     <Text>프로필 수정</Text>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => router.replace("/home")}
-                    >
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/home")}>
                       <Arrow width={24} height={24} />
                     </TouchableOpacity>
                   </ButtonRow>
                   <ButtonRow className="justify-between w-[325px] mt-[20px]">
                     <Text>알림설정</Text>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => router.replace("/home")}
-                    >
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/home")}>
                       <Arrow width={24} height={24} />
                     </TouchableOpacity>
                   </ButtonRow>
                   <ButtonRow className="justify-between w-[325px] mt-[20px]">
                     <Text>FAQ</Text>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => router.replace("/home")}
-                    >
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/home")}>
                       <Arrow width={24} height={24} />
                     </TouchableOpacity>
                   </ButtonRow>
@@ -130,37 +100,25 @@ const Profile = () => {
                 <View className="flex-1 items-center mt-[-20px]">
                   <ButtonRow className="justify-between w-[325px]">
                     <Text>로그아웃</Text>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => router.replace("/home")}
-                    >
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/home")}>
                       <Arrow width={24} height={24} />
                     </TouchableOpacity>
                   </ButtonRow>
                   <ButtonRow className="justify-between w-[325px] mt-[20px]">
                     <Text>회원 탈퇴</Text>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => router.replace("/home")}
-                    >
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/home")}>
                       <Arrow width={24} height={24} />
                     </TouchableOpacity>
                   </ButtonRow>
                   <ButtonRow className="justify-between w-[325px] mt-[20px]">
                     <Text>약관</Text>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => router.replace("/home")}
-                    >
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/home")}>
                       <Arrow width={24} height={24} />
                     </TouchableOpacity>
                   </ButtonRow>
                   <ButtonRow className="justify-between w-[325px] mt-[20px]">
                     <Text>개인 정보 취급 방침</Text>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => router.replace("/home")}
-                    >
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/home")}>
                       <Arrow width={24} height={24} />
                     </TouchableOpacity>
                   </ButtonRow>
@@ -173,9 +131,7 @@ const Profile = () => {
           </View>
         )}
         contentContainerStyle={{ paddingBottom: 30 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
     </SafeAreaView>
   );

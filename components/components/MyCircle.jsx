@@ -2,12 +2,15 @@ import React, { useRef, useEffect } from "react";
 import { View, Animated, Text, Easing } from "react-native";
 import styled from "styled-components/native";
 
+import Logo from "../../assets/icons/logo.svg";
+
 const Container = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
   margin-top: 200px;
 `;
+
 const Circle1 = styled.View`
   width: 502px;
   height: 502px;
@@ -17,6 +20,7 @@ const Circle1 = styled.View`
   opacity: 0.05;
   position: absolute;
 `;
+
 const Circle2 = styled.View`
   width: 400px;
   height: 400px;
@@ -26,6 +30,7 @@ const Circle2 = styled.View`
   opacity: 0.13;
   position: absolute;
 `;
+
 const Circle3 = styled.View`
   width: 290px;
   height: 290px;
@@ -35,6 +40,7 @@ const Circle3 = styled.View`
   opacity: 0.19;
   position: absolute;
 `;
+
 const Circle4 = styled.View`
   width: 180px;
   height: 180px;
@@ -44,6 +50,7 @@ const Circle4 = styled.View`
   opacity: 0.35;
   position: absolute;
 `;
+
 const Circle5 = styled.View`
   width: 100px;
   height: 100px;
@@ -53,10 +60,11 @@ const Circle5 = styled.View`
   border-width: 1px;
   opacity: 1;
   position: absolute;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Shape = styled(Animated.View)`
-  flex: 1;
   justify-content: center;
   align-items: center;
   width: 93px;
@@ -68,26 +76,16 @@ const Shape = styled(Animated.View)`
   position: absolute;
 `;
 
-const Shape1 = styled(Shape)`
-  /* top: -20px;
-  right: 50px; */
-`;
+const Shape1 = styled(Shape)``;
 const Shape2 = styled(Shape)`
-  /* top: -140px;
-  right: 50px; */
   width: 69px;
   height: 40px;
 `;
 const Shape3 = styled(Shape)`
-  /* top: 70px;
-  left: 120px; */
   width: 69px;
   height: 40px;
 `;
-const Shape4 = styled(Shape)`
-  /* top: -20px;
-  right: 50px; */
-`;
+const Shape4 = styled(Shape)``;
 
 const MyCircle = () => {
   const rotateAnim1 = useRef(new Animated.Value(0)).current;
@@ -110,22 +108,16 @@ const MyCircle = () => {
       ).start();
     };
 
-    rotateAnimation(rotateAnim1, 10000, 0);
-    rotateAnimation(rotateAnim2, 11000, 0); // Shape2는 2초 후 시작
-    rotateAnimation(rotateAnim3, 12000, 0); // Shape3는 4초 후 시작
-    rotateAnimation(rotateAnim4, 13000, 0); // Shape4는 6초 후 시작
+    rotateAnimation(rotateAnim1, 15000, 0);
+    rotateAnimation(rotateAnim2, 15000, 0); // Shape2는 2초 후 시작
+    rotateAnimation(rotateAnim3, 15000, 0); // Shape3는 4초 후 시작
+    rotateAnimation(rotateAnim4, 15000, 0); // Shape4는 6초 후 시작
   }, []);
 
-  const rotate = (rotateAnim) =>
+  const rotateInterpolation = (rotateAnim, outputRange) =>
     rotateAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: ["-270deg", "90deg"],
-    });
-
-  const rotateInterpolation = (rotateAnim) =>
-    rotateAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["270deg", "-90deg"],
+      outputRange,
     });
 
   return (
@@ -134,13 +126,27 @@ const MyCircle = () => {
       <Circle2 />
       <Circle3 />
       <Circle4 />
-      <Circle5 />
+      <Circle5
+        style={{
+          shadowColor: "cyan",
+          shadowOffset: {
+            width: 0,
+            height: -200,
+          },
+          shadowOpacity: 0.9,
+          shadowRadius: 10.0,
+
+          elevation: 150,
+        }}
+      >
+        <Logo width={50} />
+      </Circle5>
       <Shape1
         style={{
           transform: [
-            { rotate: rotateInterpolation(rotateAnim1) },
+            { rotate: rotateInterpolation(rotateAnim1, ["270deg", "-90deg"]) },
             { translateX: 130 },
-            { rotate: rotate(rotateAnim1) },
+            { rotate: rotateInterpolation(rotateAnim1, ["-270deg", "90deg"]) }, // 직접 값을 설정
           ],
         }}
       >
@@ -149,9 +155,9 @@ const MyCircle = () => {
       <Shape2
         style={{
           transform: [
-            { rotate: rotateInterpolation(rotateAnim2) },
+            { rotate: rotateInterpolation(rotateAnim2, ["180deg", "-180deg"]) },
             { translateX: 180 },
-            { rotate: rotate(rotateAnim2) },
+            { rotate: rotateInterpolation(rotateAnim2, ["-180deg", "180deg"]) }, // 직접 값을 설정
           ],
         }}
       >
@@ -160,9 +166,9 @@ const MyCircle = () => {
       <Shape3
         style={{
           transform: [
-            { rotate: rotateInterpolation(rotateAnim3) },
+            { rotate: rotateInterpolation(rotateAnim3, ["90deg", "-270deg"]) },
             { translateX: 80 },
-            { rotate: rotate(rotateAnim3) },
+            { rotate: rotateInterpolation(rotateAnim3, ["-90deg", "270deg"]) }, // 직접 값을 설정
           ],
         }}
       >
@@ -171,9 +177,9 @@ const MyCircle = () => {
       <Shape4
         style={{
           transform: [
-            { rotate: rotateInterpolation(rotateAnim4) },
+            { rotate: rotateInterpolation(rotateAnim4, ["45deg", "-315deg"]) },
             { translateX: 210 },
-            { rotate: rotate(rotateAnim4) },
+            { rotate: rotateInterpolation(rotateAnim4, ["-45deg", "315deg"]) }, // 직접 값을 설정
           ],
         }}
       >

@@ -1,19 +1,12 @@
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  RefreshControl,
-  ScrollView,
-} from "react-native";
+import { View, Text, FlatList, Image, RefreshControl, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import styled from "styled-components/native";
 
-import Views from "../assets/icons/views.svg";
-import Scrap from "../assets/icons/scrap.svg";
+import Views from "../../assets/icons/views.svg";
+import Scrap from "../../assets/icons/scrap.svg";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -46,12 +39,8 @@ const HomeFrame = ({ title, company, period, category, views, scrap }) => {
             </ButtonRow>
           </ButtonRow>
         </ButtonRow>
-        <Text className={`mt-[15px] ml-[20px] font-psemibold text-[18px]`}>
-          {title}
-        </Text>
-        <Text
-          className={`mt-[9px] ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}
-        >
+        <Text className={`mt-[15px] ml-[20px] font-psemibold text-[18px]`}>{title}</Text>
+        <Text className={`mt-[9px] ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}>
           {company}
         </Text>
         <Text className={`ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}>
