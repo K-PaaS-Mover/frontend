@@ -1,10 +1,4 @@
-import {
-  TouchableOpacity,
-  FlatList,
-  RefreshControl,
-  View,
-  Text,
-} from "react-native";
+import { TouchableOpacity, FlatList, RefreshControl, View, Text } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -73,13 +67,9 @@ const SearchFocus = () => {
           </View>
         </View>
       )}
-      ListFooterComponent={() => (
-        <View className="mt-[25px] h-[9px] w-full bg-[#dfe3e7] mt-[37px]"></View>
-      )}
+      ListFooterComponent={() => <View className="h-[9px] w-full bg-[#dfe3e7] mt-[37px]"></View>}
       contentContainerStyle={{ paddingBottom: 30 }} // 적절한 padding 추가
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     />
   );
 };

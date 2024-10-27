@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  RefreshControl,
-  ScrollView,
-  BackHandler,
-} from "react-native";
+import { View, Text, FlatList, Image, RefreshControl, ScrollView, BackHandler } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,6 +15,7 @@ import IconButton from "../../components/IconButton";
 import CustomButton from "../../components/CustomButton";
 import HomeFrame from "../../components/HomeFrame";
 import SearchFocus from "../../components/SearchFocus";
+import HomeFocus from "../../components/HomeFocus";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -35,8 +28,11 @@ const ButtonRow = styled.View`
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const searchInputRef = useRef(null); // SearchInput의 ref 생성
+  const [isHomeFocused, setIsHomeFocused] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null); // 선택된 아이템 상태 추가
+  const searchInputRef = useRef(null);
   const navigation = useNavigation();
+  const [isStarChecked, setIsStarChecked] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -48,37 +44,45 @@ const Home = () => {
     const backAction = () => {
       if (isSearchFocused) {
         setIsSearchFocused(false);
-        return true; // 뒤로가기를 처리했음을 알림
+        return true;
+      } else if (isHomeFocused) {
+        setIsHomeFocused(false);
+        setSelectedItem(null); // 뒤로가기 시 선택된 아이템 초기화
+        return true;
       }
-      return false; // 뒤로가기를 기본 동작으로 처리하게 함
+      return false;
     };
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
     return () => backHandler.remove();
-  }, [isSearchFocused]);
+  }, [isSearchFocused, isHomeFocused]);
 
   useEffect(() => {
     if (isSearchFocused && searchInputRef.current) {
-      searchInputRef.current.focus(); // isSearchFocused가 true일 때 포커스 설정
+      searchInputRef.current.focus();
     }
   }, [isSearchFocused]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      setIsSearchFocused(false); // Home 탭이 포커스될 때 SearchFocus 해제
+      setIsSearchFocused(false);
+      setIsHomeFocused(false);
+      setSelectedItem(null); // 화면이 포커스될 때 선택된 아이템 초기화
     });
 
-    return unsubscribe; // 클린업 함수로 리스너 해제
+    return unsubscribe;
   }, [navigation]);
 
   return (
     <SafeAreaView className="bg-white h-full">
       {isSearchFocused ? (
         <SearchFocus />
+      ) : isHomeFocused ? ( // isHomeFocused가 true일 때 HomeFocus 표시
+        <HomeFocus
+          selectedItem={selectedItem}
+          isStarChecked={isStarChecked}
+          setIsStarChecked={setIsStarChecked}
+        />
       ) : (
         <FlatList
           data={[
@@ -125,14 +129,21 @@ const Home = () => {
           ]}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <HomeFrame
-              title={item.title}
-              company={item.company}
-              period={item.period}
-              category={item.category}
-              views={item.views}
-              scrap={item.scrap}
-            />
+            <TouchableOpacity
+              onPress={() => {
+                setIsHomeFocused(true);
+                setSelectedItem(item);
+              }} // HomeFrame 클릭 시 HomeFocus 표시
+            >
+              <HomeFrame
+                title={item.title}
+                company={item.company}
+                period={item.period}
+                category={item.category}
+                views={item.views}
+                scrap={item.scrap}
+              />
+            </TouchableOpacity>
           )}
           ListHeaderComponent={() => (
             <View className="h-[350px] my-[-25px] px-4">
@@ -141,30 +152,22 @@ const Home = () => {
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={() => {
-                      // Home 탭 클릭 시 메인 화면 표시
                       setIsSearchFocused(false);
                       router.replace("/home");
                     }}
                   >
-                    <Text className="font-pblack text-2xl text-[#50c3fac4]">
-                      Mate
-                    </Text>
+                    <Text className="font-pblack text-2xl text-[#50c3fac4]">Mate</Text>
                   </TouchableOpacity>
                   <Bell width={24} height={24} />
                 </ButtonRow>
                 <SearchInput
                   ref={searchInputRef}
-                  onFocus={() => setIsSearchFocused(true)} // 포커스 시 호출
+                  onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                 />
-                <ButtonRow className="w-[100%] mt-[30px] ">
-                  <Text className="text-black text-[14px] font-pbold mr-[20px]">
-                    인기
-                  </Text>
-                  <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                  >
+                <ButtonRow className="w-[100%] mt-[30px]">
+                  <Text className="text-black text-[14px] font-pbold mr-[20px]">인기</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {[
                       "인기 검색어1",
                       "인기 검색어2",
@@ -181,12 +184,11 @@ const Home = () => {
                         key={title}
                         title={title}
                         handlePress={() => {
-                          setIsSearchFocused(false); // SearchFocus 해제
-                          router.push("/"); // 원하는 페이지로 이동
+                          setIsSearchFocused(false);
+                          router.push("/");
                         }}
-                        containerStyles={`w-[90px] h-[25px]
-                        border-[#DFE3E7] border-[1px] rounded-[8px] mr-[10px]`} // 선택된 버튼에 배경색 적용
-                        textStyles={`text-center text-[#515259] text-[12px] font-pregular`}
+                        containerStyles="w-[90px] h-[25px] border-[#DFE3E7] border-[1px] rounded-[8px] mr-[10px]"
+                        textStyles="text-center text-[#515259] text-[12px] font-pregular"
                       />
                     ))}
                   </ScrollView>
@@ -197,10 +199,8 @@ const Home = () => {
               </View>
             </View>
           )}
-          contentContainerStyle={{ paddingBottom: 30 }} // 적절한 padding 추가
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          contentContainerStyle={{ paddingBottom: 30 }}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       )}
     </SafeAreaView>

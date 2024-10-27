@@ -61,6 +61,7 @@ const ContentArea = styled.View`
 
 const MenuItem = styled.TouchableOpacity`
   padding: 10px;
+  padding-top: 15px;
   background-color: ${({ selected, isSubMenuSelected }) =>
     selected && !isSubMenuSelected ? "#e9eaf7ce" : "white"};
 `;
@@ -150,36 +151,6 @@ export const policyData = [
     category: "카테고리1",
     views: "1M",
     scrap: "2K",
-  },
-  {
-    title: "정책2",
-    company: "회사2",
-    period: "11.15 ~ 12.31",
-    id: 2,
-    name: "two",
-    category: "카테고리2",
-    views: "3M",
-    scrap: "4K",
-  },
-  {
-    title: "정책3",
-    company: "회사3",
-    period: "01.15 ~ 03.27",
-    id: 3,
-    name: "three",
-    category: "카테고리3",
-    views: "5M",
-    scrap: "6K",
-  },
-  {
-    title: "정책4",
-    company: "회사4",
-    period: "05.21 ~ 08.28",
-    id: 4,
-    name: "four",
-    category: "카테고리4",
-    views: "7M",
-    scrap: "8K",
   },
 ];
 
