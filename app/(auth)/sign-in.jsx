@@ -1,13 +1,14 @@
-import { View, Text, ScrollView, Image, Alert, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, Alert } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { Link, router } from "expo-router";
-import "nativewind"; // 추가: nativewind를 불러옵니다.
+import { router } from "expo-router";
+import "nativewind";
 
 import CustomButton from "../../components/signComponents/CustomButton";
 import FormField from "../../components/signComponents/FormField";
 import { useUser } from "../UserContext";
+import { signIn } from "../(api)/signIn.js"; // API 함수 임포트
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -19,7 +20,6 @@ const ButtonRow = styled.View`
 
 const SignIn = () => {
   const { setUserId } = useUser();
-  const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     id: "",
     password: "",
@@ -54,15 +54,28 @@ const SignIn = () => {
     return !idError && !passwordError;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) {
-      Alert.alert("Error", "입력한 정보를 확인해 주세요.");
+      Alert.alert("오류", "입력한 정보를 확인해 주세요.");
       return;
     }
 
-    setUserId(form.id); // 입력한 아이디 저장
-    router.push("/home");
+    try {
+      const response = await signIn(form.id, form.password);
+      if (response.success) {
+        setUserId(form.id); // 로그인 성공 시 아이디 저장
+        router.push("/home"); // 홈 화면으로 이동
+      } else {
+        // 로그인 실패 시, API에서 받은 오류 메시지 표시
+        Alert.alert("로그인 실패", response.message);
+      }
+    } catch (error) {
+      // 예상치 못한 오류 발생 시 기본 오류 메시지 표시
+      Alert.alert("오류", "로그인 중 오류가 발생했습니다.");
+      console.error("Unexpected error:", error); // 오류를 콘솔에 출력
+    }
   };
+
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView>
