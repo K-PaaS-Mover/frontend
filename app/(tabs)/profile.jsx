@@ -8,7 +8,10 @@ import { useScrap } from "../ScrapContext"; // Context에서 스크랩 상태 �
 import { useUser } from "../UserContext"; // Context에서 사용자 정보 가져오기
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+
 import LookScrap from "../../components/profileScreens/LookScrap";
+import ProfileModify from "../../components/profileScreens/profileModify";
+
 import Bell from "../../assets/icons/bell.svg";
 import Arrow from "../../assets/icons/arrow.svg";
 
@@ -23,11 +26,12 @@ const ButtonRow = styled.View`
 const Profile = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [viewScrapped, setViewScrapped] = useState(false);
-  const { userId } = useUser();
-  const { scrapStatus = {} } = useScrap(); // 기본값 설정
+  const [viewProfileModify, setViewProfileModify] = useState(false); // 프로필 수정 상태 추가
 
-  const { scrappedItems } = useScrap(); // 스크랩 아이템 가져오기
-  const scrappedCount = scrappedItems.length; // 스크랩 개수
+  const { userId } = useUser();
+  const { scrapStatus = {} } = useScrap();
+  const { scrappedItems } = useScrap();
+  const scrappedCount = scrappedItems.length;
   const navigation = useNavigation();
 
   const onRefresh = async () => {
@@ -39,11 +43,17 @@ const Profile = () => {
   useFocusEffect(
     React.useCallback(() => {
       setViewScrapped(false);
+      setViewProfileModify(false); // 프로필 화면에 돌아올 때 초기화
     }, [])
   );
 
   useEffect(() => {
     const backAction = () => {
+      if (viewProfileModify || viewScrapped) {
+        setViewProfileModify(false);
+        setViewScrapped(false);
+        return true;
+      }
       navigation.goBack();
       return true;
     };
@@ -51,7 +61,30 @@ const Profile = () => {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
     return () => backHandler.remove();
-  }, [navigation]);
+  }, [navigation, viewProfileModify, viewScrapped]);
+
+  const getRouteForItem = (item) => {
+    if (item === "프로필 수정") {
+      setViewProfileModify(true); // 프로필 수정 화면으로 전환
+    } else {
+      switch (item) {
+        case "알림설정":
+          return "/settings/notifications";
+        case "FAQ":
+          return "/faq";
+        case "로그아웃":
+          return "/logout";
+        case "회원 탈퇴":
+          return "/delete-account";
+        case "약관":
+          return "/terms";
+        case "개인 정보 취급 방침":
+          return "/privacy-policy";
+        default:
+          return "/home";
+      }
+    }
+  };
 
   return (
     <SafeAreaView className="bg-white h-full w-full">
@@ -61,7 +94,7 @@ const Profile = () => {
         renderItem={() => {}} // 실제 데이터로 교체 필요
         ListHeaderComponent={() => (
           <View className="mt-[-30px]">
-            {!viewScrapped ? (
+            {!viewScrapped && !viewProfileModify ? (
               <>
                 <View className="flex-1 justify-center items-center px-4">
                   <ButtonRow>
@@ -99,7 +132,13 @@ const Profile = () => {
                   ].map((item, index) => (
                     <ButtonRow className="justify-between w-[325px] mt-[20px]" key={index}>
                       <Text>{item}</Text>
-                      <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/home")}>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          const route = getRouteForItem(item);
+                          if (route) router.push(route);
+                        }}
+                      >
                         <Arrow width={24} height={24} />
                       </TouchableOpacity>
                     </ButtonRow>
@@ -107,8 +146,10 @@ const Profile = () => {
                 </View>
                 <View className="mt-[25px] border-[#EDEEF9] border-[3px] border-solid"></View>
               </>
-            ) : (
+            ) : viewScrapped ? (
               <LookScrap />
+            ) : (
+              <ProfileModify />
             )}
           </View>
         )}

@@ -127,7 +127,7 @@ const SignUpName = () => {
             placeholder="YYMMDD 형식으로 입력"
           />
           {/* 전화번호 */}
-          <ButtonRow style={{ marginBottom: -70 }}>
+          {/* <ButtonRow style={{ marginBottom: -70 }}>
             <FormField
               title="번호"
               value={form.phoneNumber}
@@ -146,9 +146,9 @@ const SignUpName = () => {
               containerStyles={`w-[78px] h-[31px] border-2 border-[#DFE3E7] rounded-[10px]`}
               textStyles={`text-center text-[#515259] text-[12px] font-pregular`}
             />
-          </ButtonRow>
+          </ButtonRow> */}
           {/* 인증번호 */}
-          <ButtonRow>
+          {/* <ButtonRow>
             <FormField
               title="인증번호"
               value={form.verificationCode}
@@ -167,7 +167,7 @@ const SignUpName = () => {
               containerStyles={`w-[78px] h-[31px] border-2 border-[#DFE3E7] rounded-[10px]`}
               textStyles={`text-center text-[#515259] text-[12px] font-pregular`}
             />
-          </ButtonRow>
+          </ButtonRow> */}
           {/* 다음 넘어가기 */}
           <View style={{ marginTop: 100, marginBottom: 70 }}>
             <CustomButton
