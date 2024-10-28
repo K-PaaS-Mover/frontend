@@ -7,6 +7,7 @@ import "nativewind"; // 추가: nativewind를 불러옵니다.
 
 import CustomButton from "../../components/signComponents/CustomButton";
 import FormField from "../../components/signComponents/FormField";
+import { useUser } from "../UserContext";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -17,6 +18,7 @@ const ButtonRow = styled.View`
 `;
 
 const SignIn = () => {
+  const { setUserId } = useUser();
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     id: "",
@@ -58,6 +60,7 @@ const SignIn = () => {
       return;
     }
 
+    setUserId(form.id); // 입력한 아이디 저장
     router.push("/home");
   };
   return (

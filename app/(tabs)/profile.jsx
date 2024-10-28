@@ -9,6 +9,9 @@ import LookScrap from "../../components/profileScreens/LookScrap";
 import Bell from "../../assets/icons/bell.svg";
 import Arrow from "../../assets/icons/arrow.svg";
 
+import { useScrap } from "../ScrapContext";
+import { useUser } from "../UserContext";
+
 const ButtonRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -19,27 +22,33 @@ const ButtonRow = styled.View`
 
 const Profile = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [viewScrapped, setViewScrapped] = useState(false); // 스크랩 화면 보기 상태
+  const [viewScrapped, setViewScrapped] = useState(false);
+  const [scrapCount, setScrapCount] = useState(0); // 스크랩 개수 상태
+  const { userId } = useUser();
+
+  const { scrapStatus } = useScrap(); // ScrapContext 사용
+  const scrappedCount = Object.values(scrapStatus).filter((status) => status).length;
 
   const onRefresh = async () => {
     setRefreshing(true);
     setRefreshing(false);
   };
 
-  // 뒤로 가기 버튼 처리
+  const addScrap = () => {
+    setScrapCount(scrapCount + 1); // 스크랩 개수 증가
+  };
+
   useEffect(() => {
     const backAction = () => {
       if (viewScrapped) {
-        setViewScrapped(false); // 스크랩 보기에서 프로필 화면으로 전환
-        return true; // 기본 뒤로 가기 동작 방지
+        setViewScrapped(false);
+        return true;
       }
-      return false; // 기본 동작 수행 (앱 종료 또는 이전 화면 이동)
+      return false;
     };
 
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
-
-    return () => backHandler.remove(); // 컴포넌트 언마운트 시 핸들러 제거
+    return () => backHandler.remove();
   }, [viewScrapped]);
 
   return (
@@ -63,11 +72,12 @@ const Profile = () => {
                 </View>
                 <View className="flex-1 justify-start items-start ml-[35px] mt-[40px]">
                   <Text className="font-pregular text-[18px]">
-                    안녕하세요 <Text className="text-[#50c3fac4]">uoonjudori</Text>
+                    안녕하세요 <Text className="text-[#50c3fac4]">{userId || "사용자"}</Text>
                     님,
                   </Text>
                   <Text className="font-pbold text-[20px] mt-[5px]">
-                    지금까지 <Text className="text-[#50c3fac4]">00</Text>개 정책을 스크랩했어요!
+                    지금까지 <Text className="text-[#50c3fac4]">{scrappedCount}</Text>개 정책을
+                    스크랩했어요!
                   </Text>
                   <TouchableOpacity activeOpacity={0.7} onPress={() => setViewScrapped(true)}>
                     <Text className="font-pextralight text-[12px] text-[#989DA3] mt-[20px]">
