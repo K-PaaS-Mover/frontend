@@ -3,9 +3,11 @@ import React from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
+import { UserProvider } from "../UserContext";
+
 const AuthLayout = () => {
   return (
-    <>
+    <UserProvider>
       <Stack>
         <Stack.Screen
           name="sign-in"
@@ -50,9 +52,7 @@ const AuthLayout = () => {
           }}
         />
       </Stack>
-
-      <StatusBar backgroundColor="#161622" style="light" />
-    </>
+    </UserProvider>
   );
 };
 

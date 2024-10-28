@@ -8,6 +8,7 @@ import React from "react";
 
 import CustomButton from "../components/signComponents/CustomButton";
 import MyCircle from "../components/mainComponents/MyCircle";
+import { ScrapProvider } from "./ScrapContext";
 
 const Container = styled.View`
   flex: 1;
@@ -29,7 +30,6 @@ export default function App() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View>
           <MyCircle />
-          {/* <MyCircle2 /> */}
           <Text className="text-[18px] font-pblack text-white mt-[180px] text-center">
             당신에게 필요한 정보를 한 번에
           </Text>
