@@ -1,21 +1,22 @@
-import { View, Text, ScrollView, Image, Alert } from "react-native";
+// SignUpName.js
+import { View, Text, ScrollView, Alert, ActivityIndicator } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { Link, router } from "expo-router";
-import "nativewind"; // 추가: nativewind를 불러옵니다.
+import "nativewind";
 
 import Status from "../../components/signComponents/Status";
 import CustomButton from "../../components/signComponents/CustomButton";
 import FormField from "../../components/signComponents/FormField";
+import { signUp } from "../(api)/signUp.js"; // API 함수 임포트
 
 const ButtonRow = styled.View`
   flex-direction: row;
   justify-content: end;
   align-items: flex-end;
   width: 85%;
-  /* margin-top: 25px; */
-  padding-right: 33px; /* 오른쪽 패딩 추가 */
+  padding-right: 33px;
 `;
 
 const SignUpName = () => {
@@ -26,10 +27,11 @@ const SignUpName = () => {
     verificationCode: "",
   });
 
-  const [nameErrorMessage, setNameErrorMessage] = useState("");
+  const [nicknameErrorMessage, setNicknameErrorMessage] = useState("");
   const [birthDateErrorMessage, setBirthDateErrorMessage] = useState("");
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] = useState("");
   const [verificationCodeErrorMessage, setVerificationCodeErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateName = (name) => {
     if (name.trim().length === 0) {
@@ -39,9 +41,17 @@ const SignUpName = () => {
   };
 
   const validateBirthDate = (birthDate) => {
-    const birthDateRegex = /^\d{2}\d{2}\d{2}$/;
+    const birthDateRegex = /^\d{6}$/; // YYMMDD 형식
     if (!birthDateRegex.test(birthDate)) {
       return "생년월일은 YYMMDD 형식이어야 합니다.";
+    }
+    return "";
+  };
+
+  const validatePhoneNumber = (phoneNumber) => {
+    const phoneRegex = /^\d{10,11}$/; // 간단한 전화번호 형식
+    if (!phoneRegex.test(phoneNumber)) {
+      return "유효한 전화번호를 입력해 주세요.";
     }
     return "";
   };
@@ -49,20 +59,38 @@ const SignUpName = () => {
   const validateForm = () => {
     const nameError = validateName(form.name);
     const birthDateError = validateBirthDate(form.birthDate);
+    const phoneError = validatePhoneNumber(form.phoneNumber);
 
-    setNameErrorMessage(nameError);
+    setNicknameErrorMessage(nameError);
     setBirthDateErrorMessage(birthDateError);
+    setPhoneNumberErrorMessage(phoneError);
 
-    return !nameError && !birthDateError;
+    return !nameError && !birthDateError && !phoneError;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) {
-      Alert.alert("Error", "입력한 정보를 확인해 주세요.");
+      Alert.alert("오류", "입력한 정보를 확인해 주세요.");
       return;
     }
 
-    router.push("/sign-up-job");
+    setIsSubmitting(true);
+
+    try {
+      const data = {
+        name: form.name,
+        birthDate: form.birthDate,
+        phoneNumber: form.phoneNumber,
+        verificationCode: form.verificationCode,
+      };
+      const response = await signUp(data);
+      Alert.alert("성공", "회원가입이 완료되었습니다!");
+      router.push("/sign-up-job");
+    } catch (error) {
+      Alert.alert("회원가입 실패", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -72,7 +100,7 @@ const SignUpName = () => {
           <Text className="font-semibold text-[36px] text-center pt-[60px]">회원가입</Text>
           <Status left="34%" />
           <View className="w-[85%]">
-            <Text className="font-semibold text-[16px] pt-[30px]">정보를 입력해주세요!</Text>
+            <Text className="font-semibold text-[16px] pt-[30px]">정보를 입력해 주세요!</Text>
           </View>
           {/* 이름 */}
           <FormField
@@ -80,9 +108,9 @@ const SignUpName = () => {
             value={form.name}
             handleChangeText={(text) => {
               setForm({ ...form, name: text });
-              setNameErrorMessage(validateName(text));
+              setNicknameErrorMessage(validateName(text));
             }}
-            errorMessage={nameErrorMessage}
+            errorMessage={nicknameErrorMessage}
             otherStyles="mt-[20px]"
             placeholder="이름을 입력해 주세요"
           />
@@ -105,34 +133,48 @@ const SignUpName = () => {
               value={form.phoneNumber}
               handleChangeText={(text) => {
                 setForm({ ...form, phoneNumber: text });
+                setPhoneNumberErrorMessage(validatePhoneNumber(text));
               }}
+              errorMessage={phoneNumberErrorMessage}
               otherStyles="mt-[20px]"
               placeholder="전화번호를 입력해 주세요"
+              keyboardType="phone-pad"
             />
             <CustomButton
               title="인증하기"
-              handlePress={() => router.push("/")} // 다음 버튼 클릭 시 확인
-              containerStyles={`w-[78px] h-[31px] border-2  border-[#DFE3E7] rounded-[10px]`} // 동의 상태에 따라 배경색 변경
+              handlePress={() => router.push("/")} // 실제 인증 로직 필요
+              containerStyles={`w-[78px] h-[31px] border-2 border-[#DFE3E7] rounded-[10px]`}
               textStyles={`text-center text-[#515259] text-[12px] font-pregular`}
             />
           </ButtonRow>
           {/* 인증번호 */}
           <ButtonRow>
-            <FormField handleChangeText={(text) => {}} placeholder="인증번호를 입력해 주세요" />
+            <FormField
+              title="인증번호"
+              value={form.verificationCode}
+              handleChangeText={(text) => {
+                setForm({ ...form, verificationCode: text });
+                // 검증 로직 추가 가능
+              }}
+              errorMessage={verificationCodeErrorMessage}
+              otherStyles="mt-[20px]"
+              placeholder="인증번호를 입력해 주세요"
+              keyboardType="number-pad"
+            />
             <CustomButton
               title="재전송"
-              handlePress={() => router.push("/")} // 다음 버튼 클릭 시 확인
-              containerStyles={`w-[78px] h-[31px] border-2  border-[#DFE3E7] rounded-[10px]`} // 동의 상태에 따라 배경색 변경
+              handlePress={() => router.push("/")} // 실제 재전송 로직 필요
+              containerStyles={`w-[78px] h-[31px] border-2 border-[#DFE3E7] rounded-[10px]`}
               textStyles={`text-center text-[#515259] text-[12px] font-pregular`}
             />
           </ButtonRow>
           {/* 다음 넘어가기 */}
           <View style={{ marginTop: 100, marginBottom: 70 }}>
             <CustomButton
-              title="다음"
+              title={isSubmitting ? <ActivityIndicator color="#fff" /> : "다음"}
               handlePress={handleSubmit}
               containerStyles={`w-[285px] h-[57px] border-2 mt-[30px] ${
-                !nameErrorMessage &&
+                !nicknameErrorMessage &&
                 !birthDateErrorMessage &&
                 !phoneNumberErrorMessage &&
                 form.name &&
@@ -142,7 +184,7 @@ const SignUpName = () => {
                   : "border-[#50c3fa]"
               }`}
               textStyles={`text-center ${
-                !nameErrorMessage &&
+                !nicknameErrorMessage &&
                 !birthDateErrorMessage &&
                 !phoneNumberErrorMessage &&
                 form.name &&
@@ -151,6 +193,7 @@ const SignUpName = () => {
                   ? "text-white"
                   : "text-[#50c3fa]"
               }`}
+              disabled={isSubmitting}
             />
             <Link href="/sign-in" className="text-[#C1C6CD] font-pregular text-center mt-[20px]">
               로그인하기
