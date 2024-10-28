@@ -28,7 +28,7 @@ const Profile = () => {
   const [viewScrapped, setViewScrapped] = useState(false);
   const [viewProfileModify, setViewProfileModify] = useState(false); // 프로필 수정 상태 추가
 
-  const { userId } = useUser();
+  const { userId } = useUser(); // UserContext에서 userId 가져오기
   const { scrapStatus = {} } = useScrap();
   const { scrappedItems } = useScrap();
   const scrappedCount = scrappedItems.length;
@@ -107,7 +107,7 @@ const Profile = () => {
                 </View>
                 <View className="flex-1 justify-start items-start ml-[35px] mt-[40px]">
                   <Text className="font-pregular text-[18px]">
-                    안녕하세요 <Text className="text-[#50c3fac4]">{userId || "사용자"}</Text> 님,
+                    안녕하세요 <Text className="text-[#50c3fac4]">{userId}</Text> 님,
                   </Text>
                   <Text className="font-pbold text-[20px] mt-[5px]">
                     지금까지 <Text className="text-[#50c3fac4]">{scrappedCount}</Text>개 정책을
