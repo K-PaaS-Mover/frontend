@@ -1,21 +1,28 @@
-// ScrapContext.js
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
+// 스크랩 컨텍스트 생성
 const ScrapContext = createContext();
 
+// 스크랩 컨텍스트 프로바이더
 export const ScrapProvider = ({ children }) => {
-  const [scrapStatus, setScrapStatus] = useState({});
+  const [scrappedItems, setScrappedItems] = useState([]); // 초기값 설정
 
-  const toggleScrap = (itemId) => {
-    setScrapStatus((prevStatus) => ({
-      ...prevStatus,
-      [itemId]: !prevStatus[itemId],
-    }));
+  const addScrap = (item) => {
+    setScrappedItems((prevItems) => [...prevItems, item]);
+  };
+
+  const removeScrap = (id) => {
+    setScrappedItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
   return (
-    <ScrapContext.Provider value={{ scrapStatus, toggleScrap }}>{children}</ScrapContext.Provider>
+    <ScrapContext.Provider value={{ scrappedItems, addScrap, removeScrap, setScrappedItems }}>
+      {children}
+    </ScrapContext.Provider>
   );
 };
 
-export const useScrap = () => useContext(ScrapContext);
+// 스크랩 훅
+export const useScrap = () => {
+  return useContext(ScrapContext);
+};

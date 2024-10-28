@@ -30,9 +30,7 @@ const Home = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const searchInputRef = useRef(null);
   const navigation = useNavigation();
-
-  // const [scrapStatus, setScrapStatus] = useState({});
-  const { scrapStatus, toggleScrap } = useScrap();
+  const { scrappedItems, addScrap, removeScrap } = useScrap(); // useScrap에서 스크랩 관련 함수 가져오기
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -40,12 +38,14 @@ const Home = () => {
     setRefreshing(false);
   };
 
-  // const toggleScrap = (itemId) => {
-  //   setScrapStatus((prevStatus) => ({
-  //     ...prevStatus,
-  //     [itemId]: !prevStatus[itemId],
-  //   }));
-  // };
+  // 사용자 정의 스크랩 토글 함수
+  const toggleScrap = (item) => {
+    if (scrappedItems.some((scrap) => scrap.id === item.id)) {
+      removeScrap(item.id); // 스크랩된 경우 제거
+    } else {
+      addScrap(item); // 스크랩되지 않은 경우 추가
+    }
+  };
 
   useEffect(() => {
     const backAction = () => {
@@ -87,8 +87,8 @@ const Home = () => {
       ) : isHomeFocused ? (
         <HomeFocus
           selectedItem={selectedItem}
-          isStarChecked={scrapStatus[selectedItem?.id] || false}
-          setIsStarChecked={() => toggleScrap(selectedItem?.id)}
+          isStarChecked={scrappedItems.some((scrap) => scrap.id === selectedItem?.id)} // context의 스크랩된 상태 확인
+          setIsStarChecked={() => toggleScrap(selectedItem)} // toggleScrap 함수 호출
         />
       ) : (
         <FlatList
@@ -145,8 +145,8 @@ const Home = () => {
                 category={item.category}
                 views={item.views}
                 scrap={item.scrap}
-                isScrapped={scrapStatus[item.id] || false}
-                toggleScrap={() => toggleScrap(item.id)}
+                isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)} // 스크랩 상태 확인
+                toggleScrap={() => toggleScrap(item)} // toggleScrap 호출
               />
             </TouchableOpacity>
           )}
