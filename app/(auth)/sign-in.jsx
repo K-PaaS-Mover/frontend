@@ -72,7 +72,6 @@ const SignIn = () => {
     } catch (error) {
       // 예상치 못한 오류 발생 시 기본 오류 메시지 표시
       Alert.alert("오류", "로그인 중 오류가 발생했습니다.");
-      console.error("Unexpected error:", error); // 오류를 콘솔에 출력
     }
   };
 

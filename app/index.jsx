@@ -9,6 +9,7 @@ import React from "react";
 import CustomButton from "../components/signComponents/CustomButton";
 import MyCircle from "../components/mainComponents/MyCircle";
 import { ScrapProvider } from "./ScrapContext";
+import { UserProvider } from "./UserContext";
 
 const Container = styled.View`
   flex: 1;
@@ -26,42 +27,44 @@ const ButtonRow = styled.View`
 
 export default function App() {
   return (
-    <SafeAreaView className="h-full bg-[#1b1b1e] pt-[20px]">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View>
-          <MyCircle />
-          <Text className="text-[18px] font-pblack text-white mt-[180px] text-center">
-            당신에게 필요한 정보를 한 번에
-          </Text>
-          <Container>
-            <CustomButton
-              title="카카오로 시작하기"
-              handlePress={() => router.push("/")}
-              containerStyles="w-[285px] h-[57px] bg-[#F6E41E]"
-              textStyles="text-black text-center"
-            />
-            <CustomButton
-              title="로그인"
-              handlePress={() => router.push("/sign-in")}
-              containerStyles="w-[285px] h-[57px] border-2 border-[#C1C6CD] mt-[15px]"
-              textStyles="text-white"
-            />
-            <ButtonRow>
+    <UserProvider>
+      <SafeAreaView className="h-full bg-[#1b1b1e] pt-[20px]">
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View>
+            <MyCircle />
+            <Text className="text-[18px] font-pblack text-white mt-[180px] text-center">
+              당신에게 필요한 정보를 한 번에
+            </Text>
+            <Container>
               <CustomButton
-                title="회원가입"
-                handlePress={() => router.push("/sign-up-agree")}
-                textStyles="text-white"
+                title="카카오로 시작하기"
+                handlePress={() => router.push("/")}
+                containerStyles="w-[285px] h-[57px] bg-[#F6E41E]"
+                textStyles="text-black text-center"
               />
               <CustomButton
-                title="비회원으로 시작"
-                handlePress={() => router.push("/home")}
+                title="로그인"
+                handlePress={() => router.push("/sign-in")}
+                containerStyles="w-[285px] h-[57px] border-2 border-[#C1C6CD] mt-[15px]"
                 textStyles="text-white"
               />
-            </ButtonRow>
-          </Container>
-        </View>
-      </ScrollView>
-      {/* <StatusBar backgroundColor="#161622" style="light" /> */}
-    </SafeAreaView>
+              <ButtonRow>
+                <CustomButton
+                  title="회원가입"
+                  handlePress={() => router.push("/sign-up-agree")}
+                  textStyles="text-white"
+                />
+                <CustomButton
+                  title="비회원으로 시작"
+                  handlePress={() => router.push("/home")}
+                  textStyles="text-white"
+                />
+              </ButtonRow>
+            </Container>
+          </View>
+        </ScrollView>
+        {/* <StatusBar backgroundColor="#161622" style="light" /> */}
+      </SafeAreaView>
+    </UserProvider>
   );
 }

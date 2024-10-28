@@ -20,12 +20,13 @@ const HomeFrameContainer = styled.View`
   margin-top: 25px;
   justify-content: center;
   padding: 10px;
+  margin-left: 10px;
 `;
 
 const HomeFrame = ({ title, company, period, category, views, scrap }) => {
   return (
     <HomeFrameContainer>
-      <ButtonRow className="mt-[10px] items-center">
+      <ButtonRow className="mt-[10px] items-center ">
         <View className="w-[83px] h-[26px] rounded-[15px] border-[#D6EDF9] border-[0.3px] border-solid bg-[#D6EDF9]">
           <View className="h-full items-center justify-center">
             <Text>{category}</Text>

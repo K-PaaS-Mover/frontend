@@ -27,7 +27,6 @@ export const signIn = async (username, password) => {
   } catch (error) {
     // 오류 발생 시, API에서 제공하는 메시지를 사용
     const errorMessage = error.response?.data?.message || "로그인 실패";
-    console.error("Error during signIn:", error);
     return { success: false, message: errorMessage };
   }
 };

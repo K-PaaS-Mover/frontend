@@ -11,8 +11,8 @@ import { UserProvider } from "../UserContext";
 
 const TabsLayout = () => {
   return (
-    <UserProvider>
-      <ScrapProvider>
+    <ScrapProvider>
+      <UserProvider>
         <Tabs
           screenOptions={{
             tabBarShowLabel: false,
@@ -68,8 +68,8 @@ const TabsLayout = () => {
             }}
           />
         </Tabs>
-      </ScrapProvider>
-    </UserProvider>
+      </UserProvider>
+    </ScrapProvider>
   );
 };
 
