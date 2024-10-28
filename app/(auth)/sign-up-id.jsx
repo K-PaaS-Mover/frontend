@@ -8,7 +8,7 @@ import "nativewind";
 import Status from "../../components/signComponents/Status";
 import CustomButton from "../../components/signComponents/CustomButton";
 import FormField from "../../components/signComponents/FormField";
-import { signUp } from "../(api)/signUp.js"; // API 함수 임포트
+import { signUp, checkIdDuplicate } from "../(api)/signUp.js"; // API 함수 임포트
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -24,11 +24,14 @@ const SignUpId = () => {
     password: "",
   });
 
-  const [idErrorMessage, setIdErrorMessage] = useState("");
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  const [idSuccessMessage, setIdSuccessMessage] = useState("");
+  // 상태 정의 확인
+  const [idErrorMessage, setIdErrorMessage] = useState(""); // 아이디 오류 메시지 상태
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState(""); // 비밀번호 오류 메시지 상태
+  const [idSuccessMessage, setIdSuccessMessage] = useState(""); // 아이디 성공 메시지 상태
   const [isSubmitting, setIsSubmitting] = useState(false); // 로딩 상태 추가
+  const [isIdAvailable, setIsIdAvailable] = useState(null); // 아이디 사용 가능 여부 상태
 
+  // 검증 함수
   const validateId = (id) => {
     const idRegex = /^[a-zA-Z0-9]{6,}$/;
     if (!idRegex.test(id)) {
@@ -55,7 +58,7 @@ const SignUpId = () => {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
+    if (!validateForm() || !isIdAvailable) {
       Alert.alert("오류", "입력한 정보를 확인해 주세요.");
       return;
     }
@@ -64,16 +67,42 @@ const SignUpId = () => {
 
     try {
       const data = {
-        username: form.id,  // API에 보낼 필드명에 맞게 수정
-        password: form.password,  // API에 보낼 필드명에 맞게 수정
+        username: form.id,
+        password: form.password,
       };
-      const response = await signUp(data); // signUp API 호출
+      const response = await signUp(data);
       Alert.alert("성공", "아이디와 비밀번호 등록이 완료되었습니다!");
-      router.push("/sign-up-name"); // 성공 시 다음 화면으로 이동
+      router.push("/sign-up-name");
     } catch (error) {
       Alert.alert("회원가입 실패", error.message);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleCheckIdDuplicate = async () => {
+    if (form.id.trim() === "") {
+      Alert.alert("아이디를 입력해 주세요.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true); // 로딩 상태 표시
+      const isDuplicate = await checkIdDuplicate(form.id);
+
+      if (isDuplicate) {
+        setIsIdAvailable(false);
+        Alert.alert("중복 오류", "이미 사용 중인 아이디입니다.");
+      } else {
+        setIsIdAvailable(true);
+        Alert.alert("확인", "사용 가능한 아이디입니다.");
+        setIdSuccessMessage("사용 가능한 아이디입니다.");
+        setIdErrorMessage("");
+      }
+    } catch (error) {
+      Alert.alert("오류", "아이디 중복 확인 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false); // 로딩 상태 해제
     }
   };
 
@@ -83,59 +112,68 @@ const SignUpId = () => {
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <Text className="font-semibold text-[36px] text-center pt-[60px]">회원가입</Text>
           <Status left="17%" />
-          {/* 제목 */}
           <View className="w-[85%]">
             <Text className="font-semibold text-[16px] pt-[30px]">정보를 입력해주세요!</Text>
           </View>
-          {/* 아이디와 비밀번호 */}
           <FormField
             title="아이디"
             value={form.id}
             handleChangeText={(text) => {
               setForm({ ...form, id: text });
-              setIdErrorMessage(validateId(text)); // 아이디 입력 중 실시간 검증
-              setIdSuccessMessage(!validateId(text) ? "아이디 작성 완료" : ""); // 성공 메시지 업데이트
+              const errorMessage = validateId(text); // 실시간 검증
+              setIdErrorMessage(errorMessage);
+              setIdSuccessMessage(!errorMessage ? "아이디 작성 완료" : ""); // 성공 메시지 업데이트
+              setIsIdAvailable(null); // 중복 확인 초기화
             }}
             errorMessage={idErrorMessage}
             successMessage={idSuccessMessage}
             otherStyles="mt-[60px]"
             placeholder="영어, 숫자 포함 6자 이상 작성"
           />
+          <CustomButton
+            title="아이디 중복 확인"
+            handlePress={handleCheckIdDuplicate} // 중복 확인 버튼 클릭 시 확인
+            containerStyles={`w-[120px] h-[30px] border-2 mt-[-35px] ml-[230px] ${
+              isIdAvailable === true ? "bg-green-500 border-green-500" : "border-[#C1C6CD]"
+            }`}
+            textStyles={`text-center ${isIdAvailable === true ? "text-white" : "text-[#C1C6CD]"}`}
+          />
           <FormField
             title="비밀번호"
             value={form.password}
             handleChangeText={(text) => {
               setForm({ ...form, password: text });
-              setPasswordErrorMessage(validatePassword(text)); // 비밀번호 입력 중 실시간 검증
+              setPasswordErrorMessage(validatePassword(text)); // 비밀번호 실시간 검증
             }}
             errorMessage={passwordErrorMessage}
             otherStyles="mt-[30px]"
             placeholder="영어 대소문자, 숫자, 특수문자 포함 10자 이상 작성"
             secureTextEntry // 비밀번호 숨김 처리
           />
-          {/* 다음 넘어가기 */}
           <View>
             <CustomButton
               title={isSubmitting ? "처리 중..." : "다음"}
               handlePress={handleSubmit} // 다음 버튼 클릭 시 확인
               containerStyles={`w-[285px] h-[57px] border-2 mt-[165px] ${
-                !idErrorMessage && !passwordErrorMessage && form.id && form.password
+                !idErrorMessage &&
+                !passwordErrorMessage &&
+                form.id &&
+                form.password &&
+                isIdAvailable
                   ? "bg-[#50c3fa] border-[#50c3fa]"
-                  : "border-[#50c3fa]"
-              }`} // 동의 상태에 따라 배경색 변경
-              textStyles={`text-center ${
-                !idErrorMessage && !passwordErrorMessage && form.id && form.password
-                  ? "text-white"
-                  : "text-[#50c3fa]"
+                  : "border-[#C1C6CD]"
               }`}
-              disabled={isSubmitting} // 처리 중일 때 버튼 비활성화
+              textStyles={`text-center ${
+                !idErrorMessage &&
+                !passwordErrorMessage &&
+                form.id &&
+                form.password &&
+                isIdAvailable
+                  ? "text-white"
+                  : "text-[#C1C6CD]"
+              }`}
+              disabled={isSubmitting} // 버튼 비활성화
             />
-            <Link
-              href="/sign-in"
-              className="text-[#C1C6CD] font-pregular text-center mt-[20px]"
-            >
-              로그인하기
-            </Link>
           </View>
         </View>
       </ScrollView>

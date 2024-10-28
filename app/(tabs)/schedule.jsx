@@ -159,6 +159,7 @@ const Schedule = () => {
             }
           }}
           markedDates={markedDates}
+          hideExtraDays={true}
         />
       </View>
     ),
@@ -170,7 +171,7 @@ const Schedule = () => {
       <SafeAreaView className="bg-[#50C3FA] h-full w-full">
         <View className="h-[100px] justify-center items-center mt-[-30px] mb-[50px]">
           <View className="w-[350px] flex-1 items-center px-4">
-            <ButtonRow className="justify-center">
+            <ButtonRow className="justify-center ml-[-25px]">
               <TouchableOpacity activeOpacity={1} onPress={goToHome}>
                 <Text className="font-pblack text-2xl text-white">Mate</Text>
               </TouchableOpacity>
@@ -185,7 +186,7 @@ const Schedule = () => {
                   <ArrowRight width={24} height={24} />
                 </TouchableOpacity>
               </ButtonRow>
-              <EditCalendar width={24} height={24} />
+              {/* <EditCalendar width={24} height={24} /> */}
             </ButtonRow>
             <ButtonRow className="mt-[40px] justify-between w-[387px]">
               {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day, index) => (
