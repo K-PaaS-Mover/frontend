@@ -1,5 +1,3 @@
-// app/(tabs)/Home.jsx
-
 import {
   View,
   Text,
@@ -13,7 +11,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native"; // 라우팅 훅 수정
+import { router, useNavigation } from "expo-router";
 import styled from "styled-components/native";
 
 import Bell from "../../assets/icons/bell.svg";
@@ -23,8 +21,8 @@ import SearchInput from "../../components/search/SearchInput";
 import SearchFocus from "../../components/search/SearchFocus";
 import CustomButton from "../../components/signComponents/CustomButton";
 import HomeFrame from "../../components/policyFrame/HomeFrame";
-import { useScrap } from "../../contexts/ScrapContext"; // 컨텍스트 경로에 맞게 수정
-import { getPolicies, getRecommendedPolicies, checkScrapStatus } from "../../app/(api)/Policy"; // API 함수 경로 수정
+import { useScrap } from "../ScrapContext";
+import { getPolicies, getRecommendedPolicies, checkScrapStatus } from "../(api)/Policy";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -37,27 +35,25 @@ const ButtonRow = styled.View`
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isHomeFocused, setIsHomeFocused] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const searchInputRef = useRef(null);
+  const navigation = useNavigation();
+  const { scrappedItems, addScrap, removeScrap } = useScrap();
   const [policies, setPolicies] = useState([]);
   const [recommendedPolicies, setRecommendedPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const searchInputRef = useRef(null);
-  const navigation = useNavigation();
-  const { scrappedItems, addScrap, removeScrap } = useScrap(); // useScrap에서 스크랩 관련 함수 가져오기
-
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchAllPolicies();
-    await fetchRecommendedPolicies();
     setRefreshing(false);
   };
 
-  // 정책 데이터를 API로부터 가져오는 함수
   const fetchAllPolicies = async () => {
     try {
       const response = await getPolicies();
+      console.log("fetchAllPolicies 응답:", response); // 추가
       if (response.success) {
         setPolicies(response.data);
         setError(null);
@@ -66,6 +62,7 @@ const Home = () => {
         Alert.alert("오류", response.message);
       }
     } catch (err) {
+      console.error("API 요청 중 오류 발생:", err); // 추가
       setError(err.message || "정책 데이터를 가져오는 데 실패했습니다.");
       Alert.alert("오류", err.message || "정책 데이터를 가져오는 데 실패했습니다.");
     } finally {
@@ -90,7 +87,6 @@ const Home = () => {
     }
   };
 
-  // 사용자 정의 스크랩 토글 함수
   const toggleScrap = async (policyId) => {
     if (scrappedItems.some((scrap) => scrap.id === policyId)) {
       // 스크랩된 경우 제거
@@ -101,14 +97,16 @@ const Home = () => {
         Alert.alert("오류", error.message || "스크랩 제거에 실패하였습니다.");
       }
     } else {
-      // 스크랩되지 않은 경우 추가
       try {
-        await addScrap(policyId);
+        addScrap(policyId);
       } catch (error) {
         console.error("스크랩 추가 오류", error);
         Alert.alert("오류", error.message || "스크랩 추가에 실패하였습니다.");
       }
     }
+    setSelectedItem((prev) =>
+      prev && prev.id === policyId ? { ...prev, isScrapped: !prev.isScrapped } : prev
+    );
   };
 
   useEffect(() => {
@@ -118,16 +116,20 @@ const Home = () => {
 
   useEffect(() => {
     const backAction = () => {
-      if (isSearchFocused) {
-        setIsSearchFocused(false);
-        return true;
-      }
-      return false;
+      Alert.alert("종료", "앱을 종료하시겠습니까?", [
+        {
+          text: "취소",
+          onPress: () => null,
+          style: "cancel",
+        },
+        { text: "확인", onPress: () => BackHandler.exitApp() },
+      ]);
+      return true; // true를 반환하여 기본 동작 방지
     };
 
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
     return () => backHandler.remove();
-  }, [isSearchFocused]);
+  }, []); // 빈 배열을 의존성으로 사용하여 한 번만 등록
 
   useEffect(() => {
     if (isSearchFocused && searchInputRef.current) {
@@ -138,6 +140,7 @@ const Home = () => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       setIsSearchFocused(false);
+      setIsHomeFocused(false);
       setSelectedItem(null);
     });
 
@@ -156,7 +159,13 @@ const Home = () => {
     return (
       <SafeAreaView className="bg-white h-full flex justify-center items-center">
         <Text>Error: {error}</Text>
-        <TouchableOpacity onPress={() => { fetchAllPolicies(); fetchRecommendedPolicies(); }} style={{ marginTop: 20 }}>
+        <TouchableOpacity
+          onPress={() => {
+            fetchAllPolicies();
+            fetchRecommendedPolicies();
+          }}
+          style={{ marginTop: 20 }}
+        >
           <Text style={{ color: "blue" }}>다시 시도하기</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -169,6 +178,30 @@ const Home = () => {
         <SearchFocus />
       ) : (
         <FlatList
+          data={recommendedPolicies}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedItem(item);
+                navigation.navigate("HomeFocus", {
+                  selectedItem: item,
+                  isStarChecked: scrappedItems.some((scrap) => scrap.id === item.id),
+                });
+              }}
+            >
+              <HomeFrame
+                title={item.title}
+                company={item.department}
+                period={item.period}
+                category={item.category}
+                views={item.views}
+                scrap={item.scrap}
+                isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)}
+                toggleScrap={() => toggleScrap(item)}
+              />
+            </TouchableOpacity>
+          )}
           ListHeaderComponent={() => (
             <View className="h-[350px] my-[-25px] px-4">
               <View className="flex-1 justify-center items-center">
@@ -177,7 +210,7 @@ const Home = () => {
                     activeOpacity={1}
                     onPress={() => {
                       setIsSearchFocused(false);
-                      // router.replace("/home"); // 라우트 네비게이션 제거
+                      // router.replace("/home");
                     }}
                   >
                     <Text className="font-pblack text-2xl text-[#50c3fac4]">Mate</Text>
@@ -209,7 +242,7 @@ const Home = () => {
                         title={title}
                         handlePress={() => {
                           setIsSearchFocused(false);
-                          // router.push("/"); // 라우트 네비게이션 제거
+                          // router.push("/");
                         }}
                         containerStyles="w-[90px] h-[25px] border-[#DFE3E7] border-[1px] rounded-[8px] mr-[10px]"
                         textStyles="text-center text-[#515259] text-[12px] font-pregular"
@@ -223,33 +256,14 @@ const Home = () => {
               </View>
             </View>
           )}
-          data={recommendedPolicies}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("HomeFocus", { policyId: item.id });
-              }}
-            >
-              <HomeFrame
-                title={item.title}
-                department={item.department} // 'department' 사용
-                startDate={item.startDate}
-                endDate={item.endDate}
-                category={item.category}
-                views={item.views}
-                scrapCount={item.scrapCount}
-              />
-            </TouchableOpacity>
-          )}
+          contentContainerStyle={{ paddingBottom: 30 }}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           ListHeaderComponentStyle={{ paddingBottom: 20 }}
           ListFooterComponent={() => (
             <View className="w-full px-4 mt-5">
               <Text className="font-pbold text-[20px]">추천 정책</Text>
             </View>
           )}
-          contentContainerStyle={{ paddingBottom: 30 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       )}
     </SafeAreaView>

@@ -2,8 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // AsyncStorage 임포트
 
 // 기본 API URL 설정
-const API_BASE_URL =
-  "http://default-springboot-app-s-e44df-100172874-9c694dec16d2.kr.lb.naverncp.com:8080/";
+const API_BASE_URL = "http://default-bjmate-11b2d-100192567-88c9bd227f80.kr.lb.naverncp.com:8080/";
 
 /**
  * 로그인 API 호출

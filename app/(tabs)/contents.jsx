@@ -1,5 +1,3 @@
-// app/(tabs)/Contents.jsx
-
 import {
   View,
   Text,
@@ -12,17 +10,17 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native"; // 라우팅 훅 수정
+import { router, useNavigation } from "expo-router";
 import styled from "styled-components/native";
 
+import { useScrap } from "../ScrapContext";
 import ContentsFrame from "../../components/policyFrame/ContentsFrame";
-
 import SearchInput from "../../components/search/SearchInput";
 import SearchFocus from "../../components/search/SearchFocus";
 import Bell from "../../assets/icons/bell.svg";
 import Sort from "../../assets/icons/sort.svg";
 
-import { getPoliciesByCategory, checkScrapStatus } from "../../app/(api)/Policy"; // API 함수 가져오기
+import { getPoliciesByCategory, checkScrapStatus } from "../(api)/Policy"; // API 함수 가져오기
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -55,6 +53,7 @@ const MenuList = styled.View`
 `;
 
 const ContentArea = styled.View`
+  /* flex: 1; */
   background-color: #e9eaf7ce;
   width: 350px;
   padding-left: 30px;
@@ -104,6 +103,8 @@ const Contents = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [selectedSubMenu, setSelectedSubMenu] = useState(null);
+  const { scrappedItems, addScrap, removeScrap } = useScrap();
+
   const [policyData, setPolicyData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -112,7 +113,7 @@ const Contents = () => {
   const searchInputRef = useRef(null);
   const navigation = useNavigation();
 
-  // 메뉴와 서브메뉴에 따라 필터링된 정책 데이터 가져오기
+  // 메뉴와 서브메뉴에 따라 필터링된 정책 데이터
   const getFilteredPolicyData = () => {
     if (selectedSubMenu) {
       // 서브 메뉴 선택 시 해당 카테고리의 정책 가져오기
@@ -128,13 +129,13 @@ const Contents = () => {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchPolicies();
+    // 리프레시 처리 로직
     setRefreshing(false);
   };
 
-  // 카테고리에 해당하는 정책 데이터를 API로부터 가져오는 함수
   const fetchPolicies = async () => {
     const category = selectedSubMenu || selectedMenu || "";
+    console.log("Selected Category:", category); // 로그 추가
     try {
       setLoading(true);
       const response = await getPoliciesByCategory(category);
@@ -153,7 +154,6 @@ const Contents = () => {
     }
   };
 
-  // 정렬 함수
   const handleSort = () => {
     if (sortOrder === "추천순") {
       setSortOrder("최신순");
@@ -170,15 +170,16 @@ const Contents = () => {
     const sortPolicies = () => {
       const sortedPolicies = [...policyData];
       if (sortOrder === "추천순") {
-        sortedPolicies.sort((a, b) => b.scrap - a.scrap); // 스크랩 수 기준 내림차순
+        sortedPolicies.sort((a, b) => b.scrap - a.scrap);
       } else if (sortOrder === "최신순") {
-        sortedPolicies.sort((a, b) => new Date(b.startDate) - new Date(a.startDate)); // 시작 날짜 기준 내림차순
+        sortedPolicies.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
       }
-      setPolicyData(sortedPolicies);
+      return sortedPolicies;
     };
 
-    sortPolicies();
-  }, [sortOrder, policyData]);
+    const sortedPolicies = sortPolicies();
+    setPolicyData(sortedPolicies);
+  }, [sortOrder, policyData.length]); // policyData.length를 추가하여 무한 루프 방지
 
   useEffect(() => {
     const backAction = () => {
@@ -209,6 +210,8 @@ const Contents = () => {
   }, [navigation]);
 
   const handleMenuPress = (menu) => {
+    console.log("Selected Menu:", menu); // 로그 추가
+
     if (selectedMenu === menu && !selectedSubMenu) {
       setSelectedMenu(null);
     } else {
@@ -218,12 +221,17 @@ const Contents = () => {
   };
 
   const handleSubMenuPress = (subMenu) => {
+    console.log("Selected SubMenu:", subMenu); // 로그 추가
     if (selectedSubMenu === subMenu) {
       setSelectedMenu(null); // 메인 메뉴와 작은 메뉴 선택 해제
       setSelectedSubMenu(null);
     } else {
       setSelectedSubMenu(subMenu);
     }
+  };
+
+  const handlePolicyPress = () => {
+    router.push("/homeFocus"); // ContentsFrame 클릭 시 HomeFocus로 이동
   };
 
   // 스크랩 상태 확인 함수
@@ -237,6 +245,28 @@ const Contents = () => {
     }
   };
 
+  const toggleScrap = async (policyId) => {
+    if (scrappedItems.some((scrap) => scrap.id === policyId)) {
+      // 스크랩된 경우 제거
+      try {
+        await removeScrap(policyId);
+      } catch (error) {
+        console.error("스크랩 제거 오류", error);
+        Alert.alert("오류", error.message || "스크랩 제거에 실패하였습니다.");
+      }
+    } else {
+      try {
+        addScrap(policyId);
+      } catch (error) {
+        console.error("스크랩 추가 오류", error);
+        Alert.alert("오류", error.message || "스크랩 추가에 실패하였습니다.");
+      }
+    }
+    setSelectedItem((prev) =>
+      prev && prev.id === policyId ? { ...prev, isScrapped: !prev.isScrapped } : prev
+    );
+  };
+
   return (
     <SafeAreaView className="bg-white h-full">
       {isSearchFocused ? (
@@ -248,7 +278,7 @@ const Contents = () => {
               activeOpacity={1}
               onPress={() => {
                 setIsSearchFocused(false);
-                navigation.replace("Home"); // 홈으로 네비게이션
+                router.replace("/home");
               }}
             >
               <Text className="font-pblack text-2xl text-[#50c3fac4]">Mate</Text>
@@ -296,7 +326,7 @@ const Contents = () => {
               <ContentArea>
                 <ButtonRow className="w-[230px] h-[20px] mt-[7px]">
                   <Text className="font-pextralight text-[12px]">전체보기</Text>
-                  <SortButton onPress={handleSort}>
+                  <SortButton>
                     <Text className="font-pextralight text-[12px]">{sortOrder}</Text>
                     <Sort width={12} height={12} />
                   </SortButton>
@@ -306,7 +336,7 @@ const Contents = () => {
                     <ActivityIndicator size="large" color="#0000ff" />
                   </View>
                 ) : error ? (
-                  <View className="flex-1 justify-center items-center">
+                  <View className="flex-1 justify-center items-center mr-[80px]">
                     <Text>Error: {error}</Text>
                     <TouchableOpacity onPress={fetchPolicies} style={{ marginTop: 20 }}>
                       <Text style={{ color: "blue" }}>다시 시도하기</Text>
@@ -315,22 +345,26 @@ const Contents = () => {
                 ) : filteredPolicyData.length > 0 ? (
                   <View>
                     {filteredPolicyData.map((item) => (
-                      <ContentsFrame
-                        key={item.id} // key prop 추가
-                        title={item.title}
-                        department={item.company} // 'company' 사용
-                        period={item.period}
-                        category={item.category}
-                        views={item.views}
-                        scrapCount={item.scrap}
-                        policyId={item.id} // 상세 페이지 네비게이션을 위해 policyId 전달
-                        isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)} // 스크랩 상태 전달
-                        toggleScrap={toggleScrap} // 스크랩 토글 함수 전달
-                      />
+                      <TouchableOpacity
+                        key={item.id}
+                        onPress={() => navigation.navigate("HomeFocus", { selectedItem: item })}
+                      >
+                        <ContentsFrame
+                          title={item.title}
+                          department={item.company}
+                          period={item.period}
+                          category={item.category}
+                          views={item.views}
+                          scrapCount={item.scrap}
+                          policyId={item.id}
+                          isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)}
+                          toggleScrap={toggleScrap}
+                        />
+                      </TouchableOpacity>
                     ))}
                   </View>
                 ) : (
-                  <View className="flex-1 justify-center items-center">
+                  <View className="flex-1 justify-center items-center mr-[80px]">
                     <Text>해당 카테고리에 대한 정책이 없습니다.</Text>
                   </View>
                 )}
@@ -342,5 +376,4 @@ const Contents = () => {
     </SafeAreaView>
   );
 };
-
 export default Contents;

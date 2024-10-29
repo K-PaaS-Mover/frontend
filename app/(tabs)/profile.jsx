@@ -1,5 +1,5 @@
 import { View, Text, FlatList, RefreshControl, BackHandler } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -9,8 +9,10 @@ import { useUser } from "../UserContext"; // Context에서 사용자 정보 가�
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 
-import LookScrap from "../../components/profileScreens/LookScrap";
+import LookScrap from "../LookScrap";
 import ProfileModify from "../../components/profileScreens/profileModify";
+import PasswordModify from "../../components/profileScreens/passwordModify"; // 비밀번호 수정 컴포넌트 임포트
+import { StarContext } from "../StarContext";
 
 import Bell from "../../assets/icons/bell.svg";
 import Arrow from "../../assets/icons/arrow.svg";
@@ -26,12 +28,13 @@ const ButtonRow = styled.View`
 const Profile = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [viewScrapped, setViewScrapped] = useState(false);
-  const [viewProfileModify, setViewProfileModify] = useState(false); // 프로필 수정 상태 추가
+  const [viewProfileModify, setViewProfileModify] = useState(false);
+  const [viewPasswordModify, setViewPasswordModify] = useState(false); // 비밀번호 수정 상태 추가
 
   const { userId } = useUser(); // UserContext에서 userId 가져오기
-  const { scrapStatus = {} } = useScrap();
-  const { scrappedItems } = useScrap();
-  const scrappedCount = scrappedItems.length;
+  const { scrappedItems } = useContext(StarContext); // 스크랩 아이템 가져오기
+  const scrappedCount = scrappedItems.length; // 스크랩한 정책 개수
+
   const navigation = useNavigation();
 
   const onRefresh = async () => {
@@ -43,15 +46,17 @@ const Profile = () => {
   useFocusEffect(
     React.useCallback(() => {
       setViewScrapped(false);
-      setViewProfileModify(false); // 프로필 화면에 돌아올 때 초기화
+      setViewProfileModify(false);
+      setViewPasswordModify(false); // 비밀번호 수정 화면 초기화
     }, [])
   );
 
   useEffect(() => {
     const backAction = () => {
-      if (viewProfileModify || viewScrapped) {
+      if (viewProfileModify || viewScrapped || viewPasswordModify) {
         setViewProfileModify(false);
         setViewScrapped(false);
+        setViewPasswordModify(false); // 비밀번호 수정 상태 초기화
         return true;
       }
       navigation.goBack();
@@ -61,11 +66,13 @@ const Profile = () => {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
     return () => backHandler.remove();
-  }, [navigation, viewProfileModify, viewScrapped]);
+  }, [navigation, viewProfileModify, viewScrapped, viewPasswordModify]);
 
   const getRouteForItem = (item) => {
     if (item === "프로필 수정") {
       setViewProfileModify(true); // 프로필 수정 화면으로 전환
+    } else if (item === "비밀번호 수정") {
+      setViewPasswordModify(true); // 비밀번호 수정 화면으로 전환
     } else {
       switch (item) {
         case "알림설정":
@@ -94,7 +101,7 @@ const Profile = () => {
         renderItem={() => {}} // 실제 데이터로 교체 필요
         ListHeaderComponent={() => (
           <View className="mt-[-30px]">
-            {!viewScrapped && !viewProfileModify ? (
+            {!viewScrapped && !viewProfileModify && !viewPasswordModify ? (
               <>
                 <View className="flex-1 justify-center items-center px-4">
                   <ButtonRow>
@@ -129,6 +136,7 @@ const Profile = () => {
                     "회원 탈퇴",
                     "약관",
                     "개인 정보 취급 방침",
+                    "비밀번호 수정",
                   ].map((item, index) => (
                     <ButtonRow className="justify-between w-[325px] mt-[20px]" key={index}>
                       <Text>{item}</Text>
@@ -148,6 +156,8 @@ const Profile = () => {
               </>
             ) : viewScrapped ? (
               <LookScrap />
+            ) : viewPasswordModify ? (
+              <PasswordModify /> // 비밀번호 수정 화면 렌더링
             ) : (
               <ProfileModify />
             )}
