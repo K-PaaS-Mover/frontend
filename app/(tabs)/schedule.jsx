@@ -1,4 +1,6 @@
-import { View, Text, BackHandler, FlatList } from "react-native";
+// schedule.jsx
+
+import { View, Text, BackHandler, FlatList, ActivityIndicator } from "react-native";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,7 +15,9 @@ import HomeFrame from "../../components/policyFrame/HomeFrame";
 
 import ArrowLeft from "../../assets/icons/arrow_left.svg";
 import ArrowRight from "../../assets/icons/arrow_right.svg";
-import EditCalendar from "../../assets/icons/edit_calendar.svg";
+// import EditCalendar from "../../assets/icons/edit_calendar.svg"; // 필요 시 주석 해제
+
+import { getScraps } from "../api/Calendar"; // API 모듈 임포트
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -28,6 +32,8 @@ const Schedule = () => {
   const [selected, setSelected] = useState(""); // 초기 상태에서 빈 문자열
   const [currentDate, setCurrentDate] = useState(moment().format("YYYY-MM-DD"));
   const [homeFrameData, setHomeFrameData] = useState(null);
+  const [scraps, setScraps] = useState([]); // 스크랩 데이터를 저장할 상태
+  const [loading, setLoading] = useState(true); // 로딩 상태
   const flatListRef = useRef(null);
   const modalRef = useRef(null); // Modalize 참조
 
@@ -72,43 +78,60 @@ const Schedule = () => {
     return months;
   }, []);
 
-  // 주황색 점을 표시할 날짜들
-  const markedDatesData = {
-    "2024-10-15": { dots: [{ key: "event", color: "#FFC830" }] },
-    "2024-10-20": { dots: [{ key: "event", color: "#FFC830" }] },
-  };
+  // API로부터 스크랩 데이터 가져오기
+  useEffect(() => {
+    const fetchScraps = async () => {
+      try {
+        const result = await getScraps();
+        if (result.success) {
+          setScraps(result.data);
+        } else {
+          console.error(result.message);
+        }
+      } catch (error) {
+        console.error("스크랩 데이터 fetching 에러:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // 주황색 점에 해당하는 데이터
-  const eventData = {
-    "2024-10-15": {
-      title: "이벤트 1",
-      company: "회사 1",
-      period: "2024-10-01 ~ 2024-10-15",
-      category: "카테고리 A",
-      views: 120,
-      scrap: 30,
-    },
-    "2024-10-20": {
-      title: "이벤트 2",
-      company: "회사 2",
-      period: "2024-10-16 ~ 2024-10-20",
-      category: "카테고리 B",
-      views: 95,
-      scrap: 15,
-    },
-  };
+    fetchScraps();
+  }, []);
 
-  // markedDates를 useMemo로 캐싱하여 성능 최적화
+  // startDate와 endDate를 기반으로 markedDates 생성
+  const markedDatesData = useMemo(() => {
+    const marks = {};
+
+    scraps.forEach((scrap) => {
+      const { startDate, endDate, id } = scrap;
+      const start = moment(startDate);
+      const end = moment(endDate);
+
+      for (let m = moment(start); m.diff(end, 'days') <= 0; m.add(1, 'days')) {
+        const dateStr = m.format("YYYY-MM-DD");
+        if (marks[dateStr]) {
+          marks[dateStr].dots.push({ key: `${id}`, color: "#FFC830" });
+        } else {
+          marks[dateStr] = {
+            dots: [{ key: `${id}`, color: "#FFC830" }],
+          };
+        }
+      }
+    });
+
+    return marks;
+  }, [scraps]);
+
+  // selected 날짜를 포함하여 markedDates 업데이트
   const markedDates = useMemo(() => {
     const updatedMarkedDates = { ...markedDatesData };
 
     if (selected) {
       updatedMarkedDates[selected] = {
-        ...updatedMarkedDates[selected],
+        ...(updatedMarkedDates[selected] || {}),
         selected: true,
         selectedColor: "#50C3FA",
         selectedTextColor: "#FFFFFF",
-        dots: [...(updatedMarkedDates[selected]?.dots || [])],
       };
     }
 
@@ -118,23 +141,25 @@ const Schedule = () => {
   // onDayPress 함수 수정
   const onDayPress = useCallback(
     (day) => {
-      const eventDetails = eventData[day.dateString];
+      const selectedDate = day.dateString;
+      setSelected(selectedDate);
+      setCurrentDate(selectedDate);
 
-      // 선택된 날짜에 해당하는 월로 currentDate 업데이트
-      setCurrentDate(day.dateString);
+      // 선택한 날짜에 해당하는 스크랩 필터링
+      const eventDetails = scraps.filter(
+        (scrap) =>
+          moment(selectedDate).isBetween(scrap.startDate, scrap.endDate, undefined, '[]') // 포함 범위
+      );
 
-      // 선택한 날짜에 해당하는 이벤트가 있으면 모달 열기
-      if (eventDetails) {
-        setSelected(day.dateString);
+      if (eventDetails.length > 0) {
         setHomeFrameData(eventDetails);
         modalRef.current?.open();
       } else {
-        setSelected(day.dateString);
         setHomeFrameData(null);
         modalRef.current?.close();
       }
     },
-    [eventData]
+    [scraps]
   );
 
   const renderNextMonthCalendar = useCallback(
@@ -151,20 +176,25 @@ const Schedule = () => {
             monthTextColor: "#474A9C",
           }}
           renderArrow={() => null}
-          onDayPress={(day) => {
-            onDayPress(day);
-            // 모달을 날짜 클릭 시에만 열도록 합니다.
-            if (eventData[day.dateString]) {
-              modalRef.current?.open();
-            }
-          }}
+          onDayPress={onDayPress}
           markedDates={markedDates}
           hideExtraDays={true}
         />
       </View>
     ),
-    [markedDates, onDayPress, eventData]
+    [markedDates, onDayPress]
   );
+
+  if (loading) {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaView className="bg-[#50C3FA] h-full w-full justify-center items-center">
+          <ActivityIndicator size="large" color="#FFFFFF" />
+          <Text className="text-white mt-4">로딩 중...</Text>
+        </SafeAreaView>
+      </GestureHandlerRootView>
+    );
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -221,14 +251,20 @@ const Schedule = () => {
             borderTopLeftRadius: 35,
             borderTopRightRadius: 35,
             shadowColor: "#000",
-            shadowOffset: { width: 100, height: 500 }, // 수직 오프셋을 더 크게
-            shadowOpacity: 1, // 불투명도 증가 (1은 완전 불투명)
-            shadowRadius: 10, // 흐림 정도 조정
-            elevation: 24, // Android 그림자 깊이 증가
+            shadowOffset: { width: 0, height: -3 }, // 적절한 그림자 설정
+            shadowOpacity: 0.1,
+            shadowRadius: 10,
+            elevation: 5, // Android 그림자 깊이 증가
           }}
         >
           <View style={{ padding: 20 }}>
-            <HomeFrame {...homeFrameData} />
+            {homeFrameData ? (
+              homeFrameData.map((event) => (
+                <HomeFrame key={event.id} {...event} />
+              ))
+            ) : (
+              <Text>이벤트가 없습니다.</Text>
+            )}
           </View>
         </Modalize>
       </SafeAreaView>
