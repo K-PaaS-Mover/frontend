@@ -16,7 +16,7 @@ const ButtonRow = styled.View`
 const HomeFrameDetail = ({ selectedItem }) => {
   if (!selectedItem) return null;
 
-  const { title, company, period, category, views, scrap } = selectedItem;
+  const { title, department, startDate, endDate, category, views, scrapCount } = selectedItem;
 
   return (
     <View className="mt-[26px] flex-1 justify-start items-center">
@@ -28,11 +28,11 @@ const HomeFrameDetail = ({ selectedItem }) => {
         </View>
         <Text className="mt-[15px] ml-[5px] font-psemibold text-[18px]">{title}</Text>
         <Text className="mt-[9px] ml-[5px] font-pregular text-[#121212] text-[12px]">
-          {company}
+          {department}
         </Text>
         <ButtonRow>
           <Text className="font-pregular text-[#121212] text-[12px] ml-[-15px]">
-            기간 : {period}
+            기간 : {startDate}-{endDate}
           </Text>
           <ButtonRow className="w-[130px] justify-center mr-[-15px]">
             <ButtonRow className="w-[80px] justify-center">
@@ -41,7 +41,7 @@ const HomeFrameDetail = ({ selectedItem }) => {
             </ButtonRow>
             <ButtonRow className="w-[80px] justify-center ml-[-20px]">
               <Scrap width={20} height={20} marginRight={5} />
-              <Text className="text-[#6D6D7A] font-pregular">{scrap}</Text>
+              <Text className="text-[#6D6D7A] font-pregular">{scrapCount}</Text>
             </ButtonRow>
           </ButtonRow>
         </ButtonRow>
