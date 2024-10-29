@@ -1,8 +1,18 @@
-import { View, Text, FlatList, Image, RefreshControl, ScrollView, BackHandler } from "react-native";
+// Home.jsx
+import {
+  View,
+  Text,
+  FlatList,
+  ScrollView,
+  BackHandler,
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState, useEffect, useRef } from "react";
-import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 import styled from "styled-components/native";
 
 import Bell from "../../assets/icons/bell.svg";
@@ -13,7 +23,8 @@ import SearchFocus from "../../components/search/SearchFocus";
 import CustomButton from "../../components/signComponents/CustomButton";
 import HomeFrame from "../../components/policyFrame/HomeFrame";
 import HomeFocus from "../../components/policyFrame/homeScreens/HomeFocus";
-import { useScrap } from "../ScrapContext";
+import { useScrap } from "../../contexts/ScrapContext"; // 컨텍스트 경로에 맞게 수정
+import { getPolicies } from "../../api"; // API 함수 경로에 맞게 수정
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -28,24 +39,44 @@ const Home = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isHomeFocused, setIsHomeFocused] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [policies, setPolicies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const searchInputRef = useRef(null);
-  const navigation = useNavigation();
   const { scrappedItems, addScrap, removeScrap } = useScrap(); // useScrap에서 스크랩 관련 함수 가져오기
 
   const onRefresh = async () => {
     setRefreshing(true);
-    // 리프레시 처리 로직
+    await fetchPolicies();
     setRefreshing(false);
   };
 
-  // 사용자 정의 스크랩 토글 함수
-  const toggleScrap = (item) => {
-    if (scrappedItems.some((scrap) => scrap.id === item.id)) {
-      removeScrap(item.id); // 스크랩된 경우 제거
+  // 정책 데이터를 API로부터 가져오는 함수
+  const fetchPolicies = async () => {
+    const response = await getPolicies();
+    if (response.success) {
+      setPolicies(response.data);
+      setError(null);
     } else {
-      addScrap(item); // 스크랩되지 않은 경우 추가
+      setError(response.message);
+      Alert.alert("오류", response.message);
+    }
+    setLoading(false);
+  };
+
+  // 사용자 정의 스크랩 토글 함수
+  const toggleScrap = (policyId) => {
+    if (scrappedItems.some((scrap) => scrap.id === policyId)) {
+      removeScrap(policyId); // 스크랩된 경우 제거
+    } else {
+      addScrap(policyId); // 스크랩되지 않은 경우 추가
     }
   };
+
+  useEffect(() => {
+    fetchPolicies();
+  }, []);
 
   useEffect(() => {
     const backAction = () => {
@@ -71,14 +102,33 @@ const Home = () => {
   }, [isSearchFocused]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
+    const unsubscribe = router.addListener("focus", () => {
       setIsSearchFocused(false);
       setIsHomeFocused(false);
       setSelectedItem(null);
     });
 
     return unsubscribe;
-  }, [navigation]);
+  }, []);
+
+  if (loading) {
+    return (
+      <SafeAreaView className="bg-white h-full flex justify-center items-center">
+        <ActivityIndicator size="large" color="#0000ff" />
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="bg-white h-full flex justify-center items-center">
+        <Text>Error: {error}</Text>
+        <TouchableOpacity onPress={fetchPolicies} style={{ marginTop: 20 }}>
+          <Text style={{ color: "blue" }}>다시 시도하기</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -87,66 +137,29 @@ const Home = () => {
       ) : isHomeFocused ? (
         <HomeFocus
           selectedItem={selectedItem}
-          isStarChecked={scrappedItems.some((scrap) => scrap.id === selectedItem?.id)} // context의 스크랩된 상태 확인
-          setIsStarChecked={() => toggleScrap(selectedItem)} // toggleScrap 함수 호출
+          isStarChecked={scrappedItems.some((scrap) => scrap.id === selectedItem?.id)}
+          setIsStarChecked={() => toggleScrap(selectedItem.id)}
         />
       ) : (
         <FlatList
-          data={[
-            {
-              title: "정책1",
-              company: "회사1",
-              period: "09.15 ~ 10.09",
-              id: 1,
-              category: "카테고리1",
-              views: "1M",
-              scrap: "2K",
-            },
-            {
-              title: "정책2",
-              company: "회사2",
-              period: "11.15 ~ 12.31",
-              id: 2,
-              category: "카테고리2",
-              views: "3M",
-              scrap: "4K",
-            },
-            {
-              title: "정책3",
-              company: "회사3",
-              period: "01.15 ~ 03.27",
-              id: 3,
-              category: "카테고리3",
-              views: "5M",
-              scrap: "6K",
-            },
-            {
-              title: "정책4",
-              company: "회사4",
-              period: "05.21 ~ 08.28",
-              id: 4,
-              category: "카테고리4",
-              views: "7M",
-              scrap: "8K",
-            },
-          ]}
+          data={policies}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {
-                setIsHomeFocused(true);
-                setSelectedItem(item);
+                // PolicyScreen으로 네비게이션
+                router.push(`/policy/${item.id}`);
               }}
             >
               <HomeFrame
                 title={item.title}
-                company={item.company}
-                period={item.period}
+                company={item.department} // 'company' 대신 'department' 사용
+                period={`${item.startDate} ~ ${item.endDate}`}
                 category={item.category}
                 views={item.views}
-                scrap={item.scrap}
-                isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)} // 스크랩 상태 확인
-                toggleScrap={() => toggleScrap(item)} // toggleScrap 호출
+                scrap={item.scrapCount}
+                isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)}
+                toggleScrap={() => toggleScrap(item.id)}
               />
             </TouchableOpacity>
           )}
