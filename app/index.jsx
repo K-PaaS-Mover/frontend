@@ -10,6 +10,8 @@ import CustomButton from "../components/signComponents/CustomButton";
 import MyCircle from "../components/mainComponents/MyCircle";
 import { ScrapProvider } from "./ScrapContext";
 import { UserProvider } from "./UserContext";
+import SignIn from "./(auth)/sign-in";
+import Profile from "./(tabs)/profile";
 
 const Container = styled.View`
   flex: 1;

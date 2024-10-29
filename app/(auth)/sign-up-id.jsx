@@ -115,6 +115,14 @@ const SignUpId = () => {
           <View className="w-[85%]">
             <Text className="font-semibold text-[16px] pt-[30px]">정보를 입력해주세요!</Text>
           </View>
+          <CustomButton
+            title="아이디 중복 확인"
+            handlePress={handleCheckIdDuplicate} // 중복 확인 버튼 클릭 시 확인
+            containerStyles={`w-[120px] h-[30px] border-2 absolute right-[20px] top-[300px] z-50 ${
+              isIdAvailable === true ? "bg-green-500 border-green-500" : "border-[#C1C6CD]"
+            }`}
+            textStyles={`text-center ${isIdAvailable === true ? "text-white" : "text-[#C1C6CD]"}`}
+          />
           <FormField
             title="아이디"
             value={form.id}
@@ -129,14 +137,6 @@ const SignUpId = () => {
             successMessage={idSuccessMessage}
             otherStyles="mt-[60px]"
             placeholder="영어, 숫자 포함 6자 이상 작성"
-          />
-          <CustomButton
-            title="아이디 중복 확인"
-            handlePress={handleCheckIdDuplicate} // 중복 확인 버튼 클릭 시 확인
-            containerStyles={`w-[120px] h-[30px] border-2 mt-[-35px] ml-[230px] ${
-              isIdAvailable === true ? "bg-green-500 border-green-500" : "border-[#C1C6CD]"
-            }`}
-            textStyles={`text-center ${isIdAvailable === true ? "text-white" : "text-[#C1C6CD]"}`}
           />
           <FormField
             title="비밀번호"
@@ -161,7 +161,7 @@ const SignUpId = () => {
                 form.password &&
                 isIdAvailable
                   ? "bg-[#50c3fa] border-[#50c3fa]"
-                  : "border-[#C1C6CD]"
+                  : "border-[#50c3fa]"
               }`}
               textStyles={`text-center ${
                 !idErrorMessage &&
@@ -170,7 +170,7 @@ const SignUpId = () => {
                 form.password &&
                 isIdAvailable
                   ? "text-white"
-                  : "text-[#C1C6CD]"
+                  : "text-[#50c3fa]"
               }`}
               disabled={isSubmitting} // 버튼 비활성화
             />
