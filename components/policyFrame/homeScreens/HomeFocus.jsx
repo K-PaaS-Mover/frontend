@@ -11,6 +11,7 @@ import Star from "../../../assets/icons/star.svg";
 import StarCheck from "../../../assets/icons/star_filled.svg";
 import { addScrap, removeScrap , recordNavigateAPI} from "../../../app/(api)/Policy";
 import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
+import { useRoute } from "@react-navigation/native";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -36,6 +37,10 @@ const ScrapMessage = styled.View`
 `;
 
 const HomeFocus = ({ selectedItem, isScrapped, setIsScrapped }) => {
+  const route = useRoute();
+  const {policyId} = route.params;
+
+  const {selectedItem, setSelectedItem} = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isHomeFocused, setIsHomeFocused] = useState(true);
@@ -51,6 +56,31 @@ const HomeFocus = ({ selectedItem, isScrapped, setIsScrapped }) => {
     // 리프레시 처리 로직
     setRefreshing(false);
   };
+
+  useEffect(() => {
+    const fetchPolicy = async () => {
+      try {
+        const result = await getPolicyById(policyId);
+        if (result.success) {
+          setSelectedItem(result.data);
+          setScrapCount(result.data.scrapCount);
+          // 스크랩 여부 확인 (예: 스크랩 목록에 있는지 확인)
+          // 여기서는 간단히 예시로 스크랩되지 않은 상태로 초기화
+          setIsScrapped(false);
+        } else {
+          setError(result.message);
+          Alert.alert("오류", result.message);
+        }
+      } catch (err) {
+        setError("정책 데이터를 가져오는 중 오류가 발생했습니다.");
+        Alert.alert("오류", "정책 데이터를 가져오는 중 오류가 발생했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPolicy();
+  }, [policyId]);
 
   useEffect(() => {
     const backAction = () => {
@@ -84,7 +114,7 @@ const HomeFocus = ({ selectedItem, isScrapped, setIsScrapped }) => {
     return unsubscribe;
   }, [navigation]);
 
-  const handleScrap = async () => {
+  const handleScrap = async() => {
     const newScrapped = !isScrapped;
     setIsScrapped(newScrapped); // 상위 컴포넌트의 상태를 업데이트
     if (newScrapped) {
@@ -139,6 +169,27 @@ const HomeFocus = ({ selectedItem, isScrapped, setIsScrapped }) => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>{error}</Text>
+      </View>
+    );
+  }
+
+  if (!selectedItem) {
+    return null;
+  }
+
 
   return (
     <SafeAreaView className="bg-white h-full">

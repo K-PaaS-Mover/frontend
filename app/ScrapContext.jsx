@@ -1,7 +1,8 @@
-// ScrapContext.jsx
+// src/contexts/ScrapContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { addScrap as apiAddScrap, removeScrap as apiRemoveScrap } from "../api";
+import { addScrap, removeScrap } from "../api/PolicyAPI";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 
 const ScrapContext = createContext();
 
@@ -33,26 +34,34 @@ export const ScrapProvider = ({ children }) => {
     AsyncStorage.setItem("scrappedItems", JSON.stringify(scrappedItems));
   }, [scrappedItems]);
 
-  const addScrap = async (policyId) => {
-    const response = await apiAddScrap(policyId);
-    if (response.success) {
-      setScrappedItems((prev) => [...prev, { id: policyId }]);
-    } else {
-      alert(response.message);
+  const addScrapItem = async (policyId) => {
+    try {
+      const response = await addScrap(policyId);
+      if (response.success) {
+        setScrappedItems((prev) => [...prev, { id: policyId }]);
+      } else {
+        Alert.alert("오류", response.message);
+      }
+    } catch (error) {
+      Alert.alert("오류", error.message || "스크랩 추가 중 오류가 발생했습니다.");
     }
   };
 
-  const removeScrap = async (policyId) => {
-    const response = await apiRemoveScrap(policyId);
-    if (response.success) {
-      setScrappedItems((prev) => prev.filter((item) => item.id !== policyId));
-    } else {
-      alert(response.message);
+  const removeScrapItem = async (policyId) => {
+    try {
+      const response = await removeScrap(policyId);
+      if (response.success) {
+        setScrappedItems((prev) => prev.filter((item) => item.id !== policyId));
+      } else {
+        Alert.alert("오류", response.message);
+      }
+    } catch (error) {
+      Alert.alert("오류", error.message || "스크랩 제거 중 오류가 발생했습니다.");
     }
   };
 
   return (
-    <ScrapContext.Provider value={{ scrappedItems, addScrap, removeScrap }}>
+    <ScrapContext.Provider value={{ scrappedItems, addScrapItem, removeScrapItem }}>
       {children}
     </ScrapContext.Provider>
   );

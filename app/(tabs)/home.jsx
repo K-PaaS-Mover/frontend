@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import styled from "styled-components/native";
 
 import Bell from "../../assets/icons/bell.svg";
@@ -44,6 +44,7 @@ const Home = () => {
   const [error, setError] = useState(null);
 
   const searchInputRef = useRef(null);
+  const navigation = useNavigation();
   const { scrappedItems, addScrap, removeScrap } = useScrap(); // useScrap에서 스크랩 관련 함수 가져오기
 
   const onRefresh = async () => {
@@ -53,16 +54,22 @@ const Home = () => {
   };
 
   // 정책 데이터를 API로부터 가져오는 함수
-  const fetchPolicies = async () => {
-    const response = await getPolicies();
-    if (response.success) {
-      setPolicies(response.data);
-      setError(null);
-    } else {
-      setError(response.message);
-      Alert.alert("오류", response.message);
+  const fetchAllPolicies = async () => {
+    try {
+      const response = await getPolicies();
+      if (response.success) {
+        setPolicies(response.data);
+        setError(null);
+      } else {
+        setError(response.message);
+        Alert.alert("오류", response.message);
+      }
+    } catch (err) {
+      setError(err.message || "정책 데이터를 가져오는 데 실패했습니다.");
+      Alert.alert("오류", err.message || "정책 데이터를 가져오는 데 실패했습니다.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // 사용자 정의 스크랩 토글 함수
@@ -75,7 +82,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchPolicies();
+    fetchAllPolicies();
   }, []);
 
   useEffect(() => {
@@ -137,8 +144,8 @@ const Home = () => {
       ) : isHomeFocused ? (
         <HomeFocus
           selectedItem={selectedItem}
-          isStarChecked={scrappedItems.some((scrap) => scrap.id === selectedItem?.id)}
-          setIsStarChecked={() => toggleScrap(selectedItem.id)}
+          isScrapped={scrappedItems.some((scrap) => scrap.id === selectedItem?.id)}
+          setIsScrapped={(isScrapped) => toggleScrap(selectedItem.id)}
         />
       ) : (
         <FlatList
@@ -147,19 +154,17 @@ const Home = () => {
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {
-                // PolicyScreen으로 네비게이션
-                router.push(`/policy/${item.id}`);
+                navigation.navigate("HomeFocus", {policyId: item.id}) // 라우트 네임 확인
               }}
             >
               <HomeFrame
                 title={item.title}
-                company={item.department} // 'company' 대신 'department' 사용
-                period={`${item.startDate} ~ ${item.endDate}`}
+                company={item.department} 
+                startDate={item.startDate}
+                endDate={item.endDate}
                 category={item.category}
                 views={item.views}
-                scrap={item.scrapCount}
-                isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)}
-                toggleScrap={() => toggleScrap(item.id)}
+                scrapCount={item.scrapCount}
               />
             </TouchableOpacity>
           )}
@@ -171,7 +176,7 @@ const Home = () => {
                     activeOpacity={1}
                     onPress={() => {
                       setIsSearchFocused(false);
-                      router.replace("/home");
+                      // router.replace("/home");
                     }}
                   >
                     <Text className="font-pblack text-2xl text-[#50c3fac4]">Mate</Text>
@@ -203,7 +208,7 @@ const Home = () => {
                         title={title}
                         handlePress={() => {
                           setIsSearchFocused(false);
-                          router.push("/");
+                          // router.push("/");
                         }}
                         containerStyles="w-[90px] h-[25px] border-[#DFE3E7] border-[1px] rounded-[8px] mr-[10px]"
                         textStyles="text-center text-[#515259] text-[12px] font-pregular"

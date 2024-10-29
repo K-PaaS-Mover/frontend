@@ -1,9 +1,11 @@
-import { View, Text } from "react-native";
 import React from "react";
+import { View, Text, Dimensions } from "react-native";
+
 import styled from "styled-components/native";
 
 import Views from "../../../assets/icons/views.svg";
 import Scrap from "../../../assets/icons/scrap.svg";
+import RenderHTML from "react-native-render-html";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -16,7 +18,9 @@ const ButtonRow = styled.View`
 const HomeFrameDetail = ({ selectedItem }) => {
   if (!selectedItem) return null;
 
-  const { title, department, startDate, endDate, category, views, scrapCount } = selectedItem;
+  const { title, department, startDate, endDate, category, views, scrapCount, content } = selectedItem;
+
+  const contentWidth = Dimensions.get("window").width - 40;
 
   return (
     <View className="mt-[26px] flex-1 justify-start items-center">
@@ -45,6 +49,17 @@ const HomeFrameDetail = ({ selectedItem }) => {
             </ButtonRow>
           </ButtonRow>
         </ButtonRow>
+      </View>
+      {/* content 랜더링 추가 */}
+      <View className="mt-[20px] w-full">
+        <RenderHTML
+          contentWidth={contentWidth}
+          source={{html: content}}
+          tagsStyles={{
+            p: {fontSize: 14, color: "#333"},
+            //추가 스타일링 정의
+          }}
+        />
       </View>
     </View>
   );
