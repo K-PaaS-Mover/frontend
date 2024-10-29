@@ -56,15 +56,16 @@ const FormField = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
-        {title === "비밀번호" && (
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            {showPassword ? (
-              <Visible width={24} height={24} />
-            ) : (
-              <UnVisible width={24} height={24} />
-            )}
-          </TouchableOpacity>
-        )}
+        {title === "비밀번호" ||
+          (title === "비밀번호 수정" && (
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              {showPassword ? (
+                <Visible width={24} height={24} />
+              ) : (
+                <UnVisible width={24} height={24} />
+              )}
+            </TouchableOpacity>
+          ))}
       </InputContainer>
       {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
     </Container>
