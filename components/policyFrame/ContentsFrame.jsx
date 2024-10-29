@@ -16,7 +16,8 @@ const ButtonRow = styled.View`
   padding: 0 20px;
 `;
 
-const ContentsFrame = ({ title, company, period, category, views, scrap }) => {
+const ContentsFrame = ({ title, department, views, scrapCount }) => {
+  
   return (
     <View className="w-[300px] mt-[20px]">
       <View className="w-full flex-1 justify-center items-center">
@@ -31,13 +32,13 @@ const ContentsFrame = ({ title, company, period, category, views, scrap }) => {
                 </ButtonRow>
                 <ButtonRow className="justify-center">
                   <Scrap width={20} height={20} marginRight={5} />
-                  <Text className="text-[#6D6D7A] font-pregular">{scrap}</Text>
+                  <Text className="text-[#6D6D7A] font-pregular">{scrapCount}</Text>
                 </ButtonRow>
               </ButtonRow>
             </ButtonRow>
           </ButtonRow>
           <Text className={`mt-[9px] ml-[23px] font-pregular text-[#1B1B1E] text-[14px]`}>
-            {company}
+            {department}
           </Text>
         </View>
       </View>
