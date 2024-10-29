@@ -1,6 +1,6 @@
 // src/contexts/ScrapContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { addScrap, removeScrap } from "../api/PolicyAPI";
+import { addScrap, removeScrap } from "./(api)/Policy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 

@@ -2,8 +2,10 @@ import { StyleSheet, Text, View } from "react-native";
 import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
 
 import { UserProvider } from "./UserContext";
+import { StarProvider } from "./StarContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,11 +32,15 @@ const RootLayout = () => {
 
   return (
     <UserProvider>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <StarProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="LookScrap" options={{ headerShown: false }} />
+          <Stack.Screen name="HomeFocus" options={{ headerShown: false }} />
+        </Stack>
+      </StarProvider>
     </UserProvider>
   );
 };

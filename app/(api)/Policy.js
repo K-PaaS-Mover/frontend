@@ -3,7 +3,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = "http://default-springboot-app-s-e44df-100172874-9c694dec16d2.kr.lb.naverncp.com:8080/";
+const API_BASE_URL = "http://default-bjmate-11b2d-100192567-88c9bd227f80.kr.lb.naverncp.com:8080/";
 
 /**
  * 인증 토큰을 가져오는 함수
@@ -20,13 +20,35 @@ const getAuthToken = async () => {
 };
 
 /**
+ * 정책 목록 조회 API 호출
+ * @returns {Promise} - Axios 응답 프라미스
+ */
+export const getPolicies = async () => {
+  try {
+    const token = await AsyncStorage.getItem("accessToken");
+    console.log("가져온 토큰:", token); // 로그 추가
+    const response = await axios.get(`${API_BASE_URL}policy/{policyId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("정책 목록 조회 오류:", error); // 전체 에러 출력
+    const errorMessage = error.response?.data?.message || "정책 목록 조회 실패";
+    return { success: false, message: errorMessage };
+  }
+};
+
+/**
  * 추천 정책 조회 API 호출
  * @returns {Promise} - Axios 응답 프라미스
  */
 export const getRecommendedPolicies = async () => {
   try {
     const token = await getAuthToken();
-    const response = await axios.get(`${API_BASE_URL}policy/recommandation`, {
+    const response = await axios.get(`${API_BASE_URL}policy/recommendation`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -47,6 +69,8 @@ export const getRecommendedPolicies = async () => {
 export const getPoliciesByCategory = async (category) => {
   try {
     const token = await getAuthToken();
+    console.log("가져온 토큰:", token);
+    console.log("전달하는 카테고리:", category);
     const response = await axios.get(`${API_BASE_URL}policy/all-policies`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -56,6 +80,7 @@ export const getPoliciesByCategory = async (category) => {
 
     return { success: true, data: response.data };
   } catch (error) {
+    console.error("카테고리별 정책 조회 오류:", error); // 전체 에러 출력
     const errorMessage = error.response?.data?.message || "카테고리별 정책 조회 실패";
     return { success: false, message: errorMessage };
   }
@@ -147,30 +172,5 @@ export const removeScrap = async (policyId) => {
   } catch (error) {
     const errorMessage = error.response?.data?.message || "스크랩 제거 실패";
     return { success: false, message: errorMessage };
-  }
-};
-
-/**
- * 네비게이션 기록 API 호출
- * @param {number} policyId - 정책 ID
- * @returns {Promise<object>} - 응답 객체
- */
-export const recordNavigateAPI = async (policyId) => {
-  try {
-    const token = await getAuthToken();
-    const response = await axios.post(
-      `${API_BASE_URL}policy/${policyId}/navigate`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error("네비게이션 기록 API 오류:", error);
-    return { success: false, message: error.response?.data?.message || "네비게이션 기록에 실패했습니다." };
   }
 };

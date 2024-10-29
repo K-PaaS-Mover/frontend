@@ -58,6 +58,7 @@ const SignUpId = () => {
   };
 
   const handleSubmit = async () => {
+    // 폼 검증
     if (!validateForm() || !isIdAvailable) {
       Alert.alert("오류", "입력한 정보를 확인해 주세요.");
       return;
@@ -66,10 +67,15 @@ const SignUpId = () => {
     setIsSubmitting(true);
 
     try {
+      // 서버에 보낼 데이터
       const data = {
         username: form.id,
         password: form.password,
       };
+
+      // 데이터 확인 (콘솔에 출력하여 확인 가능)
+      console.log("서버로 보낼 데이터:", data);
+
       const response = await signUp(data);
       Alert.alert("성공", "아이디와 비밀번호 등록이 완료되었습니다!");
       router.push("/sign-up-name");
@@ -79,7 +85,6 @@ const SignUpId = () => {
       setIsSubmitting(false);
     }
   };
-
   const handleCheckIdDuplicate = async () => {
     if (form.id.trim() === "") {
       Alert.alert("아이디를 입력해 주세요.");

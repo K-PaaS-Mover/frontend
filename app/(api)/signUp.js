@@ -2,9 +2,7 @@
 import axios from "axios";
 
 // 기본 API URL 설정
-const API_BASE_URL =
-  "http://default-springboot-app-s-e44df-100172874-9c694dec16d2.kr.lb.naverncp.com:8080/";
-
+const API_BASE_URL = "http://default-bjmate-11b2d-100192567-88c9bd227f80.kr.lb.naverncp.com:8080/";
 /**
  * 회원가입 API 호출
  * @param {Object} data - 회원가입에 필요한 데이터
@@ -12,6 +10,7 @@ const API_BASE_URL =
  */
 
 export const signUp = async (data) => {
+  console.log("회원가입 데이터:", data); // 데이터 출력
   try {
     const response = await axios.post(`${API_BASE_URL}members/sign-up`, data);
     return response.data;
