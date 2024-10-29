@@ -1,3 +1,5 @@
+// app/(tabs)/Contents.jsx
+
 import {
   View,
   Text,
@@ -5,10 +7,12 @@ import {
   BackHandler,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useNavigation } from "expo-router";
+import { useNavigation } from "@react-navigation/native"; // 라우팅 훅 수정
 import styled from "styled-components/native";
 
 import ContentsFrame from "../../components/policyFrame/ContentsFrame";
@@ -17,6 +21,8 @@ import SearchInput from "../../components/search/SearchInput";
 import SearchFocus from "../../components/search/SearchFocus";
 import Bell from "../../assets/icons/bell.svg";
 import Sort from "../../assets/icons/sort.svg";
+
+import { getPoliciesByCategory, checkScrapStatus } from "../../app/(api)/Policy"; // API 함수 가져오기
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -39,7 +45,6 @@ const MenuContainer = styled.View`
   justify-content: space-between; /* 좌우 정렬을 위해 space-between */
   align-items: flex-start; /* 상단에 고정 */
   width: 100%;
-  /* background-color: #aff; */
 `;
 
 const MenuList = styled.View`
@@ -50,7 +55,6 @@ const MenuList = styled.View`
 `;
 
 const ContentArea = styled.View`
-  /* flex: 1; */
   background-color: #e9eaf7ce;
   width: 350px;
   padding-left: 30px;
@@ -71,85 +75,27 @@ const SubMenuItem = styled.TouchableOpacity`
   background-color: ${({ selected }) => (selected ? "#e9eaf7ce" : "white")};
 `;
 
+// 새로운 카테고리 구조 반영
 const menuItems = [
-  { id: "1", title: "메뉴 1", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "2", title: "메뉴 2", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "3", title: "메뉴 3", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "4", title: "메뉴 4", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "5", title: "메뉴 5", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "6", title: "메뉴 6", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "7", title: "메뉴 7", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "8", title: "메뉴 8", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "9", title: "메뉴 9", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "10", title: "메뉴 10", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "11", title: "메뉴 11", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "12", title: "메뉴 12", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "13", title: "메뉴 13", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "14", title: "메뉴 14", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "15", title: "메뉴 15", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "16", title: "메뉴 16", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-  { id: "17", title: "메뉴 17", subMenu: ["작은 메뉴 1", "작은 메뉴 2"] },
-];
-
-// const policyData = {
-//   "메뉴 1": [
-//     {
-//       title: "정책1",
-//       company: "회사1",
-//       period: "09.15 ~ 10.09",
-//       id: 1,
-//       name: "one",
-//       category: "카테고리1",
-//       views: "1M",
-//       scrap: "2K",
-//     },
-//     {
-//       title: "정책2",
-//       company: "회사2",
-//       period: "11.15 ~ 12.31",
-//       id: 2,
-//       name: "two",
-//       category: "카테고리2",
-//       views: "3M",
-//       scrap: "4K",
-//     },
-//   ],
-//   "작은 메뉴 1": [
-//     {
-//       title: "정책3",
-//       company: "회사3",
-//       period: "01.15 ~ 03.27",
-//       id: 3,
-//       name: "three",
-//       category: "카테고리3",
-//       views: "5M",
-//       scrap: "6K",
-//     },
-//   ],
-//   "작은 메뉴 2": [
-//     {
-//       title: "정책4",
-//       company: "회사4",
-//       period: "05.21 ~ 08.28",
-//       id: 4,
-//       name: "four",
-//       category: "카테고리4",
-//       views: "7M",
-//       scrap: "8K",
-//     },
-//   ],
-// };
-
-export const policyData = [
   {
-    title: "정책1",
-    company: "회사1",
-    period: "09.15 ~ 10.09",
-    id: 1,
-    name: "one",
-    category: "카테고리1",
-    views: "1M",
-    scrap: "2K",
+    id: "1",
+    title: "서비스",
+    subMenu: ["돌봄", "어르신", "중장년", "장애인", "자활", "여성가족"],
+  },
+  {
+    id: "2",
+    title: "생애주기",
+    subMenu: ["임산/출산", "영유아", "아동", "청소년", "청년", "중장년", "어르신"],
+  },
+  {
+    id: "3",
+    title: "생활지원",
+    subMenu: ["자립", "일자리", "교육", "금융", "주택", "의료", "시설"],
+  },
+  {
+    id: "4",
+    title: "가구",
+    subMenu: ["가족", "한부모", "다문화", "보훈"],
   },
 ];
 
@@ -158,33 +104,81 @@ const Contents = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [selectedSubMenu, setSelectedSubMenu] = useState(null);
+  const [policyData, setPolicyData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [sortOrder, setSortOrder] = useState("추천순"); // 기본 정렬 순서 설정
+
   const searchInputRef = useRef(null);
   const navigation = useNavigation();
 
-  // 메뉴와 서브메뉴에 따라 필터링된 정책 데이터
+  // 메뉴와 서브메뉴에 따라 필터링된 정책 데이터 가져오기
   const getFilteredPolicyData = () => {
     if (selectedSubMenu) {
-      switch (selectedSubMenu) {
-        case "작은 메뉴 1":
-          return policyData.filter((item) => item.category === "카테고리1");
-        case "작은 메뉴 2":
-          return policyData.filter((item) => item.category === "카테고리2");
-        default:
-          return [];
-      }
+      // 서브 메뉴 선택 시 해당 카테고리의 정책 가져오기
+      return policyData.filter((item) => item.category === selectedSubMenu);
     } else if (selectedMenu) {
-      return policyData; // 메인 메뉴를 선택했을 때 모든 정책 데이터 반환
+      // 메인 메뉴 선택 시 해당 카테고리의 모든 정책 가져오기
+      return policyData.filter((item) => item.categoryGroup === selectedMenu);
     }
-    return [];
+    return policyData; // 선택이 없을 경우 모든 정책 반환
   };
 
   const filteredPolicyData = getFilteredPolicyData();
 
   const onRefresh = async () => {
     setRefreshing(true);
-    // 리프레시 처리 로직
+    await fetchPolicies();
     setRefreshing(false);
   };
+
+  // 카테고리에 해당하는 정책 데이터를 API로부터 가져오는 함수
+  const fetchPolicies = async () => {
+    const category = selectedSubMenu || selectedMenu || "";
+    try {
+      setLoading(true);
+      const response = await getPoliciesByCategory(category);
+      if (response.success) {
+        setPolicyData(response.data);
+        setError(null);
+      } else {
+        setError(response.message);
+        Alert.alert("오류", response.message);
+      }
+    } catch (err) {
+      setError(err.message || "정책 데이터를 가져오는 데 실패했습니다.");
+      Alert.alert("오류", err.message || "정책 데이터를 가져오는 데 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 정렬 함수
+  const handleSort = () => {
+    if (sortOrder === "추천순") {
+      setSortOrder("최신순");
+    } else {
+      setSortOrder("추천순");
+    }
+  };
+
+  useEffect(() => {
+    fetchPolicies();
+  }, [selectedMenu, selectedSubMenu]);
+
+  useEffect(() => {
+    const sortPolicies = () => {
+      const sortedPolicies = [...policyData];
+      if (sortOrder === "추천순") {
+        sortedPolicies.sort((a, b) => b.scrap - a.scrap); // 스크랩 수 기준 내림차순
+      } else if (sortOrder === "최신순") {
+        sortedPolicies.sort((a, b) => new Date(b.startDate) - new Date(a.startDate)); // 시작 날짜 기준 내림차순
+      }
+      setPolicyData(sortedPolicies);
+    };
+
+    sortPolicies();
+  }, [sortOrder, policyData]);
 
   useEffect(() => {
     const backAction = () => {
@@ -232,6 +226,17 @@ const Contents = () => {
     }
   };
 
+  // 스크랩 상태 확인 함수
+  const isScrapped = async (policyId) => {
+    try {
+      const response = await checkScrapStatus(policyId);
+      return response.success ? response.data.scrapped : false;
+    } catch (error) {
+      console.error("스크랩 상태 확인 오류:", error);
+      return false;
+    }
+  };
+
   return (
     <SafeAreaView className="bg-white h-full">
       {isSearchFocused ? (
@@ -243,7 +248,7 @@ const Contents = () => {
               activeOpacity={1}
               onPress={() => {
                 setIsSearchFocused(false);
-                router.replace("/home");
+                navigation.replace("Home"); // 홈으로 네비게이션
               }}
             >
               <Text className="font-pblack text-2xl text-[#50c3fac4]">Mate</Text>
@@ -291,24 +296,42 @@ const Contents = () => {
               <ContentArea>
                 <ButtonRow className="w-[230px] h-[20px] mt-[7px]">
                   <Text className="font-pextralight text-[12px]">전체보기</Text>
-                  <SortButton>
-                    <Text className="font-pextralight text-[12px]">추천순</Text>
+                  <SortButton onPress={handleSort}>
+                    <Text className="font-pextralight text-[12px]">{sortOrder}</Text>
                     <Sort width={12} height={12} />
                   </SortButton>
                 </ButtonRow>
-                {filteredPolicyData.length > 0 && (
+                {loading ? (
+                  <View className="flex-1 justify-center items-center">
+                    <ActivityIndicator size="large" color="#0000ff" />
+                  </View>
+                ) : error ? (
+                  <View className="flex-1 justify-center items-center">
+                    <Text>Error: {error}</Text>
+                    <TouchableOpacity onPress={fetchPolicies} style={{ marginTop: 20 }}>
+                      <Text style={{ color: "blue" }}>다시 시도하기</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : filteredPolicyData.length > 0 ? (
                   <View>
                     {filteredPolicyData.map((item) => (
                       <ContentsFrame
                         key={item.id} // key prop 추가
                         title={item.title}
-                        company={item.company}
+                        department={item.company} // 'company' 사용
                         period={item.period}
                         category={item.category}
                         views={item.views}
-                        scrap={item.scrap}
+                        scrapCount={item.scrap}
+                        policyId={item.id} // 상세 페이지 네비게이션을 위해 policyId 전달
+                        isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)} // 스크랩 상태 전달
+                        toggleScrap={toggleScrap} // 스크랩 토글 함수 전달
                       />
                     ))}
+                  </View>
+                ) : (
+                  <View className="flex-1 justify-center items-center">
+                    <Text>해당 카테고리에 대한 정책이 없습니다.</Text>
                   </View>
                 )}
               </ContentArea>

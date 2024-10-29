@@ -1,4 +1,5 @@
 // HomeFrame.jsx
+import React from "react";
 import { View, Text } from "react-native";
 import styled from "styled-components/native";
 import Views from "../../assets/icons/views.svg";
@@ -23,7 +24,7 @@ const HomeFrameContainer = styled.View`
   margin-left: 10px;
 `;
 
-const HomeFrame = ({ title, company, period, category, views, scrap }) => {
+const HomeFrame = ({ title, department, startDate, endDate, category, views, scrapCount }) => {
   return (
     <HomeFrameContainer>
       <ButtonRow className="mt-[10px] items-center ">
@@ -39,15 +40,15 @@ const HomeFrame = ({ title, company, period, category, views, scrap }) => {
           </ButtonRow>
           <ButtonRow className="w-[80px] justify-center ml-[-20px]">
             <Scrap width={20} height={20} marginRight={5} />
-            <Text className="text-[#6D6D7A] font-pregular">{scrap}</Text>
+            <Text className="text-[#6D6D7A] font-pregular">{scrapCount}</Text>
           </ButtonRow>
         </ButtonRow>
       </ButtonRow>
       <Text className={`mt-[15px] ml-[20px] font-psemibold text-[18px]`}>{title}</Text>
       <Text className={`mt-[9px] ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}>
-        {company}
+        {department}
       </Text>
-      <Text className={`ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}>기간 : {period}</Text>
+      <Text className={`ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}>기간 : {startDate}-{endDate}</Text>
     </HomeFrameContainer>
   );
 };
