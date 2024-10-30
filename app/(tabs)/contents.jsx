@@ -1,4 +1,4 @@
-// contents
+// contents.js
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  SectionList,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -54,7 +55,6 @@ const MenuList = styled.View`
 `;
 
 const ContentArea = styled.View`
-  /* flex: 1; */
   background-color: #e9eaf7ce;
   width: 350px;
   padding-left: 30px;
@@ -114,33 +114,32 @@ const Contents = () => {
   const searchInputRef = useRef(null);
   const navigation = useNavigation();
 
-  // 메뉴와 서브메뉴에 따라 필터링된 정책 데이터
-  const getFilteredPolicyData = () => {
-    if (selectedSubMenu) {
-      // 서브 메뉴 선택 시 해당 카테고리의 정책 가져오기
-      return policyData.filter((item) => item.category === selectedSubMenu);
-    } else if (selectedMenu) {
-      // 메인 메뉴 선택 시 해당 카테고리의 모든 정책 가져오기
-      return policyData.filter((item) => item.categoryGroup === selectedMenu);
-    }
-    return policyData; // 선택이 없을 경우 모든 정책 반환
-  };
-
-  const filteredPolicyData = getFilteredPolicyData();
-
   const onRefresh = async () => {
     setRefreshing(true);
-    // 리프레시 처리 로직
+    await fetchPolicies();
     setRefreshing(false);
   };
 
   const fetchPolicies = async () => {
-    const category = selectedSubMenu || selectedMenu || "";
-    console.log("Selected Category:", category); // 로그 추가
+    let categories = [];
+    if (selectedSubMenu) {
+      // 서브 메뉴 선택 시 해당 카테고리 하나
+      categories = [selectedSubMenu];
+    } else if (selectedMenu) {
+      // 메인 메뉴 선택 시 해당 메인 메뉴의 모든 서브 메뉴
+      const menuItem = menuItems.find((item) => item.title === selectedMenu);
+      if (menuItem) {
+        categories = menuItem.subMenu;
+      }
+    }
+
+    console.log("Fetching policies with categories:", categories); // 디버깅용 로그
+
     try {
       setLoading(true);
-      const response = await getPoliciesByCategory(category);
+      const response = await getPoliciesByCategory(categories);
       if (response.success) {
+        console.log("Fetched policies:", response.data); // 디버깅용 로그
         setPolicyData(response.data);
         setError(null);
       } else {
@@ -173,7 +172,9 @@ const Contents = () => {
       if (sortOrder === "추천순") {
         sortedPolicies.sort((a, b) => b.scrap - a.scrap);
       } else if (sortOrder === "최신순") {
-        sortedPolicies.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+        sortedPolicies.sort(
+          (a, b) => new Date(b.startDate) - new Date(a.startDate)
+        );
       }
       return sortedPolicies;
     };
@@ -191,7 +192,10 @@ const Contents = () => {
       return false;
     };
 
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
 
     return () => backHandler.remove();
   }, [isSearchFocused]);
@@ -231,20 +235,7 @@ const Contents = () => {
     }
   };
 
-  const handlePolicyPress = () => {
-    router.push("/homeFocus"); // ContentsFrame 클릭 시 HomeFocus로 이동
-  };
-
-  // 스크랩 상태 확인 함수
-  const isScrapped = async (policyId) => {
-    try {
-      const response = await checkScrapStatus(policyId);
-      return response.success ? response.data.scrapped : false;
-    } catch (error) {
-      console.error("스크랩 상태 확인 오류:", error);
-      return false;
-    }
-  };
+  // 스크랩 상태 확인 함수는 비동기 함수로 유지할 필요 없으므로 제거
 
   const toggleScrap = async (policyId) => {
     if (scrappedItems.some((scrap) => scrap.id === policyId)) {
@@ -263,10 +254,38 @@ const Contents = () => {
         Alert.alert("오류", error.message || "스크랩 추가에 실패하였습니다.");
       }
     }
-    setSelectedItem((prev) =>
-      prev && prev.id === policyId ? { ...prev, isScrapped: !prev.isScrapped } : prev
+    setPolicyData((prev) =>
+      prev.map((item) =>
+        item.id === policyId
+          ? { ...item, isScrapped: !item.isScrapped }
+          : item
+      )
     );
   };
+
+  // 정책 데이터를 카테고리별로 그룹화하는 함수
+  const groupPoliciesByCategory = (policies) => {
+    return policies.reduce((groups, policy) => {
+      const categories = policy.categories; // 정책의 카테고리 배열
+      categories.forEach((category) => {
+        if (!groups[category]) {
+          groups[category] = [];
+        }
+        groups[category].push(policy);
+      });
+      return groups;
+    }, {});
+  };
+
+  const groupedPolicies = groupPoliciesByCategory(policyData);
+
+  // SectionList를 위한 섹션 데이터 생성
+  const sections = menuItems.flatMap((menu) =>
+    menu.subMenu.map((subMenu) => ({
+      title: subMenu,
+      data: groupedPolicies[subMenu] || [],
+    }))
+  );
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -298,7 +317,10 @@ const Contents = () => {
             onBlur={() => setIsSearchFocused(false)}
           />
           <MenuContainer>
-            <ScrollView style={{ width: 150 }} contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView
+              style={{ width: 150 }}
+              contentContainerStyle={{ flexGrow: 1 }}
+            >
               <MenuList>
                 {menuItems.map((item) => (
                   <View key={item.id}>
@@ -307,7 +329,9 @@ const Contents = () => {
                       selected={selectedMenu === item.title}
                       isSubMenuSelected={!!selectedSubMenu}
                     >
-                      <Text className="ml-[7px] font-psemibold text-[16px]">{item.title}</Text>
+                      <Text className="ml-[7px] font-psemibold text-[16px]">
+                        {item.title}
+                      </Text>
                     </MenuItem>
                     {selectedMenu === item.title &&
                       item.subMenu.map((subMenu, index) => (
@@ -316,19 +340,29 @@ const Contents = () => {
                           onPress={() => handleSubMenuPress(subMenu)}
                           selected={selectedSubMenu === subMenu}
                         >
-                          <Text className="ml-[4px] font-pregular text-[16px]">{subMenu}</Text>
+                          <Text className="ml-[4px] font-pregular text-[16px]">
+                            {subMenu}
+                          </Text>
                         </SubMenuItem>
                       ))}
                   </View>
                 ))}
               </MenuList>
             </ScrollView>
-            <ScrollView style={{ width: 350 }} contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView
+              style={{ width: 350 }}
+              contentContainerStyle={{ flexGrow: 1 }}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            >
               <ContentArea>
                 <ButtonRow className="w-[230px] h-[20px] mt-[7px]">
                   <Text className="font-pextralight text-[12px]">전체보기</Text>
-                  <SortButton>
-                    <Text className="font-pextralight text-[12px]">{sortOrder}</Text>
+                  <SortButton onPress={handleSort}>
+                    <Text className="font-pextralight text-[12px]">
+                      {sortOrder}
+                    </Text>
                     <Sort width={12} height={12} />
                   </SortButton>
                 </ButtonRow>
@@ -343,11 +377,23 @@ const Contents = () => {
                       <Text style={{ color: "blue" }}>다시 시도하기</Text>
                     </TouchableOpacity>
                   </View>
-                ) : filteredPolicyData.length > 0 ? (
-                  <View>
-                    {filteredPolicyData.map((item) => (
+                ) : policyData.length > 0 ? (
+                  <SectionList
+                    sections={sections}
+                    keyExtractor={(item) => item.id}
+                    renderSectionHeader={({ section: { title } }) => (
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          marginBottom: 10,
+                        }}
+                      >
+                        {title}
+                      </Text>
+                    )}
+                    renderItem={({ item }) => (
                       <TouchableOpacity
-                        key={item.id}
                         onPress={() =>
                           navigation.navigate("HomeFocus", {
                             selectedItem: item,
@@ -358,17 +404,21 @@ const Contents = () => {
                         <ContentsFrame
                           title={item.title}
                           department={item.department}
-                          period={item.period}
-                          category={item.category}
+                          startDate={item.startDate}
+                          endDate={item.endDate}
+                          categories={item.categories}
                           views={item.views}
                           scrapCount={item.scrapCount}
                           policyId={item.id}
-                          isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)}
+                          isScrapped={scrappedItems.some(
+                            (scrap) => scrap.id === item.id
+                          )}
                           toggleScrap={toggleScrap}
                         />
                       </TouchableOpacity>
-                    ))}
-                  </View>
+                    )}
+                    stickySectionHeadersEnabled={false} // 필요에 따라 조정
+                  />
                 ) : (
                   <View className="flex-1 justify-center items-center mr-[80px]">
                     <Text>해당 카테고리에 대한 정책이 없습니다.</Text>

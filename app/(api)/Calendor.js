@@ -3,7 +3,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = "http://default-bjmate-65e1d-100195000-76b9fed28ce6.kr.lb.naverncp.com:8080/";
+const API_BASE_URL = "http://10.0.2.2:8080/";
 
 /**
  * 인증 토큰을 가져오는 함수
