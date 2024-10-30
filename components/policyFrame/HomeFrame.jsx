@@ -32,13 +32,13 @@ const OvalContainer = styled.View`
   padding: 0 10px; /* 양쪽 패딩 추가 */
 `;
 
-const HomeFrame = ({ title, department, startDate, endDate, category, views, scrapCount }) => {
+const HomeFrame = ({ title, department, startDate, endDate, categories, views, scrapCount }) => {
   return (
     <HomeFrameContainer>
       <ButtonRow className="mt-[10px] items-center ">
         {/* <OvalContainer style={{ width: category.length * 10 + 60 }}> */}
         <ButtonRow className="w-[80px] justify-center">
-          <Text className="text-[#6D6D7A] font-pregular">{category}</Text>
+          <Text className="text-[#6D6D7A] font-pregular">{categories}</Text>
         </ButtonRow>
         {/* </OvalContainer> */}
         <ButtonRow className="w-[130px] justify-center mr-[-20px]">
