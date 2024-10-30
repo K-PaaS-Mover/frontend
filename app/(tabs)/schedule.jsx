@@ -102,14 +102,18 @@ const Schedule = () => {
     const fetchScraps = async () => {
       try {
         const result = await getScraps();
+        console.log(result);
         if (result.success && Array.isArray(result.data)) {
-          // 배열인지 확인
+          // 데이터가 배열일 경우에만 상태 업데이트
           setScraps(result.data);
         } else {
-          console.error(result.message || "스크랩 데이터는 배열이어야 합니다."); // 배열이 아닐 경우 에러 메시지
+          // 배열이 아닐 경우
+          console.error(result.message || "스크랩 데이터는 배열이어야 합니다.");
+          setScraps([]); // 빈 배열로 초기화
         }
       } catch (error) {
         console.error("스크랩 데이터 fetching 에러:", error);
+        setScraps([]); // 오류 발생 시 빈 배열로 초기화
       } finally {
         setLoading(false);
       }
@@ -148,17 +152,18 @@ const Schedule = () => {
     if (!Array.isArray(scraps)) return marks; // scraps가 배열이 아닐 경우 빈 객체 반환
 
     scraps.forEach((scrap) => {
-      const { startDate, endDate, id } = scrap;
-      const start = moment(startDate);
-      const end = moment(endDate);
+      // 기간 형식: "2024-10-30-2024-11-31"로 되어 있다고 가정
+      const [startDateStr, endDateStr] = scrap.dateRange.split("-"); // 기간을 분리
+      const start = moment(startDateStr);
+      const end = moment(endDateStr);
 
       for (let m = moment(start); m.diff(end, "days") <= 0; m.add(1, "days")) {
         const dateStr = m.format("YYYY-MM-DD");
         if (marks[dateStr]) {
-          marks[dateStr].dots.push({ key: `${id}`, color: "#FFC830" });
+          marks[dateStr].dots.push({ key: `${scrap.id}`, color: "#FFC830" });
         } else {
           marks[dateStr] = {
-            dots: [{ key: `${id}`, color: "#FFC830" }],
+            dots: [{ key: `${scrap.id}`, color: "#FFC830" }],
           };
         }
       }

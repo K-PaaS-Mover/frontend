@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // 기본 API URL 설정
-const API_BASE_URL = "http://localhost:8080/";
+const API_BASE_URL = "http://10.0.2.2:8080/";
 /**
  * 회원가입 API 호출
  * @param {Object} data - 회원가입에 필요한 데이터

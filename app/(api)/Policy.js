@@ -100,7 +100,7 @@ export const getPoliciesByCategory = async (categories) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      params: { categories },
+      params: { categories: categories.join(",") },
     });
 
     return { success: true, data: response.data };
@@ -160,22 +160,28 @@ export const checkScrapStatus = async (policyId) => {
  * @param {number} policyId - 정책 ID
  * @returns {Promise} - Axios 응답 프라미스
  */
+/**
+ * 스크랩 추가 API 호출
+ * @param {number} policyId - 정책 ID
+ * @returns {Promise} - Axios 응답 프라미스
+ */
 export const addScrap = async (policyId) => {
   try {
     const token = await getAuthToken();
-    const response = await axios.post(
+    console.log(token);
+    const response = await axios.get(
       `${API_BASE_URL}policy/scrap/${policyId}`,
       {},
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
         },
       }
     );
 
     return { success: true, data: response.data };
   } catch (error) {
+    console.error("스크랩 추가 오류:", error.response ? error.response.data : error.message); // 전체 에러 출력
     const errorMessage = error.response?.data?.message || "스크랩 추가 실패";
     return { success: false, message: errorMessage };
   }

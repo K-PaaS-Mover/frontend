@@ -15,19 +15,6 @@ const ButtonRow = styled.View`
   padding: 0 20px;
 `;
 
-// const cleanCategory = (category) => {
-//   if (!category) return ""; // title이 없을 경우 빈 문자열 반환
-
-//   // 대괄호와 따옴표 제거하고, 쉼표로 구분된 문자열로 변환
-//   const cleanedCategory = category
-//     .replace(/[\[\]\"']/g, "") // 대괄호와 따옴표 제거
-//     .split(",") // 쉼표로 분리하여 배열로 변환
-//     .map((item) => item.trim()) // 각 항목의 공백 제거
-//     .join(", "); // 다시 쉼표로 연결하여 문자열로 변환
-
-//   return cleanedCategory;
-// };
-
 const HomeFrameDetail = ({ selectedItem = {} }) => {
   if (!selectedItem) return null;
 
@@ -39,11 +26,19 @@ const HomeFrameDetail = ({ selectedItem = {} }) => {
   return (
     <View className="mt-[26px] flex-1 justify-start items-center">
       <View className="w-[95%] h-[140px]">
-        <View className="ml-[5px] mt-[7px] w-[83px] h-[26px] rounded-[15px] border-[#D6EDF9] border-[0.3px] border-solid bg-[#D6EDF9]">
-          <View className="h-full items-center justify-center ">
-            <Text className="font-pregular text-[12px] text-[#515259]">{categories}</Text>
-          </View>
-        </View>
+        <ButtonRow className="mt-[10px] w-[100px] ml-[-20px]">
+          {/* categories 배열의 각 항목에 대해 개별 ButtonRow 생성 */}
+          {categories.map((category, index) => (
+            <ButtonRow
+              key={index} // 리스트의 각 항목에 고유한 key 설정
+              className="w-[80px] bg-[#d6edf9] rounded-[13px] mr-[5px]" // 가로 길이를 자동으로 설정하고 좌우 여백 추가
+            >
+              <Text className="text-[#6D6D7A] font-pregular justify-center">{category}</Text>
+            </ButtonRow>
+          ))}
+
+          {/* Views와 ScrapCount 부분 */}
+        </ButtonRow>
         <Text className="mt-[15px] ml-[5px] font-psemibold text-[18px]">{title}</Text>
         <Text className="mt-[9px] ml-[5px] font-pregular text-[#121212] text-[12px]">
           {department}
