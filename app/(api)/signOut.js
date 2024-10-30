@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // 기본 API URL 설정
-const API_BASE_URL = "http://localhost:8080/";
+const API_BASE_URL = "http://10.0.2.2:8080/";
 
 const signOut = async () => {
   try {
