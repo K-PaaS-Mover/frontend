@@ -1,3 +1,4 @@
+// Home.js
 import {
   View,
   Text,
@@ -22,7 +23,7 @@ import SearchFocus from "../../components/search/SearchFocus";
 import CustomButton from "../../components/signComponents/CustomButton";
 import HomeFrame from "../../components/policyFrame/HomeFrame";
 import { useScrap } from "../ScrapContext";
-import { getPolicies, getRecommendedPolicies, checkScrapStatus } from "../(api)/Policy";
+import { getRecommendedPolicies } from "../(api)/Policy";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -35,48 +36,31 @@ const ButtonRow = styled.View`
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [isHomeFocused, setIsHomeFocused] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const searchInputRef = useRef(null);
   const navigation = useNavigation();
   const { scrappedItems, addScrap, removeScrap } = useScrap();
-  const [policies, setPolicies] = useState([]);
   const [recommendedPolicies, setRecommendedPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const onRefresh = async () => {
     setRefreshing(true);
+    await fetchRecommendedPolicies(); // 새로 고침 시 추천 정책을 다시 가져옵니다.
     setRefreshing(false);
-  };
-
-  const fetchAllPolicies = async () => {
-    try {
-      const response = await getPolicies();
-      console.log("fetchAllPolicies 응답:", response); // 추가
-      if (response.success) {
-        setPolicies(response.data);
-        setError(null);
-      } else {
-        setError(response.message);
-        Alert.alert("오류", response.message);
-      }
-    } catch (err) {
-      console.error("API 요청 중 오류 발생:", err); // 추가
-      setError(err.message || "정책 데이터를 가져오는 데 실패했습니다.");
-      Alert.alert("오류", err.message || "정책 데이터를 가져오는 데 실패했습니다.");
-    } finally {
-      setLoading(false);
-    }
   };
 
   // 추천 정책을 API로부터 가져오는 함수
   const fetchRecommendedPolicies = async () => {
+    setLoading(true); // 데이터를 가져오기 전에 로딩 상태 설정
     try {
       const response = await getRecommendedPolicies();
       if (response.success) {
         setRecommendedPolicies(response.data);
         setError(null);
+        response.data.forEach((policy) => {
+          console.log(`Policy ID: ${policy.id}, Scrap Count: ${policy.scrapCount}`);
+        });
       } else {
         setError(response.message);
         Alert.alert("오류", response.message);
@@ -84,6 +68,8 @@ const Home = () => {
     } catch (err) {
       setError(err.message || "추천 정책을 가져오는 데 실패했습니다.");
       Alert.alert("오류", err.message || "추천 정책을 가져오는 데 실패했습니다.");
+    } finally {
+      setLoading(false); // 로딩 완료
     }
   };
 
@@ -92,13 +78,17 @@ const Home = () => {
       // 스크랩된 경우 제거
       try {
         await removeScrap(policyId);
+        // 상태에서 직접 제거
+        setScrappedItems((prev) => prev.filter((scrap) => scrap.id !== policyId));
       } catch (error) {
         console.error("스크랩 제거 오류", error);
         Alert.alert("오류", error.message || "스크랩 제거에 실패하였습니다.");
       }
     } else {
       try {
-        addScrap(policyId);
+        await addScrap(policyId);
+        // 상태에 추가
+        setScrappedItems((prev) => [...prev, { id: policyId }]);
       } catch (error) {
         console.error("스크랩 추가 오류", error);
         Alert.alert("오류", error.message || "스크랩 추가에 실패하였습니다.");
@@ -110,7 +100,6 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchAllPolicies();
     fetchRecommendedPolicies();
   }, []);
 
@@ -132,15 +121,8 @@ const Home = () => {
   }, []); // 빈 배열을 의존성으로 사용하여 한 번만 등록
 
   useEffect(() => {
-    if (isSearchFocused && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [isSearchFocused]);
-
-  useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       setIsSearchFocused(false);
-      setIsHomeFocused(false);
       setSelectedItem(null);
     });
 
@@ -160,10 +142,7 @@ const Home = () => {
       <SafeAreaView className="bg-white h-full flex justify-center items-center">
         <Text>Error: {error}</Text>
         <TouchableOpacity
-          onPress={() => {
-            fetchAllPolicies();
-            fetchRecommendedPolicies();
-          }}
+          onPress={fetchRecommendedPolicies} // 에러 시 재시도
           style={{ marginTop: 20 }}
         >
           <Text style={{ color: "blue" }}>다시 시도하기</Text>
@@ -171,6 +150,22 @@ const Home = () => {
       </SafeAreaView>
     );
   }
+
+  const cleanCategory = (category) => {
+    if (!category) return ""; // category가 없을 경우 빈 문자열 반환
+
+    // category가 배열일 경우 각 항목을 공백으로 연결하여 문자열로 변환
+    if (Array.isArray(category)) {
+      return category.join(" ");
+    }
+
+    // category가 문자열일 경우 기존 로직을 그대로 적용
+    return category
+      .replace(/[\[\]\"']/g, "") // 대괄호와 따옴표 제거
+      .split(",") // 쉼표로 분리하여 배열로 변환
+      .map((item) => item.trim()) // 각 항목의 공백 제거
+      .join(" "); // 공백으로 연결하여 문자열로 변환
+  };
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -186,6 +181,7 @@ const Home = () => {
                 setSelectedItem(item);
                 navigation.navigate("HomeFocus", {
                   selectedItem: item,
+                  policyId: item.id, // policyId 추가
                   isStarChecked: scrappedItems.some((scrap) => scrap.id === item.id),
                 });
               }}
@@ -194,11 +190,11 @@ const Home = () => {
                 title={item.title}
                 company={item.department}
                 period={item.period}
-                category={item.category}
+                category={cleanCategory(item.categories)}
                 views={item.views}
-                scrap={item.scrap}
+                scrapCount={item.scrapCount}
                 isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)}
-                toggleScrap={() => toggleScrap(item)}
+                toggleScrap={() => toggleScrap(item.id)}
               />
             </TouchableOpacity>
           )}

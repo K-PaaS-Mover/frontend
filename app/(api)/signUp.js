@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // 기본 API URL 설정
-const API_BASE_URL = "http://default-bjmate-11b2d-100192567-88c9bd227f80.kr.lb.naverncp.com:8080/";
+const API_BASE_URL = "http://default-bjmate-65e1d-100195000-76b9fed28ce6.kr.lb.naverncp.com:8080/";
 /**
  * 회원가입 API 호출
  * @param {Object} data - 회원가입에 필요한 데이터
