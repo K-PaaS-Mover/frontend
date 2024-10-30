@@ -169,9 +169,9 @@ const HomeFocus = () => {
 
         <ScrollView style={{ paddingTop: 20 }}>
           <HomeFrameDetail selectedItem={selectedPolicy} />
-          <Text className="font-pregular text-[#515259] text-[16px]">
+          {/* <Text className="font-pregular text-[#515259] text-[16px]">
             스크랩 개수: {selectedPolicy.scrapCount}
-          </Text>
+          </Text> */}
         </ScrollView>
 
         {scrapMessageVisible && (
