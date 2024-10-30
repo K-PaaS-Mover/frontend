@@ -51,7 +51,9 @@ const LookScrap = () => {
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() => navigation.navigate("HomeFocus", { selectedItem: item })}
+                onPress={() =>
+                  navigation.navigate("HomeFocus", { selectedItem: item, policyId: item.id })
+                }
               >
                 <HomeFrame
                   title={item.title}

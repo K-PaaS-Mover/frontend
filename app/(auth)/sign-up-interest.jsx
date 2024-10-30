@@ -7,6 +7,7 @@ import "nativewind";
 
 import Status from "../../components/signComponents/Status";
 import CustomButton from "../../components/signComponents/CustomButton";
+import { signUp } from "../(api)/signUp";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -41,7 +42,7 @@ const menuItems = [
   "보훈",
 ];
 
-const SignUpInterest = ({ form, handleSubmit }) => {
+const SignUpInterest = () => {
   const [selectedButtons, setSelectedButtons] = useState(new Set());
 
   const handleButtonPress = (title) => {
@@ -56,6 +57,16 @@ const SignUpInterest = ({ form, handleSubmit }) => {
     });
   };
 
+  const handleSubmit = async (data) => {
+    try {
+      const response = await signUp(data);
+      Alert.alert("성공", "관심 분야가 성공적으로 저장되었습니다!");
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+      Alert.alert("오류", error.message || "관심 분야 저장 중 오류가 발생했습니다.");
+    }
+  };
+
   const handleSubmitClick = () => {
     if (selectedButtons.size === 0) {
       Alert.alert("오류", "관심 분야를 선택해 주세요.");
@@ -63,16 +74,11 @@ const SignUpInterest = ({ form, handleSubmit }) => {
     }
 
     const selectedInterests = Array.from(selectedButtons);
-    // 서버에 보낼 데이터 생성
-    const dataToSend = {
-      username: form.id, // 아이디
-      password: form.password, // 비밀번호
-      interests: selectedInterests, // 선택한 관심 분야
+    const data = {
+      interests: selectedInterests,
     };
 
-    console.log(form); // 이 줄을 추가해 form 객체의 상태를 확인
-    // handleSubmit 함수를 호출하면서 데이터를 보냄
-    handleSubmit(dataToSend);
+    handleSubmit(data);
   };
   return (
     <SafeAreaView className="bg-white h-full">

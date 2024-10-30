@@ -23,17 +23,25 @@ const HomeFrameContainer = styled.View`
   padding: 10px;
   margin-left: 10px;
 `;
+const OvalContainer = styled.View`
+  background-color: #d6edf9;
+  border-radius: 50px;
+  align-items: center;
+  justify-content: center;
+  height: 30px; /* 고정 높이 */
+  padding: 0 10px; /* 양쪽 패딩 추가 */
+`;
 
 const HomeFrame = ({ title, department, startDate, endDate, category, views, scrapCount }) => {
   return (
     <HomeFrameContainer>
       <ButtonRow className="mt-[10px] items-center ">
-        <View className="w-[83px] h-[26px] rounded-[15px] border-[#D6EDF9] border-[0.3px] border-solid bg-[#D6EDF9]">
-          <View className="h-full items-center justify-center">
-            <Text>{category}</Text>
-          </View>
-        </View>
-        <ButtonRow className="w-[130px] justify-center">
+        {/* <OvalContainer style={{ width: category.length * 10 + 60 }}> */}
+        <ButtonRow className="w-[80px] justify-center">
+          <Text className="text-[#6D6D7A] font-pregular">{category}</Text>
+        </ButtonRow>
+        {/* </OvalContainer> */}
+        <ButtonRow className="w-[130px] justify-center mr-[-20px]">
           <ButtonRow className="w-[80px] justify-center">
             <Views width={20} height={20} marginRight={5} />
             <Text className="text-[#6D6D7A] font-pregular">{views}</Text>
@@ -48,7 +56,9 @@ const HomeFrame = ({ title, department, startDate, endDate, category, views, scr
       <Text className={`mt-[9px] ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}>
         {department}
       </Text>
-      <Text className={`ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}>기간 : {startDate}-{endDate}</Text>
+      <Text className={`ml-[20px] font-pregular text-[#1B1B1E] text-[14px]`}>
+        기간 : {startDate}-{endDate}
+      </Text>
     </HomeFrameContainer>
   );
 };

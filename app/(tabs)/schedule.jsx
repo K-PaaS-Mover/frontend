@@ -17,7 +17,7 @@ import ArrowLeft from "../../assets/icons/arrow_left.svg";
 import ArrowRight from "../../assets/icons/arrow_right.svg";
 // import EditCalendar from "../../assets/icons/edit_calendar.svg"; // 필요 시 주석 해제
 
-import { getScraps } from "../api/Calendar"; // API 모듈 임포트
+import { getScraps } from "../(api)/Calendor"; // API 모듈 임포트
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -107,7 +107,7 @@ const Schedule = () => {
       const start = moment(startDate);
       const end = moment(endDate);
 
-      for (let m = moment(start); m.diff(end, 'days') <= 0; m.add(1, 'days')) {
+      for (let m = moment(start); m.diff(end, "days") <= 0; m.add(1, "days")) {
         const dateStr = m.format("YYYY-MM-DD");
         if (marks[dateStr]) {
           marks[dateStr].dots.push({ key: `${id}`, color: "#FFC830" });
@@ -147,8 +147,7 @@ const Schedule = () => {
 
       // 선택한 날짜에 해당하는 스크랩 필터링
       const eventDetails = scraps.filter(
-        (scrap) =>
-          moment(selectedDate).isBetween(scrap.startDate, scrap.endDate, undefined, '[]') // 포함 범위
+        (scrap) => moment(selectedDate).isBetween(scrap.startDate, scrap.endDate, undefined, "[]") // 포함 범위
       );
 
       if (eventDetails.length > 0) {
@@ -259,9 +258,7 @@ const Schedule = () => {
         >
           <View style={{ padding: 20 }}>
             {homeFrameData ? (
-              homeFrameData.map((event) => (
-                <HomeFrame key={event.id} {...event} />
-              ))
+              homeFrameData.map((event) => <HomeFrame key={event.id} {...event} />)
             ) : (
               <Text>이벤트가 없습니다.</Text>
             )}
