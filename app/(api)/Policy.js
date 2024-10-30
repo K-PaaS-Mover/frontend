@@ -53,7 +53,7 @@ export const getRecommendedPolicies = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-
+    console.log(`토큰 접근함,, ${token}`);
     return { success: true, data: response.data };
   } catch (error) {
     const errorMessage = error.response?.data?.message || "추천 정책 조회 실패";
