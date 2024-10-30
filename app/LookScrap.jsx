@@ -57,11 +57,11 @@ const LookScrap = () => {
               >
                 <HomeFrame
                   title={item.title}
-                  company={item.company}
+                  department={item.department}
                   period={item.period}
                   category={item.category}
                   views={item.views}
-                  scrap={item.scrap}
+                  scrapCount={item.scrapCount}
                 />
               </TouchableOpacity>
             )}

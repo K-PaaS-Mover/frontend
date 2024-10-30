@@ -347,15 +347,20 @@ const Contents = () => {
                     {filteredPolicyData.map((item) => (
                       <TouchableOpacity
                         key={item.id}
-                        onPress={() => navigation.navigate("HomeFocus", { selectedItem: item })}
+                        onPress={() =>
+                          navigation.navigate("HomeFocus", {
+                            selectedItem: item,
+                            policyId: item.id,
+                          })
+                        }
                       >
                         <ContentsFrame
                           title={item.title}
-                          department={item.company}
+                          department={item.department}
                           period={item.period}
                           category={item.category}
                           views={item.views}
-                          scrapCount={item.scrap}
+                          scrapCount={item.scrapCount}
                           policyId={item.id}
                           isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)}
                           toggleScrap={toggleScrap}

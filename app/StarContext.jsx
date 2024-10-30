@@ -3,7 +3,7 @@ import React, { createContext, useState } from "react";
 
 export const StarContext = createContext();
 
-export const StarProvider = ({ children }) => {
+export const StarProvider = ({ children = null }) => {
   const [isStarChecked, setIsStarChecked] = useState(false);
   const [scrapCount, setScrapCount] = useState(0);
   const [scrappedItems, setScrappedItems] = useState([]); // 스크랩된 아이템 상태 추가
