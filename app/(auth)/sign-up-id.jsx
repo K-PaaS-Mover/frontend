@@ -9,6 +9,7 @@ import Status from "../../components/signComponents/Status";
 import CustomButton from "../../components/signComponents/CustomButton";
 import FormField from "../../components/signComponents/FormField";
 import { signUp, checkIdDuplicate } from "../(api)/signUp.js"; // API 함수 임포트
+import { useUser } from "../UserContext.jsx"; // UserContext 임포트
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -19,12 +20,13 @@ const ButtonRow = styled.View`
 `;
 
 const SignUpId = () => {
+  const { setUsername, setPassword } = useUser(); // UserContext에서 상태 가져오기
+
   const [form, setForm] = useState({
     id: "",
     password: "",
   });
 
-  // 상태 정의 확인
   const [idErrorMessage, setIdErrorMessage] = useState(""); // 아이디 오류 메시지 상태
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(""); // 비밀번호 오류 메시지 상태
   const [idSuccessMessage, setIdSuccessMessage] = useState(""); // 아이디 성공 메시지 상태
@@ -57,8 +59,8 @@ const SignUpId = () => {
     return !idError && !passwordError;
   };
 
+  // SignUpId 컴포넌트
   const handleSubmit = async () => {
-    // 폼 검증
     if (!validateForm() || !isIdAvailable) {
       Alert.alert("오류", "입력한 정보를 확인해 주세요.");
       return;
@@ -67,13 +69,15 @@ const SignUpId = () => {
     setIsSubmitting(true);
 
     try {
-      // 서버에 보낼 데이터
       const data = {
-        username: form.id,
+        username: form.id, // username에 id 값을 할당
         password: form.password,
       };
 
-      // 데이터 확인 (콘솔에 출력하여 확인 가능)
+      // UserContext에 username과 password 저장
+      setUsername(form.id); // 여기서 설정
+      setPassword(form.password);
+
       console.log("서버로 보낼 데이터:", data);
 
       const response = await signUp(data);
@@ -85,6 +89,7 @@ const SignUpId = () => {
       setIsSubmitting(false);
     }
   };
+
   const handleCheckIdDuplicate = async () => {
     if (form.id.trim() === "") {
       Alert.alert("아이디를 입력해 주세요.");
