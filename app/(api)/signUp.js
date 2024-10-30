@@ -18,11 +18,14 @@ export const signUp = async (data) => {
   } catch (error) {
     // 에러 핸들링
     if (error.response) {
-      console.error("Error details:", error.response.data); // 더 많은 오류 세부 정보 출력
-      throw new Error(error.response.data.message || "서버 오류");
+      console.error("Error checking ID:", error.response.data); // 에러 세부 정보 출력
+      Alert.alert("중복 오류", error.response.data.message || "아이디 중복 확인 중 오류 발생");
+      throw new Error(error.response.data.message || "아이디 중복 확인 중 오류 발생");
     } else if (error.request) {
+      Alert.alert("오류", "서버에 응답이 없습니다.");
       throw new Error("서버에 응답이 없습니다.");
     } else {
+      Alert.alert("오류", "요청 오류: " + error.message);
       throw new Error("요청 오류: " + error.message);
     }
   }
