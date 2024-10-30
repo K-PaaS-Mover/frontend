@@ -12,7 +12,8 @@ const API_BASE_URL = "http://default-bjmate-65e1d-100195000-76b9fed28ce6.kr.lb.n
 export const signUp = async (data) => {
   console.log("회원가입 데이터:", data); // 데이터 출력
   try {
-    const response = await axios.get(`${API_BASE_URL}members/sign-up`, data);
+    const response = await axios.post(`${API_BASE_URL}members/sign-up`, data);
+    console.log("회원가입 데이터:", data); // 데이터 출력
     return response.data;
   } catch (error) {
     // 에러 핸들링
@@ -38,7 +39,7 @@ export const checkIdDuplicate = async (id) => {
     console.log("Checking ID:", id);
 
     // 쿼리 파라미터로 아이디를 전달
-    const response = await axios.get(
+    const response = await axios.post(
       `${API_BASE_URL}members/sign-up/validate-username?username=${encodeURIComponent(id)}`
     );
 

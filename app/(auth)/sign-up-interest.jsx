@@ -2,12 +2,13 @@ import { View, Text, ScrollView, Alert } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import "nativewind";
 
 import Status from "../../components/signComponents/Status";
 import CustomButton from "../../components/signComponents/CustomButton";
 import { signUp } from "../(api)/signUp";
+import { useUser } from "../UserContext"; // user context import
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -22,7 +23,7 @@ const menuItems = [
   "어르신",
   "중장년",
   "장애인",
-  "자활",
+  "재활",
   "여성가족",
   "임산/출산",
   "영유아",
@@ -43,16 +44,15 @@ const menuItems = [
 ];
 
 const SignUpInterest = () => {
+  const { username, password } = useUser(); // useUser 훅으로 사용자 정보 가져오기
   const [selectedButtons, setSelectedButtons] = useState(new Set());
 
   const handleButtonPress = (title) => {
     setSelectedButtons((prevSelectedButtons) => {
       const updatedSelectedButtons = new Set(prevSelectedButtons);
-      if (updatedSelectedButtons.has(title)) {
-        updatedSelectedButtons.delete(title);
-      } else {
-        updatedSelectedButtons.add(title);
-      }
+      updatedSelectedButtons.has(title)
+        ? updatedSelectedButtons.delete(title)
+        : updatedSelectedButtons.add(title);
       return updatedSelectedButtons;
     });
   };
@@ -62,7 +62,7 @@ const SignUpInterest = () => {
       const response = await signUp(data);
       Alert.alert("성공", "관심 분야가 성공적으로 저장되었습니다!");
     } catch (error) {
-      console.log(error.response?.data || error.message);
+      console.error(error.response?.data || error.message);
       Alert.alert("오류", error.message || "관심 분야 저장 중 오류가 발생했습니다.");
     }
   };
@@ -75,11 +75,14 @@ const SignUpInterest = () => {
 
     const selectedInterests = Array.from(selectedButtons);
     const data = {
+      username,
+      password,
       interests: selectedInterests,
     };
 
     handleSubmit(data);
   };
+
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView>
@@ -89,7 +92,7 @@ const SignUpInterest = () => {
           <View className="w-[85%]">
             <Text className="font-semibold text-[16px] pt-[30px]">관심 분야를 선택해 주세요!</Text>
           </View>
-          <View className="flex-1 justify-center items-center">
+          <View className="flex-1 justify-center items-center mt-4">
             {Array.from({ length: Math.ceil(menuItems.length / 4) }).map((_, rowIndex) => (
               <ButtonRow key={rowIndex}>
                 {menuItems.slice(rowIndex * 4, rowIndex * 4 + 4).map((title) => (
@@ -111,7 +114,7 @@ const SignUpInterest = () => {
           <View>
             <CustomButton
               title="다음"
-              handlePress={handleSubmitClick} // 다음 버튼 클릭 시 처리
+              handlePress={handleSubmitClick}
               containerStyles={`w-[285px] h-[57px] mt-[80px] border-[#50c3fa] border-2 ${
                 selectedButtons.size > 0 ? "bg-[#50c3fa]" : "bg-transparent"
               }`}
