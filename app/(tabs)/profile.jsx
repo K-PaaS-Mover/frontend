@@ -1,4 +1,4 @@
-import { View, Text, FlatList, RefreshControl, BackHandler } from "react-native";
+import { View, Text, FlatList, RefreshControl, BackHandler, Alert } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +13,7 @@ import LookScrap from "../LookScrap";
 import ProfileModify from "../../components/profileScreens/profileModify";
 import PasswordModify from "../../components/profileScreens/passwordModify"; // 비밀번호 수정 컴포넌트 임포트
 import { StarContext } from "../StarContext";
+import { signOut } from "../(api)/signOut";
 
 import Bell from "../../assets/icons/bell.svg";
 import Arrow from "../../assets/icons/arrow.svg";
@@ -79,8 +80,6 @@ const Profile = () => {
           return "/settings/notifications";
         case "FAQ":
           return "/faq";
-        case "로그아웃":
-          return "/logout";
         case "회원 탈퇴":
           return "/delete-account";
         case "약관":
@@ -90,6 +89,20 @@ const Profile = () => {
         default:
           return "/home";
       }
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const result = await signOut(); // signOut 함수 호출
+      if (result.success) {
+        router.replace("/"); // 로그아웃 후 로그인 화면으로 이동
+      } else {
+        Alert.alert("로그아웃 실패", result.message || "예기치 못한 오류가 발생했습니다.");
+      }
+    } catch (error) {
+      Alert.alert("오류", "로그아웃 중 오류가 발생했습니다. " + error.message);
+      console.log(error.message);
     }
   };
 
@@ -132,7 +145,6 @@ const Profile = () => {
                     "프로필 수정",
                     "알림설정",
                     "FAQ",
-                    "로그아웃",
                     "회원 탈퇴",
                     "약관",
                     "개인 정보 취급 방침",
@@ -153,6 +165,11 @@ const Profile = () => {
                   ))}
                 </View>
                 <View className="mt-[25px] border-[#EDEEF9] border-[3px] border-solid"></View>
+                <View className="flex-1 items-start ml-[45px] mt-[10px]">
+                  <TouchableOpacity onPress={handleSignOut}>
+                    <Text className="font-pextralight text-[12px]">로그아웃</Text>
+                  </TouchableOpacity>
+                </View>
               </>
             ) : viewScrapped ? (
               <LookScrap />

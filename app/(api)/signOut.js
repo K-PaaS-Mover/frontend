@@ -4,20 +4,39 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // 기본 API URL 설정
 const API_BASE_URL = "http://10.0.2.2:8080/";
 
-const signOut = async () => {
+export const signOut = async () => {
   try {
-    // 로그아웃 요청
-    const response = await axios.post(`${API_BASE_URL}members/sign-out`);
+    const token = await AsyncStorage.getItem("accessToken"); // 저장된 토큰 가져오기
+    console.log("토큰: ", token);
 
-    // 요청이 성공적일 경우
+    // 로그아웃 요청
+    const response = await axios.post(
+      `${API_BASE_URL}members/sign-out`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // 인증 헤더에 토큰 추가
+        },
+      }
+    );
+
+    // 응답이 정상적으로 오면
     if (response.status === 200) {
-      // AsyncStorage에서 사용자 데이터 삭제
-      await AsyncStorage.removeItem("userToken"); // 사용자 토큰 키를 수정해 주세요.
-      console.log("로그아웃 성공");
+      // 서버 응답이 문자열인 경우
+      if (typeof response.data === "string") {
+        console.log("로그아웃 성공:", response.data);
+        await AsyncStorage.removeItem("accessToken"); // 토큰 삭제
+        return { success: true }; // 성공 시 객체 반환
+      } else {
+        console.error("로그아웃 실패:", response.data.message || "알 수 없는 오류");
+        return { success: false, message: response.data.message || "알 수 없는 오류" }; // 실패 시 객체 반환
+      }
+    } else {
+      console.error("응답 상태 코드:", response.status);
+      return { success: false, message: "응답 상태 코드: " + response.status }; // 상태 코드가 200이 아닐 경우
     }
   } catch (error) {
-    console.error("로그아웃 실패:", error);
+    console.error("로그아웃 중 오류 발생:", error);
+    return { success: false, message: error.message }; // 오류 발생 시 객체 반환
   }
 };
-
-export default signOut;

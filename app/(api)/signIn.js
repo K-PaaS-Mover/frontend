@@ -44,3 +44,29 @@ export const validateCredentials = (id, password) => {
   // 추가적인 유효성 검사가 필요할 경우 여기에 로직 추가
   return true; // 기본적으로 유효성 검사 통과
 };
+
+/**
+ * 로그인 상태 확인 API 호출
+ * @returns {Promise} - 로그인 상태 (true: 로그인됨, false: 로그인되지 않음)
+ */
+export const isSignedIn = async () => {
+  try {
+    // AsyncStorage에서 토큰 가져오기
+    const token = await AsyncStorage.getItem("accessToken");
+    if (!token) return false;
+
+    // 토큰을 Authorization 헤더에 포함하여 로그인 상태 확인 요청
+    const response = await axios.get(`${API_BASE_URL}members/is-signed-in`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // 로그인 상태 확인 성공
+    return response.data.isSignedIn || false;
+  } catch (error) {
+    // 오류 발생 시 로그인되지 않은 것으로 간주하고 토큰 삭제
+    await AsyncStorage.removeItem("accessToken");
+    return false;
+  }
+};

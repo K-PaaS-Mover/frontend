@@ -68,9 +68,9 @@ const SignUpFinish = () => {
           {/* 다음 넘어가기 */}
           <View style={{ marginTop: -100 }}>
             <CustomButton
-              title="시작하기"
+              title="로그인하기"
               handlePress={() => {
-                router.replace("/home");
+                router.replace("/sign-in");
               }}
               containerStyles={`w-[285px] h-[57px] mt-[165px] bg-[#50c3fa]`}
               textStyles={`text-center text-[#fff]`}
