@@ -29,11 +29,12 @@ const getAuthToken = async () => {
 export const getScraps = async () => {
   try {
     const token = await getAuthToken();
-    const response = await axios.get(`${API_BASE_URL}calendor/getScraps`, {
+    const response = await axios.get(`${API_BASE_URL}calendar/getScraps`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log("API 응답:", response.data);
 
     return { success: true, data: response.data };
   } catch (error) {

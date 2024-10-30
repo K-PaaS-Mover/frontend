@@ -10,7 +10,7 @@ export const useScrap = () => {
   return useContext(ScrapContext);
 };
 
-export const ScrapProvider = ({ children }) => {
+export const ScrapProvider = ({ children = null }) => {
   const [scrappedItems, setScrappedItems] = useState([]);
 
   useEffect(() => {

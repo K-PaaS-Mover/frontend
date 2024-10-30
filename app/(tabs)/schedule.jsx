@@ -79,14 +79,34 @@ const Schedule = () => {
   }, []);
 
   // API로부터 스크랩 데이터 가져오기
+  // useEffect(() => {
+  //   const fetchScraps = async () => {
+  //     try {
+  //       const result = await getScraps();
+  //       if (result.success) {
+  //         setScraps(result.data);
+  //       } else {
+  //         console.error(result.message);
+  //       }
+  //     } catch (error) {
+  //       console.error("스크랩 데이터 fetching 에러:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchScraps();
+  // }, []);
+
   useEffect(() => {
     const fetchScraps = async () => {
       try {
         const result = await getScraps();
-        if (result.success) {
+        if (result.success && Array.isArray(result.data)) {
+          // 배열인지 확인
           setScraps(result.data);
         } else {
-          console.error(result.message);
+          console.error(result.message || "스크랩 데이터는 배열이어야 합니다."); // 배열이 아닐 경우 에러 메시지
         }
       } catch (error) {
         console.error("스크랩 데이터 fetching 에러:", error);
@@ -99,8 +119,33 @@ const Schedule = () => {
   }, []);
 
   // startDate와 endDate를 기반으로 markedDates 생성
+  // const markedDatesData = useMemo(() => {
+  //   const marks = {};
+
+  //   scraps.forEach((scrap) => {
+  //     const { startDate, endDate, id } = scrap;
+  //     const start = moment(startDate);
+  //     const end = moment(endDate);
+
+  //     for (let m = moment(start); m.diff(end, "days") <= 0; m.add(1, "days")) {
+  //       const dateStr = m.format("YYYY-MM-DD");
+  //       if (marks[dateStr]) {
+  //         marks[dateStr].dots.push({ key: `${id}`, color: "#FFC830" });
+  //       } else {
+  //         marks[dateStr] = {
+  //           dots: [{ key: `${id}`, color: "#FFC830" }],
+  //         };
+  //       }
+  //     }
+  //   });
+
+  //   return marks;
+  // }, [scraps]);
+
   const markedDatesData = useMemo(() => {
     const marks = {};
+
+    if (!Array.isArray(scraps)) return marks; // scraps가 배열이 아닐 경우 빈 객체 반환
 
     scraps.forEach((scrap) => {
       const { startDate, endDate, id } = scrap;
