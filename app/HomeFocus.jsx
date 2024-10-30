@@ -12,6 +12,8 @@ import Bell from "../assets/icons/bell.svg";
 import Star from "../assets/icons/star.svg";
 import StarCheck from "../assets/icons/star_filled.svg";
 
+import { getScraps } from "./(api)/Calendor";
+
 const ButtonRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -81,10 +83,30 @@ const HomeFocus = () => {
     };
   }, [policyId]); // selectedItem을 의존성 배열에서 제거
 
+  const fetchScrapList = async () => {
+    try {
+      const response = await getScraps();
+      console.log("스크랩 목록:", response); // API의 전체 응답을 확인합니다.
+
+      if (response.success) {
+        // 스크랩 목록이 비어있지 않으면, 해당 아이템이 존재하는지 확인
+        const isScrapped = response.data.some((item) => item.id === selectedItem.id);
+        console.log("스크랩 여부:", isScrapped);
+      } else {
+        console.error("스크랩 목록 조회 실패:", response.message);
+      }
+    } catch (error) {
+      console.error("스크랩 목록을 가져오는 중 오류:", error);
+    }
+  };
+
   const handleScrap = async () => {
     const newScrapped = !scrappedItems.some((item) => item.id === selectedItem.id);
+    await fetchScrapList(); // 스크랩 목록 확인
+
     if (newScrapped) {
-      setScrappedItems([...scrappedItems, selectedItem]);
+      // 스크랩 추가
+      setScrappedItems((prevItems) => [...prevItems, selectedItem]); // 기존 스크랩 아이템에 추가
       setScrapMessageVisible(true);
       if (selectedPolicy) {
         setSelectedPolicy((prevPolicy) => ({
@@ -99,7 +121,8 @@ const HomeFocus = () => {
         Alert.alert("오류", "스크랩 추가에 실패하셨습니다.");
       }
     } else {
-      setScrappedItems(scrappedItems.filter((item) => item.id !== selectedItem.id));
+      // 스크랩 제거
+      setScrappedItems((prevItems) => prevItems.filter((item) => item.id !== selectedItem.id));
       if (selectedPolicy) {
         setSelectedPolicy((prevPolicy) => ({
           ...prevPolicy,
@@ -114,6 +137,7 @@ const HomeFocus = () => {
       }
     }
     setTimeout(() => setScrapMessageVisible(false), 2000);
+    await fetchScrapList(); // 스크랩 목록 확인 (추가)
   };
 
   useEffect(() => {
@@ -169,9 +193,6 @@ const HomeFocus = () => {
 
         <ScrollView style={{ paddingTop: 20 }}>
           <HomeFrameDetail selectedItem={selectedPolicy} />
-          {/* <Text className="font-pregular text-[#515259] text-[16px]">
-            스크랩 개수: {selectedPolicy.scrapCount}
-          </Text> */}
         </ScrollView>
 
         {scrapMessageVisible && (

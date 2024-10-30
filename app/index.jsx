@@ -1,17 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { Text, View, ScrollView, Image } from "react-native";
-import { Redirect, router } from "expo-router";
-import "nativewind"; // 추가: nativewind를 불러옵니다.
+import { Text, View, ScrollView } from "react-native";
+import { router } from "expo-router";
+import "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 import CustomButton from "../components/signComponents/CustomButton";
 import MyCircle from "../components/mainComponents/MyCircle";
-import { ScrapProvider } from "./ScrapContext";
-import { useUser, UserProvider } from "./UserContext";
-import SignIn from "./(auth)/sign-in";
-import Profile from "./(tabs)/profile";
+import { UserProvider } from "./UserContext"; // UserProvider를 불러옵니다.
+import { isSignedIn } from "./(api)/signIn";
 
 const Container = styled.View`
   flex: 1;
@@ -28,14 +28,20 @@ const ButtonRow = styled.View`
 `;
 
 const AppContent = () => {
-  const { isLoggedIn } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 앱이 시작될 때 로그인 상태에 따라 리다이렉트 처리
-    if (isLoggedIn) {
-      router.replace("/home"); // 로그인 상태면 home으로 이동
-    }
-  }, [isLoggedIn]);
+    const checkSignInStatus = async () => {
+      const signedIn = await isSignedIn();
+      if (signedIn) {
+        router.replace("/home"); // 로그인 상태면 home 페이지로 이동
+      } else {
+        setIsLoading(false); // 로그인되지 않은 상태면 로딩 종료
+      }
+    };
+
+    checkSignInStatus();
+  }, []);
 
   return (
     <SafeAreaView className="h-full bg-[#1b1b1e] pt-[20px]">
@@ -73,7 +79,6 @@ const AppContent = () => {
           </Container>
         </View>
       </ScrollView>
-      {/* <StatusBar backgroundColor="#161622" style="light" /> */}
     </SafeAreaView>
   );
 };

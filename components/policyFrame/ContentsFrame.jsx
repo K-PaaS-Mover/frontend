@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components/native";
 import Views from "../../assets/icons/views.svg";
 import Scrap from "../../assets/icons/scrap.svg";
@@ -21,6 +21,10 @@ const ContentsFrameContainer = styled.TouchableOpacity`
 
 const ContentsFrame = ({ title, department, views, scrapCount, policyId }) => {
   const navigation = useNavigation();
+
+  useEffect(() => {
+    console.log("ContentsFrame Props:", { title, department, views, scrapCount, policyId });
+  }, [title, department, views, scrapCount, policyId]);
 
   return (
     <ContentsFrameContainer onPress={() => navigation.navigate("HomeFocus", { policyId })}>

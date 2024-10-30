@@ -59,7 +59,7 @@ const LookScrap = () => {
                   title={item.title}
                   department={item.department}
                   period={item.period}
-                  category={item.category}
+                  categories={Array.isArray(item.categories) ? item.categories : [item.categories]}
                   views={item.views}
                   scrapCount={item.scrapCount}
                 />

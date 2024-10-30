@@ -34,7 +34,11 @@ export const getScraps = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("API 응답:", response.data);
+    console.log("response", response);
+
+    if (response.status === 204) {
+      return { success: true, data: [] }; // 빈 배열 반환
+    }
 
     return { success: true, data: response.data };
   } catch (error) {
