@@ -151,21 +151,21 @@ const Home = () => {
     );
   }
 
-  const cleanCategory = (category) => {
-    if (!category) return ""; // category가 없을 경우 빈 문자열 반환
+  // const cleanCategory = (category) => {
+  //   if (!category) return ""; // category가 없을 경우 빈 문자열 반환
 
-    // category가 배열일 경우 각 항목을 공백으로 연결하여 문자열로 변환
-    if (Array.isArray(category)) {
-      return category.join(" ");
-    }
+  //   // category가 배열일 경우 각 항목을 공백으로 연결하여 문자열로 변환
+  //   if (Array.isArray(category)) {
+  //     return category.join(" ");
+  //   }
 
-    // category가 문자열일 경우 기존 로직을 그대로 적용
-    return category
-      .replace(/[\[\]\"']/g, "") // 대괄호와 따옴표 제거
-      .split(",") // 쉼표로 분리하여 배열로 변환
-      .map((item) => item.trim()) // 각 항목의 공백 제거
-      .join(" "); // 공백으로 연결하여 문자열로 변환
-  };
+  //   // category가 문자열일 경우 기존 로직을 그대로 적용
+  //   return category
+  //     .replace(/[\[\]\"']/g, "") // 대괄호와 따옴표 제거
+  //     .split(",") // 쉼표로 분리하여 배열로 변환
+  //     .map((item) => item.trim()) // 각 항목의 공백 제거
+  //     .join(" "); // 공백으로 연결하여 문자열로 변환
+  // };
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -189,8 +189,9 @@ const Home = () => {
               <HomeFrame
                 title={item.title}
                 company={item.department}
-                period={item.period}
-                category={cleanCategory(item.categories)}
+                startDate={item.startDate}
+                endDate={item.endDate}
+                categories={item.categories}
                 views={item.views}
                 scrapCount={item.scrapCount}
                 isScrapped={scrappedItems.some((scrap) => scrap.id === item.id)}
