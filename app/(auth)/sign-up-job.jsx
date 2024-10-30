@@ -1,3 +1,4 @@
+// sign-up-job
 import { View, Text, ScrollView, Alert, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,22 +9,23 @@ import "nativewind";
 
 import Status from "../../components/signComponents/Status";
 import CustomButton from "../../components/signComponents/CustomButton";
+import { useUser } from "../UserContext";
 
 const SignUpJob = () => {
+  const { setJob, setWorkExperience, setResidence } = useUser();
   // 각 드롭다운의 선택 상태 관리
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [careerOptions, setCareerOptions] = useState([]);
   const [selectedCareer, setSelectedCareer] = useState(null);
   const [selectedResidence, setSelectedResidence] = useState(null);
-  const [selectedSpecialNote, setSelectedSpecialNote] = useState(null);
 
   // 다음 버튼 활성화 여부
-  const isNextButtonEnabled =
-    selectedCompany && selectedCareer && selectedResidence && selectedSpecialNote;
+  const isNextButtonEnabled = selectedCompany && selectedCareer && selectedResidence;
 
   // 직장 선택 시 경력 옵션 업데이트
   const handleCompanyChange = (company) => {
     setSelectedCompany(company);
+    setJob(company); // 직장 정보 저장
 
     if (company === "학생") {
       setCareerOptions([
@@ -47,6 +49,10 @@ const SignUpJob = () => {
       Alert.alert("Error", "항목을 선택해주세요.");
       return;
     }
+
+    // 선택된 경력 및 거주지 저장
+    setWorkExperience(selectedCareer);
+    setResidence(selectedResidence);
 
     router.push("/sign-up-interest");
   };
@@ -120,29 +126,6 @@ const SignUpJob = () => {
                 color: "#989DA3",
               }}
               value={selectedResidence}
-              style={{
-                inputAndroid: {
-                  marginLeft: -15,
-                },
-              }}
-            />
-          </View>
-          {/* 특이사항 드롭다운 메뉴 */}
-          <View className="w-[85%] mt-[50px] border-b-[1px] border-[#50c3fa]">
-            <Text className={`font-semibold text-[16px] mb-[8px] text-[#989DA3]`}>특이사항</Text>
-            <RNPickerSelect
-              onValueChange={(value) => setSelectedSpecialNote(value)}
-              items={[
-                { label: "Option 1", value: "option1" },
-                { label: "Option 2", value: "option2" },
-                { label: "Option 3", value: "option3" },
-              ]}
-              placeholder={{
-                label: "특이사항을 선택해주세요!",
-                value: null,
-                color: "#989DA3",
-              }}
-              value={selectedSpecialNote}
               style={{
                 inputAndroid: {
                   marginLeft: -15,

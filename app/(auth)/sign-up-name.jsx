@@ -10,6 +10,7 @@ import Status from "../../components/signComponents/Status";
 import CustomButton from "../../components/signComponents/CustomButton";
 import FormField from "../../components/signComponents/FormField";
 import { signUp } from "../(api)/signUp.js";
+import { useUser } from "../UserContext.jsx"; // UserContext import
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -20,6 +21,7 @@ const ButtonRow = styled.View`
 `;
 
 const SignUpName = () => {
+  const { setNickname, setBirthDate } = useUser(); // UserContext에서 필요한 값 가져오기
   const [form, setForm] = useState({
     name: "",
     birthDate: "",
@@ -37,19 +39,11 @@ const SignUpName = () => {
   };
 
   const validateBirthDate = (birthDate) => {
-    const birthDateRegex = /^\d{6}$/; // YYMMDD 형식
+    const birthDateRegex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD 형식
     if (!birthDateRegex.test(birthDate)) {
-      return "생년월일은 YYMMDD 형식이어야 합니다.";
+      return "생년월일은 YYYY-MM-DD 형식이어야 합니다.";
     }
     return "";
-  };
-
-  const formatBirthDate = (birthDate) => {
-    const yearPrefix = parseInt(birthDate.slice(0, 2)) <= 22 ? "20" : "19";
-    const year = birthDate.slice(0, 2);
-    const month = birthDate.slice(2, 4);
-    const day = birthDate.slice(4, 6);
-    return `${yearPrefix}${year}-${month}-${day}`; // 포맷 예: 2000-01-01 또는 1995-08-12
   };
 
   const validateForm = () => {
@@ -71,6 +65,11 @@ const SignUpName = () => {
     setIsSubmitting(true);
 
     try {
+      // UserContext를 이용해 nickname과 birthDate 저장
+      setNickname(form.name);
+      setBirthDate(form.birthDate);
+      // 여기에 필요 시 setUserId()도 사용할 수 있습니다.
+
       router.push("/sign-up-job");
     } catch (error) {
       Alert.alert("회원가입 실패", error.message);
@@ -108,7 +107,7 @@ const SignUpName = () => {
             }}
             errorMessage={birthDateErrorMessage}
             otherStyles="mt-[20px]"
-            placeholder="YYMMDD 형식으로 입력"
+            placeholder="YYYY-MM-DD 형식으로 입력"
           />
           <View style={{ marginTop: 100, marginBottom: 70 }}>
             <CustomButton

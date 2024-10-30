@@ -1,3 +1,4 @@
+// contents
 import {
   View,
   Text,
@@ -79,7 +80,7 @@ const menuItems = [
   {
     id: "1",
     title: "서비스",
-    subMenu: ["돌봄", "어르신", "중장년", "장애인", "재활", "여성가족"],
+    subMenu: ["돌봄", "어르신", "중장년", "장애인", "자활", "여성가족"],
   },
   {
     id: "2",

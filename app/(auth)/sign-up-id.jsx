@@ -1,3 +1,4 @@
+// sign-up-id
 import { View, Text, ScrollView, Alert } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,7 +9,7 @@ import "nativewind";
 import Status from "../../components/signComponents/Status";
 import CustomButton from "../../components/signComponents/CustomButton";
 import FormField from "../../components/signComponents/FormField";
-import { signUp, checkIdDuplicate } from "../(api)/signUp.js"; // API 함수 임포트
+import { checkIdDuplicate } from "../(api)/signUp.js"; // API 함수 임포트
 import { useUser } from "../UserContext.jsx"; // UserContext 임포트
 
 const ButtonRow = styled.View`
@@ -71,7 +72,6 @@ const SignUpId = () => {
     try {
       const data = {
         username: form.id, // username에 id 값을 할당
-        password: form.password,
       };
 
       // UserContext에 username과 password 저장
@@ -80,8 +80,8 @@ const SignUpId = () => {
 
       console.log("서버로 보낼 데이터:", data);
 
-      const response = await signUp(data);
-      Alert.alert("성공", "아이디와 비밀번호 등록이 완료되었습니다!");
+      // const response = await signUp(data); // 비밀번호를 보내지 않도록 수정
+      Alert.alert("성공", "아이디 등록이 완료되었습니다!"); // 메시지 수정
       router.push("/sign-up-name");
     } catch (error) {
       Alert.alert("회원가입 실패", error.message);
@@ -165,22 +165,12 @@ const SignUpId = () => {
               title={isSubmitting ? "처리 중..." : "다음"}
               handlePress={handleSubmit} // 다음 버튼 클릭 시 확인
               containerStyles={`w-[285px] h-[57px] border-2 mt-[165px] ${
-                !idErrorMessage &&
-                !passwordErrorMessage &&
-                form.id &&
-                form.password &&
-                isIdAvailable
+                !idErrorMessage && form.id && isIdAvailable
                   ? "bg-[#50c3fa] border-[#50c3fa]"
                   : "border-[#50c3fa]"
               }`}
               textStyles={`text-center ${
-                !idErrorMessage &&
-                !passwordErrorMessage &&
-                form.id &&
-                form.password &&
-                isIdAvailable
-                  ? "text-white"
-                  : "text-[#50c3fa]"
+                !idErrorMessage && form.id && isIdAvailable ? "text-white" : "text-[#50c3fa]"
               }`}
               disabled={isSubmitting} // 버튼 비활성화
             />

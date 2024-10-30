@@ -1,8 +1,9 @@
+// sign-up-interest
 import { View, Text, ScrollView, Alert } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import "nativewind";
 
 import Status from "../../components/signComponents/Status";
@@ -23,7 +24,7 @@ const menuItems = [
   "어르신",
   "중장년",
   "장애인",
-  "재활",
+  "자활",
   "여성가족",
   "임산/출산",
   "영유아",
@@ -44,7 +45,7 @@ const menuItems = [
 ];
 
 const SignUpInterest = () => {
-  const { username, password } = useUser(); // useUser 훅으로 사용자 정보 가져오기
+  const { username, password, nickname, birthDate, job, workExperience, residence } = useUser(); // useUser 훅으로 사용자 정보 가져오기
   const [selectedButtons, setSelectedButtons] = useState(new Set());
 
   const handleButtonPress = (title) => {
@@ -77,10 +78,17 @@ const SignUpInterest = () => {
     const data = {
       username,
       password,
+      nickname,
+      birthDate,
+      job,
+      workExperience,
+      residence,
       interests: selectedInterests,
     };
 
     handleSubmit(data);
+
+    router.push("/sign-up-finish"); // 경로 변경
   };
 
   return (
