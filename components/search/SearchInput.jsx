@@ -1,16 +1,14 @@
-import { View, Text, TextInput, Image, TouchableOpacity } from "react-native";
-import React, { useState, useRef, useImperativeHandle, forwardRef } from "react";
-
+import { View, TextInput, TouchableOpacity, Keyboard } from "react-native";
+import React, { useRef, forwardRef, useImperativeHandle } from "react";
 import Search from "../../assets/icons/search.svg";
+import { searchPolicies } from "../../app/(api)/Search"; // searchPolicies 함수 import
 
 const SearchInput = forwardRef(
   (
     {
-      title,
       value,
-      placeholder,
       handleChangeText,
-      otherStyles,
+      onSearch, // 검색을 실행하는 함수
       onFocus, // 포커스 시 호출할 함수
       onBlur, // 포커스 해제 시 호출할 함수
       ...props
@@ -25,6 +23,12 @@ const SearchInput = forwardRef(
       },
     }));
 
+    const handleSearchSubmit = () => {
+      if (value.trim() === "") return; // 빈 검색어는 무시
+      onSearch(value); // 검색 실행
+      Keyboard.dismiss(); // 키보드 닫기
+    };
+
     return (
       <View
         className="w-[355px] h-[35px] px-4 
@@ -32,7 +36,7 @@ const SearchInput = forwardRef(
       border-[#6d6d7a] focus:border-[#6d6d7a]
       items-center flex-row space-x-4 mt-[20px]"
       >
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleSearchSubmit}>
           <Search width={24} height={24} />
         </TouchableOpacity>
         <TextInput
@@ -44,6 +48,7 @@ const SearchInput = forwardRef(
           onChangeText={handleChangeText}
           onFocus={onFocus} // 포커스 시 호출
           onBlur={onBlur} // 포커스 해제 시 호출
+          onSubmitEditing={handleSearchSubmit} // 엔터 시 검색 실행
         />
       </View>
     );

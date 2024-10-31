@@ -28,20 +28,6 @@ const ButtonRow = styled.View`
 `;
 
 const AppContent = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const checkSignInStatus = async () => {
-      const signedIn = await isSignedIn();
-      if (signedIn) {
-        router.replace("/home"); // 로그인 상태면 home 페이지로 이동
-      } else {
-        setIsLoading(false); // 로그인되지 않은 상태면 로딩 종료
-      }
-    };
-
-    checkSignInStatus();
-  }, []);
 
   return (
     <SafeAreaView className="h-full bg-[#1b1b1e] pt-[20px]">
@@ -84,6 +70,23 @@ const AppContent = () => {
 };
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkSignInStatus = async () => {
+    const signedIn = await isSignedIn();
+    console.log("signedIn:", signedIn);
+    if (signedIn) {
+      console.log("home.jsx로 들어감");
+      router.replace("/home"); // 로그인 상태면 home 페이지로 이동
+    } else {
+      setIsLoading(false); // 로그인되지 않은 상태면 로딩 종료
+    }
+  };
+  
+  useEffect(() => {
+    checkSignInStatus();
+  }, []);
+
   return (
     <UserProvider>
       <AppContent />
