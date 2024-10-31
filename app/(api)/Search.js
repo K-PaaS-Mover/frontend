@@ -6,10 +6,10 @@ const API_BASE_URL = "http://default-bjmate-1b710-100218781-a3b91276253a.kr.lb.n
 
 /**
  * 정책 검색 API 호출
- * @param {string} query - 검색어
+ * @param {string} keyword - 검색어
  * @returns {Promise} - 검색된 정책 목록을 반환
  */
-export const searchPolicies = async (query) => {
+export const searchPolicies = async (keyword) => {
   try {
     // 저장된 토큰을 가져와 인증 헤더에 추가
     const token = await AsyncStorage.getItem("accessToken");
@@ -21,7 +21,7 @@ export const searchPolicies = async (query) => {
         Authorization: `Bearer ${token}`,
       },
       params: {
-        query: query,
+        keyword: keyword,
       },
     });
 
@@ -29,7 +29,7 @@ export const searchPolicies = async (query) => {
     return { success: true, data: response.data };
   } catch (error) {
     const errorMessage = error.response?.data?.message || "검색 실패";
-    console.log("search : 오류 발생", errorMessage);
+    console.log("search api : 오류 발생", errorMessage);
     return { success: false, message: errorMessage };
   }
 };
