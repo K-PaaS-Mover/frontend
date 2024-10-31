@@ -1,7 +1,8 @@
+// SearchInput.js
+import React, { useRef, forwardRef, useImperativeHandle, memo } from "react";
 import { View, TextInput, TouchableOpacity, Keyboard } from "react-native";
-import React, { useRef, forwardRef, useImperativeHandle } from "react";
 import Search from "../../assets/icons/search.svg";
-import { searchPolicies } from "../../app/(api)/Search"; // searchPolicies 함수 import
+import PropTypes from 'prop-types'; // PropTypes 추가 (선택 사항)
 
 const SearchInput = forwardRef(
   (
@@ -21,7 +22,7 @@ const SearchInput = forwardRef(
       focus: () => {
         inputRef.current.focus();
       },
-    }));
+    }), []);
 
     const handleSearchSubmit = () => {
       if (value.trim() === "") return; // 빈 검색어는 무시
@@ -32,9 +33,9 @@ const SearchInput = forwardRef(
     return (
       <View
         className="w-[355px] h-[35px] px-4 
-      border-[1px] border-solid
-      border-[#6d6d7a] focus:border-[#6d6d7a]
-      items-center flex-row space-x-4 mt-[20px]"
+          border-[1px] border-solid
+          border-[#6d6d7a] focus:border-[#6d6d7a]
+          items-center flex-row space-x-4 mt-[20px]"
       >
         <TouchableOpacity onPress={handleSearchSubmit}>
           <Search width={24} height={24} />
@@ -49,10 +50,20 @@ const SearchInput = forwardRef(
           onFocus={onFocus} // 포커스 시 호출
           onBlur={onBlur} // 포커스 해제 시 호출
           onSubmitEditing={handleSearchSubmit} // 엔터 시 검색 실행
+          {...props}
         />
       </View>
     );
   }
 );
 
-export default SearchInput;
+// PropTypes 설정 (선택 사항)
+SearchInput.propTypes = {
+  value: PropTypes.string.isRequired,
+  handleChangeText: PropTypes.func.isRequired,
+  onSearch: PropTypes.func.isRequired,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+};
+
+export default memo(SearchInput);
