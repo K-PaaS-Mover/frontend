@@ -97,7 +97,7 @@ const SearchFocus = () => {
 
   // 인기 검색어 아이템 렌더링
   const renderStaticItem = useCallback(({ item }) => (
-    <VIew>
+    <View>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center", marginTop: 40 }}>
       <View style={{ width: 355 }}>
         <Text style={{ fontWeight: "bold", fontSize: 20 }}>인기 검색어</Text>
@@ -113,7 +113,7 @@ const SearchFocus = () => {
           </Text>
         </ButtonRow>
       </View>
-    </VIew>
+    </View>
   ), []);
 
   // 인기 검색어 푸터 렌더링
