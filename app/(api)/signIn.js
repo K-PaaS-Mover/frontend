@@ -20,6 +20,8 @@ export const signIn = async (username, password) => {
     // 로그인 성공 시, 서버에서 반환한 토큰을 AsyncStorage에 저장
     if (response.data && response.data.accessToken) {
       await AsyncStorage.setItem("accessToken", response.data.accessToken); // AsyncStorage에 저장
+      await AsyncStorage.setItem("username", username); // AsyncStorage에 저장
+      console.log(response.data.accessToken);
     }
 
     return { success: true, data: response.data };

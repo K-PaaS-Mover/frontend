@@ -22,10 +22,6 @@ const ContentsFrameContainer = styled.TouchableOpacity`
 const ContentsFrame = ({ title, department, views, scrapCount, policyId }) => {
   const navigation = useNavigation();
 
-  useEffect(() => {
-    console.log("ContentsFrame Props:", { title, department, views, scrapCount, policyId });
-  }, [title, department, views, scrapCount, policyId]);
-
   return (
     <ContentsFrameContainer onPress={() => navigation.navigate("HomeFocus", { policyId })}>
       <View className="w-full flex-1 justify-center items-center">

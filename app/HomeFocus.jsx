@@ -81,15 +81,14 @@ const HomeFocus = () => {
     return () => {
       isMounted = false; // 언마운트 시 플래그 설정
     };
-  }, [policyId]); // selectedItem을 의존성 배열에서 제거
+  }, [policyId]);
 
   const fetchScrapList = async () => {
     try {
       const response = await getScraps();
-      console.log("스크랩 목록:", response); // API의 전체 응답을 확인합니다.
+      console.log("스크랩 목록:", response);
 
       if (response.success) {
-        // 스크랩 목록이 비어있지 않으면, 해당 아이템이 존재하는지 확인
         const isScrapped = response.data.some((item) => item.id === selectedItem.id);
         console.log("스크랩 여부:", isScrapped);
       } else {
@@ -101,17 +100,17 @@ const HomeFocus = () => {
   };
 
   const handleScrap = async () => {
-    const newScrapped = !scrappedItems.some((item) => item.id === selectedItem.id);
-    await fetchScrapList(); // 스크랩 목록 확인
+    const isCurrentlyScraped = selectedPolicy.scraped; // 현재 스크랩 여부 확인
 
-    if (newScrapped) {
+    if (!isCurrentlyScraped) {
       // 스크랩 추가
-      setScrappedItems((prevItems) => [...prevItems, selectedItem]); // 기존 스크랩 아이템에 추가
+      setScrappedItems((prevItems) => [...prevItems, selectedItem]);
       setScrapMessageVisible(true);
       if (selectedPolicy) {
         setSelectedPolicy((prevPolicy) => ({
           ...prevPolicy,
           scrapCount: prevPolicy.scrapCount + 1,
+          scraped: true, // scraped 값을 true로 업데이트
         }));
       }
       try {
@@ -127,6 +126,7 @@ const HomeFocus = () => {
         setSelectedPolicy((prevPolicy) => ({
           ...prevPolicy,
           scrapCount: prevPolicy.scrapCount - 1,
+          scraped: false,
         }));
       }
       try {
@@ -136,8 +136,8 @@ const HomeFocus = () => {
         Alert.alert("오류", "스크랩 제거에 실패하셨습니다.");
       }
     }
+
     setTimeout(() => setScrapMessageVisible(false), 2000);
-    await fetchScrapList(); // 스크랩 목록 확인 (추가)
   };
 
   useEffect(() => {
@@ -183,7 +183,7 @@ const HomeFocus = () => {
 
   return (
     <SafeAreaView className="bg-white h-full">
-      <View className="flex-1 items-center mt-[30px]">
+      <View className="flex-1 items-center mt-[30px] px-[10px]">
         <ButtonRow className="w-[355px] mt-[-10px]">
           <TouchableOpacity activeOpacity={1} onPress={() => router.replace("/home")}>
             <Text className="font-pblack text-2xl text-[#50c3fac4]">Mate</Text>
@@ -206,7 +206,7 @@ const HomeFocus = () => {
             className="w-[82px] h-full justify-center items-center"
             onPress={handleScrap}
           >
-            {scrappedItems.some((item) => item.id === selectedItem.id) ? (
+            {selectedPolicy.scraped ? ( // scraped 값에 따라 아이콘 변경
               <StarCheck width={24} height={24} />
             ) : (
               <Star width={24} height={24} />
