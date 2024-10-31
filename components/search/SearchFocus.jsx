@@ -79,7 +79,7 @@ const SearchFocus = () => {
     // 추가 블러 로직
   }, []);
 
-  // 인기 검색어 헤더 렌더링
+  // 헤더 컴포넌트 렌더링
   const renderHeader = useCallback(() => (
     <View style={{ marginTop: 20, marginBottom: 10 }}>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -95,25 +95,27 @@ const SearchFocus = () => {
     </View>
   ), [searchQuery, handleChangeText, handleSearch, handleFocus, handleBlur]);
 
-  // 인기 검색어 아이템 렌더링
-  const renderStaticItem = useCallback(({ item }) => (
-    <VIew>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", marginTop: 40 }}>
+  // 인기 검색어 헤더 (검색 결과 없을 때만 표시)
+  const renderPopularSearchHeader = useCallback(() => (
+    <View style={{ alignItems: "center", justifyContent: "center", marginTop: 40 }}>
       <View style={{ width: 355 }}>
         <Text style={{ fontWeight: "bold", fontSize: 20 }}>인기 검색어</Text>
         <Text style={{ fontWeight: "500", fontSize: 14, color: "#989DA3" }}>
           1주일 간 사람들이 찾아본 정책을 보여드릴게요.
         </Text>
       </View>
-        </View>
-      <View style={{ marginTop: 11, width: "100%", alignItems: "center" }}>
-        <ButtonRow>
-          <Text style={{ fontWeight: "600", fontSize: 14 }}>
-            {item.id}. {item.title}
-          </Text>
-        </ButtonRow>
-      </View>
-    </VIew>
+    </View>
+  ), []);
+
+  // 인기 검색어 아이템 렌더링
+  const renderStaticItem = useCallback(({ item }) => (
+    <View style={{ marginTop: 11, width: "100%", alignItems: "center" }}>
+      <ButtonRow>
+        <Text style={{ fontWeight: "600", fontSize: 14 }}>
+          {item.id}. {item.title}
+        </Text>
+      </ButtonRow>
+    </View>
   ), []);
 
   // 인기 검색어 푸터 렌더링
@@ -139,12 +141,17 @@ const SearchFocus = () => {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       ) : (
-        // 검색 결과가 없을 때 인기 검색어 리스트 렌더링
+        // 검색 결과가 없을 때 인기 검색어 리스트 및 헤더 렌더링
         <FlatList
           data={data}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderStaticItem}
-          ListHeaderComponent={renderHeader}
+          ListHeaderComponent={() => (
+            <>
+              {renderHeader()}
+              {renderPopularSearchHeader()}
+            </>
+          )}
           ListFooterComponent={renderFooter}
           contentContainerStyle={{ paddingBottom: 30 }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
