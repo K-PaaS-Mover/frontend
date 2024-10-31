@@ -55,6 +55,7 @@ export const isSignedIn = async () => {
   try {
     // AsyncStorage에서 토큰 가져오기
     const token = await AsyncStorage.getItem("accessToken");
+    console.log("token :", token);
     if (!token) return false;
 
     // 토큰을 Authorization 헤더에 포함하여 로그인 상태 확인 요청
@@ -63,10 +64,11 @@ export const isSignedIn = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-
+    console.log("is-sign-in : 로그인 상태임");
     // 로그인 상태 확인 성공
-    return response.data.isSignedIn || false;
+    return response.data.isSignedIn || true;
   } catch (error) {
+    console.log("is-sign-in : 상태 확인 실패");
     // 오류 발생 시 로그인되지 않은 것으로 간주하고 토큰 삭제
     await AsyncStorage.removeItem("accessToken");
     return false;
