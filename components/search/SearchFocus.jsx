@@ -19,11 +19,11 @@ const SearchFocus = () => {
   const searchInputRef = useRef(null); // SearchInput의 ref 생성
 
   const data = [
-    { id: 1, title: "인기 검색어1" },
-    { id: 2, title: "인기 검색어2" },
-    { id: 3, title: "인기 검색어3" },
-    { id: 4, title: "인기 검색어4" },
-    { id: 5, title: "인기 검색어5" },
+    { id: 1, title: "가사 간병" },
+    { id: 2, title: "장애인 자립" },
+    { id: 3, title: "고령 장애" },
+    { id: 4, title: "자립 정착금" },
+    { id: 5, title: "청년" },
   ];
 
   const onRefresh = async () => {

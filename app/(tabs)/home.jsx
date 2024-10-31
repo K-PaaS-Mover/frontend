@@ -207,16 +207,16 @@ const Home = () => {
                   <Text className="text-black text-[14px] font-pbold mr-[20px]">인기</Text>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {[
-                      "인기 검색어1",
-                      "인기 검색어2",
-                      "인기 검색어3",
-                      "인기 검색어4",
-                      "인기 검색어5",
-                      "인기 검색어6",
-                      "인기 검색어7",
-                      "인기 검색어8",
-                      "인기 검색어9",
-                      "인기 검색어10",
+                      "가사 간병",
+                      "장애인 자립",
+                      "고령 장애",
+                      "자립 정착금",
+                      "청년",
+                      "가족",
+                      "거주 시설",
+                      "국민 기초",
+                      "의료",
+                      "독립유공자",
                     ].map((title) => (
                       <CustomButton
                         key={title}
