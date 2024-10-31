@@ -1,34 +1,36 @@
 // SearchInput.js
 import React, { useRef, forwardRef, useImperativeHandle, memo } from "react";
-import { View, TextInput, TouchableOpacity, Keyboard } from "react-native";
+import { View, TouchableOpacity, Keyboard } from "react-native";
 import Search from "../../assets/icons/search.svg";
-import PropTypes from 'prop-types'; // PropTypes 추가 (선택 사항)
+import PropTypes from 'prop-types';
+import SearchInputContainer from "./SearchInputContainer";
 
 const SearchInput = forwardRef(
   (
     {
       value,
       handleChangeText,
-      onSearch, // 검색을 실행하는 함수
-      onFocus, // 포커스 시 호출할 함수
-      onBlur, // 포커스 해제 시 호출할 함수
+      onSearch,
+      onFocus,
+      onBlur,
       ...props
     },
     ref
   ) => {
     const inputRef = useRef(null);
 
+    const handleSearchSubmit = () => {
+      const trimmedValue = value.trim();
+      if (trimmedValue === "") return; // 빈 검색어는 무시
+      onSearch(trimmedValue); // 공백 제거 후 검색 실행
+      console.log("trim");
+    };
+
     useImperativeHandle(ref, () => ({
       focus: () => {
         inputRef.current.focus();
       },
     }), []);
-
-    const handleSearchSubmit = () => {
-      if (value.trim() === "") return; // 빈 검색어는 무시
-      onSearch(value); // 검색 실행
-      Keyboard.dismiss(); // 키보드 닫기
-    };
 
     return (
       <View
@@ -40,16 +42,13 @@ const SearchInput = forwardRef(
         <TouchableOpacity onPress={handleSearchSubmit}>
           <Search width={24} height={24} />
         </TouchableOpacity>
-        <TextInput
+        <SearchInputContainer
           ref={inputRef}
-          className="text-base flex-1 font-pregular text-[12px]"
           value={value}
-          placeholder="검색"
-          placeholderTextColor="#7b7b8b"
-          onChangeText={handleChangeText}
-          onFocus={onFocus} // 포커스 시 호출
-          onBlur={onBlur} // 포커스 해제 시 호출
-          // onSubmitEditing={handleSearchSubmit} // 엔터 시 검색 실행
+          handleChangeText={handleChangeText}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onSubmitEditing={handleSearchSubmit}
           {...props}
         />
       </View>
@@ -57,7 +56,6 @@ const SearchInput = forwardRef(
   }
 );
 
-// PropTypes 설정 (선택 사항)
 SearchInput.propTypes = {
   value: PropTypes.string.isRequired,
   handleChangeText: PropTypes.func.isRequired,
