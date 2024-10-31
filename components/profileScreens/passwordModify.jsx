@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -8,6 +8,7 @@ import Profile from "../../assets/icons/profile_modify.svg";
 import Bell from "../../assets/icons/bell.svg";
 
 import FormField from "../signComponents/FormField";
+import { updatePassword } from "../../app/(api)/Members"; 
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -19,20 +20,13 @@ const ButtonRow = styled.View`
 
 const PasswordModify = () => {
   const [form, setForm] = useState({
-    id: "",
     password: "",
+    newPassword: "",
   });
 
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
 
-  const validateId = (id) => {
-    const idRegex = /^[a-zA-Z0-9]{6,}$/;
-    if (!idRegex.test(id)) {
-      return "아이디는 영어와 숫자를 포함해 6자 이상이어야 합니다.";
-    }
-    return "";
-  };
-
+  // 비밀번호 유효성 검증 함수
   const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%#*?&])[A-Za-z\d@$!%#*?&]{10,}$/;
     if (!passwordRegex.test(password)) {
@@ -41,13 +35,24 @@ const PasswordModify = () => {
     return "";
   };
 
-  const validateForm = () => {
-    const idError = validateId(form.id);
+  // 비밀번호 업데이트 요청 함수
+  const handlePasswordUpdate = async () => {
     const passwordError = validatePassword(form.password);
-    setIdErrorMessage(idError);
-    setPasswordErrorMessage(passwordError);
+    const newPasswordError = validatePassword(form.newPassword);
 
-    return !idError && !passwordError;
+    if (passwordError || newPasswordError) {
+      setPasswordErrorMessage(passwordError || newPasswordError);
+      return;
+    }
+
+    // 현재 비밀번호와 새 비밀번호를 updatePassword 함수로 전달
+    const result = await updatePassword(form.password, form.newPassword);
+    if (result.success) {
+      Alert.alert("성공", result.message);
+      router.replace("/home");
+    } else {
+      Alert.alert("오류", result.message);
+    }
   };
 
   return (
@@ -63,16 +68,32 @@ const PasswordModify = () => {
       </View>
       <View className="flex-1 justify-center items-center px-4 mt-[30px]">
         <FormField
-          title="비밀번호 수정"
+          title="현재 비밀번호"
           value={form.password}
           handleChangeText={(text) => {
             setForm({ ...form, password: text });
-            setPasswordErrorMessage(validatePassword(text)); // 비밀번호 입력 중 실시간 검증
+            setPasswordErrorMessage(validatePassword(text));
+          }}
+          errorMessage={passwordErrorMessage}
+          placeholder="현재 비밀번호를 입력하세요"
+        />
+        <FormField
+          title="새 비밀번호"
+          value={form.newPassword}
+          handleChangeText={(text) => {
+            setForm({ ...form, newPassword: text });
+            setPasswordErrorMessage(validatePassword(text));
           }}
           errorMessage={passwordErrorMessage}
           otherStyles="mt-[30px]"
           placeholder="영어 대소문자, 숫자, 특수문자 포함 10자 이상 작성"
         />
+        <TouchableOpacity
+          onPress={handlePasswordUpdate}
+          className="bg-blue-500 mt-5 py-3 px-5 rounded"
+        >
+          <Text className="text-white">비밀번호 수정하기</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
