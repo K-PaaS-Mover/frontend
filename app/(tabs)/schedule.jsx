@@ -1,5 +1,3 @@
-// schedule.jsx
-
 import { View, Text, BackHandler, FlatList, ActivityIndicator } from "react-native";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
@@ -15,7 +13,6 @@ import HomeFrame from "../../components/policyFrame/HomeFrame";
 
 import ArrowLeft from "../../assets/icons/arrow_left.svg";
 import ArrowRight from "../../assets/icons/arrow_right.svg";
-// import EditCalendar from "../../assets/icons/edit_calendar.svg"; // 필요 시 주석 해제
 
 import { getScraps } from "../(api)/Calendor"; // API 모듈 임포트
 
@@ -29,15 +26,14 @@ const ButtonRow = styled.View`
 
 const Schedule = () => {
   const [viewScrapped, setViewScrapped] = useState(false);
-  const [selected, setSelected] = useState(""); // 초기 상태에서 빈 문자열
+  const [selected, setSelected] = useState("");
   const [currentDate, setCurrentDate] = useState(moment().format("YYYY-MM-DD"));
   const [homeFrameData, setHomeFrameData] = useState(null);
-  const [scraps, setScraps] = useState([]); // 스크랩 데이터를 저장할 상태
-  const [loading, setLoading] = useState(true); // 로딩 상태
+  const [scraps, setScraps] = useState([]);
+  const [loading, setLoading] = useState(true);
   const flatListRef = useRef(null);
-  const modalRef = useRef(null); // Modalize 참조
+  const modalRef = useRef(null);
 
-  // 뒤로 가기 버튼 처리
   useEffect(() => {
     const backAction = () => {
       if (viewScrapped) {
@@ -52,23 +48,19 @@ const Schedule = () => {
     return () => backHandler.remove();
   }, [viewScrapped]);
 
-  // 이전 달로 이동
   const goToPreviousMonth = useCallback(() => {
     setCurrentDate((prevDate) => moment(prevDate).subtract(1, "months").format("YYYY-MM-DD"));
   }, []);
 
-  // 다음 달로 이동
   const goToNextMonth = useCallback(() => {
     setCurrentDate((prevDate) => moment(prevDate).add(1, "months").format("YYYY-MM-DD"));
   }, []);
 
-  // 홈으로 이동 시 현재 날짜로 달력 초기화
   const goToHome = useCallback(() => {
     setCurrentDate(moment().format("YYYY-MM-DD"));
     router.replace("/home");
   }, []);
 
-  // 현재 달과 다음 몇 개의 달을 표시하기 위한 데이터 생성
   const generateMonths = useCallback((current) => {
     const months = [];
     const totalMonthsToDisplay = 3;
@@ -78,42 +70,19 @@ const Schedule = () => {
     return months;
   }, []);
 
-  // API로부터 스크랩 데이터 가져오기
-  // useEffect(() => {
-  //   const fetchScraps = async () => {
-  //     try {
-  //       const result = await getScraps();
-  //       if (result.success) {
-  //         setScraps(result.data);
-  //       } else {
-  //         console.error(result.message);
-  //       }
-  //     } catch (error) {
-  //       console.error("스크랩 데이터 fetching 에러:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchScraps();
-  // }, []);
-
   useEffect(() => {
     const fetchScraps = async () => {
       try {
         const result = await getScraps();
-        console.log(result);
         if (result.success && Array.isArray(result.data)) {
-          // 데이터가 배열일 경우에만 상태 업데이트
           setScraps(result.data);
         } else {
-          // 배열이 아닐 경우
           console.error(result.message || "스크랩 데이터는 배열이어야 합니다.");
-          setScraps([]); // 빈 배열로 초기화
+          setScraps([]);
         }
       } catch (error) {
         console.error("스크랩 데이터 fetching 에러:", error);
-        setScraps([]); // 오류 발생 시 빈 배열로 초기화
+        setScraps([]);
       } finally {
         setLoading(false);
       }
@@ -122,49 +91,26 @@ const Schedule = () => {
     fetchScraps();
   }, []);
 
-  // startDate와 endDate를 기반으로 markedDates 생성
-  // const markedDatesData = useMemo(() => {
-  //   const marks = {};
-
-  //   scraps.forEach((scrap) => {
-  //     const { startDate, endDate, id } = scrap;
-  //     const start = moment(startDate);
-  //     const end = moment(endDate);
-
-  //     for (let m = moment(start); m.diff(end, "days") <= 0; m.add(1, "days")) {
-  //       const dateStr = m.format("YYYY-MM-DD");
-  //       if (marks[dateStr]) {
-  //         marks[dateStr].dots.push({ key: `${id}`, color: "#FFC830" });
-  //       } else {
-  //         marks[dateStr] = {
-  //           dots: [{ key: `${id}`, color: "#FFC830" }],
-  //         };
-  //       }
-  //     }
-  //   });
-
-  //   return marks;
-  // }, [scraps]);
-
   const markedDatesData = useMemo(() => {
     const marks = {};
 
-    if (!Array.isArray(scraps)) return marks; // scraps가 배열이 아닐 경우 빈 객체 반환
-
     scraps.forEach((scrap) => {
-      // 기간 형식: "2024-10-30-2024-11-31"로 되어 있다고 가정
-      const [startDateStr, endDateStr] = scrap.dateRange.split("-"); // 기간을 분리
-      const start = moment(startDateStr);
-      const end = moment(endDateStr);
+      const { startDate, endDate, id } = scrap;
 
-      for (let m = moment(start); m.diff(end, "days") <= 0; m.add(1, "days")) {
-        const dateStr = m.format("YYYY-MM-DD");
-        if (marks[dateStr]) {
-          marks[dateStr].dots.push({ key: `${scrap.id}`, color: "#FFC830" });
-        } else {
-          marks[dateStr] = {
-            dots: [{ key: `${scrap.id}`, color: "#FFC830" }],
-          };
+      // startDate와 endDate가 존재하는 경우
+      if (startDate && endDate) {
+        const start = moment(startDate);
+        const end = moment(endDate);
+
+        for (let m = moment(start); m.diff(end, "days") <= 0; m.add(1, "days")) {
+          const dateStr = m.format("YYYY-MM-DD");
+          if (marks[dateStr]) {
+            marks[dateStr].dots.push({ key: `${id}`, color: "#FFC830" });
+          } else {
+            marks[dateStr] = {
+              dots: [{ key: `${id}`, color: "#FFC830" }],
+            };
+          }
         }
       }
     });
@@ -172,7 +118,6 @@ const Schedule = () => {
     return marks;
   }, [scraps]);
 
-  // selected 날짜를 포함하여 markedDates 업데이트
   const markedDates = useMemo(() => {
     const updatedMarkedDates = { ...markedDatesData };
 
@@ -188,20 +133,20 @@ const Schedule = () => {
     return updatedMarkedDates;
   }, [selected, markedDatesData]);
 
-  // onDayPress 함수 수정
   const onDayPress = useCallback(
     (day) => {
       const selectedDate = day.dateString;
       setSelected(selectedDate);
       setCurrentDate(selectedDate);
 
-      // 선택한 날짜에 해당하는 스크랩 필터링
       const eventDetails = scraps.filter(
-        (scrap) => moment(selectedDate).isBetween(scrap.startDate, scrap.endDate, undefined, "[]") // 포함 범위
+        (scrap) => moment(selectedDate).isBetween(scrap.startDate, scrap.endDate, null, "[]") // 포함 범위
       );
 
       if (eventDetails.length > 0) {
+        console.log("eventDetails ", eventDetails);
         setHomeFrameData(eventDetails);
+        console.log("homeFrameData ", homeFrameData);
         modalRef.current?.open();
       } else {
         setHomeFrameData(null);
@@ -210,6 +155,17 @@ const Schedule = () => {
     },
     [scraps]
   );
+  // homeFrameData가 업데이트된 후 모달을 열도록 useEffect 추가
+  useEffect(() => {
+    console.log("useEffect");
+    if (homeFrameData) {
+      console.log("homeFrameDate ", homeFrameData);
+      modalRef.current?.open();
+    } else {
+      console.log("else");
+      modalRef.current?.close();
+    }
+  }, [homeFrameData]);
 
   const renderNextMonthCalendar = useCallback(
     ({ item }) => (
@@ -265,7 +221,6 @@ const Schedule = () => {
                   <ArrowRight width={24} height={24} />
                 </TouchableOpacity>
               </ButtonRow>
-              {/* <EditCalendar width={24} height={24} /> */}
             </ButtonRow>
             <ButtonRow className="mt-[40px] justify-between w-[387px]">
               {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day, index) => (
@@ -284,37 +239,37 @@ const Schedule = () => {
             keyExtractor={(item) => item}
             showsVerticalScrollIndicator={false}
             windowSize={3}
-            contentContainerStyle={{ paddingBottom: 100 }}
+            contentContainerStyle={{
+              paddingVertical: 20,
+            }}
+            style={{ height: "100%" }}
           />
         </View>
-
-        {/* Modalize 추가 */}
-        <Modalize
-          ref={modalRef}
-          adjustToContentHeight
-          modalTopOffset={68}
-          handlePosition="inside"
-          alwaysOpen={selected ? 68 : 0} // 모달이 기본적으로 68px만큼 올라와 있도록 설정
-          modalStyle={{
-            backgroundColor: "white", // 배경색 추가
-            borderTopLeftRadius: 35,
-            borderTopRightRadius: 35,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: -3 }, // 적절한 그림자 설정
-            shadowOpacity: 0.1,
-            shadowRadius: 10,
-            elevation: 5, // Android 그림자 깊이 증가
-          }}
-        >
-          <View style={{ padding: 20 }}>
-            {homeFrameData ? (
-              homeFrameData.map((event) => <HomeFrame key={event.id} {...event} />)
-            ) : (
-              <Text>이벤트가 없습니다.</Text>
-            )}
-          </View>
-        </Modalize>
       </SafeAreaView>
+      <Modalize
+        ref={modalRef}
+        modalHeight={400}
+        overlayStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        flatListProps={{
+          data: selected
+            ? scraps.filter((scrap) =>
+                moment(selected).isBetween(scrap.startDate, scrap.endDate, null, "[]")
+              )
+            : [],
+          keyExtractor: (item) => item.id.toString(),
+          renderItem: ({ item }) => (
+            <HomeFrame
+              title={item.title}
+              department={item.department}
+              startDate={item.startDate}
+              endDate={item.endDate}
+              categories={Array.isArray(item.categories) ? item.categories : [item.categories]}
+              views={item.views}
+              scrapCount={item.scrapCount}
+            />
+          ),
+        }}
+      />
     </GestureHandlerRootView>
   );
 };

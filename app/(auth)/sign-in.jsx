@@ -19,7 +19,7 @@ const ButtonRow = styled.View`
 `;
 
 const SignIn = () => {
-  const { setUserId } = useUser();
+  const { setUsername } = useUser();
   const [form, setForm] = useState({
     id: "",
     password: "",
@@ -63,7 +63,7 @@ const SignIn = () => {
     try {
       const response = await signIn(form.id, form.password);
       if (response.success) {
-        setUserId(form.id); // 로그인 성공 시 아이디 저장
+        setUsername(form.id); // 로그인 성공 시 아이디 저장
         router.push("/home"); // 홈 화면으로 이동
       } else {
         // 로그인 실패 시, API에서 받은 오류 메시지 표시

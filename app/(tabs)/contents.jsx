@@ -107,6 +107,46 @@ const Contents = () => {
 
   const searchInputRef = useRef(null);
 
+  const fetchPolicies = async () => {
+    console.log("fetchPolicies 함");
+    const categories = selectedSubMenu
+      ? [selectedSubMenu]
+      : selectedMenu
+      ? menuItems.find((item) => item.title === selectedMenu).subMenu
+      : [];
+
+    try {
+      setLoading(true);
+      const response = await getPoliciesByCategory(categories);
+      console.log("선택된 카테고리:", categories);
+      console.log("API response:", response);
+
+      if (response.success) {
+        // categories에 따라 정책 데이터 필터링
+        const filteredPolicies = response.data.filter((policy) =>
+          policy.categories.some((category) => categories.includes(category))
+        );
+        setPolicyData(filteredPolicies);
+      } else {
+        setError(response.message);
+        Alert.alert("오류", response.message);
+      }
+    } catch (err) {
+      setError(err.message || "정책 데이터를 가져오는 데 실패했습니다.");
+      Alert.alert("오류", err.message || "정책 데이터를 가져오는 데 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMenuPress = (menu) => {
+    setSelectedMenu(menu === selectedMenu ? null : menu);
+    setSelectedSubMenu(null);
+  };
+
+  const handleSubMenuPress = (subMenu) => {
+    setSelectedSubMenu(subMenu === selectedSubMenu ? null : subMenu);
+  };
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchPolicies();
@@ -128,42 +168,6 @@ const Contents = () => {
     });
     setPolicyData(sortedPolicies);
   }, [sortOrder]);
-
-  const fetchPolicies = async () => {
-    const categories = selectedSubMenu
-      ? [selectedSubMenu]
-      : selectedMenu
-      ? menuItems.find((item) => item.title === selectedMenu).subMenu
-      : [];
-
-    console.log("Fetching policies for categories:", categories);
-
-    try {
-      setLoading(true);
-      const response = await getPoliciesByCategory(categories);
-      console.log("API response:", response);
-      if (response.success) {
-        setPolicyData(response.data);
-      } else {
-        setError(response.message);
-        Alert.alert("오류", response.message);
-      }
-    } catch (err) {
-      setError(err.message || "정책 데이터를 가져오는 데 실패했습니다.");
-      Alert.alert("오류", err.message || "정책 데이터를 가져오는 데 실패했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleMenuPress = (menu) => {
-    setSelectedMenu(menu === selectedMenu ? null : menu);
-    setSelectedSubMenu(null);
-  };
-
-  const handleSubMenuPress = (subMenu) => {
-    setSelectedSubMenu(subMenu === selectedSubMenu ? null : subMenu);
-  };
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -229,13 +233,18 @@ const Contents = () => {
                   refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 >
                   {policyData.length > 0 ? (
-                    policyData.map((policy) => (
-                      <ContentsFrame
-                        key={policy.id}
-                        policy={policy}
-                        onScrap={scrappedItems.includes(policy.id) ? removeScrap : addScrap}
-                      />
-                    ))
+                    policyData.map((policy) => {
+                      return (
+                        <ContentsFrame
+                          policyId={policy.id}
+                          title={policy.title}
+                          department={policy.department}
+                          scrapCount={policy.scrapCount}
+                          views={policy.views}
+                          onScrap={scrappedItems.includes(policy.id) ? removeScrap : addScrap}
+                        />
+                      );
+                    })
                   ) : (
                     <Text className="text-center text-lg">정책이 없습니다.</Text>
                   )}

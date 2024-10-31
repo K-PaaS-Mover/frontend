@@ -94,8 +94,8 @@ export const getRecommendedPolicies = async () => {
 export const getPoliciesByCategory = async (categories) => {
   try {
     const token = await getAuthToken();
-    console.log("가져온 토큰:", token);
-    console.log("전달하는 카테고리 리스트:", categories);
+    // console.log("가져온 토큰:", token);
+    // console.log("전달하는 카테고리 리스트:", categories);
     const response = await axios.get(`${API_BASE_URL}policy/all-policies`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -169,7 +169,7 @@ export const addScrap = async (policyId) => {
   try {
     const token = await getAuthToken();
     console.log(token);
-    const response = await axios.get(
+    const response = await axios.post(
       `${API_BASE_URL}policy/scrap/${policyId}`,
       {},
       {

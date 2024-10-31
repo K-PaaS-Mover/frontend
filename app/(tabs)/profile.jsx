@@ -8,12 +8,14 @@ import { useScrap } from "../ScrapContext"; // Context에서 스크랩 상태 �
 import { useUser } from "../UserContext"; // Context에서 사용자 정보 가져오기
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // AsyncStorage import
 
 import LookScrap from "../LookScrap";
 import ProfileModify from "../../components/profileScreens/profileModify";
 import PasswordModify from "../../components/profileScreens/passwordModify"; // 비밀번호 수정 컴포넌트 임포트
 import { StarContext } from "../StarContext";
 import { signOut } from "../(api)/signOut";
+import { getScraps } from "../(api)/Calendor";
 
 import Bell from "../../assets/icons/bell.svg";
 import Arrow from "../../assets/icons/arrow.svg";
@@ -32,15 +34,17 @@ const Profile = () => {
   const [viewProfileModify, setViewProfileModify] = useState(false);
   const [viewPasswordModify, setViewPasswordModify] = useState(false); // 비밀번호 수정 상태 추가
 
-  const { username } = useUser(); // UserContext에서 userId 가져오기
-  const { scrappedItems } = useContext(StarContext); // 스크랩 아이템 가져오기
-  const scrappedCount = scrappedItems.length; // 스크랩한 정책 개수
+  const [username, setUsername] = useState(""); // AsyncStorage에서 가져온 username 상태  const { scrappedItems } = useContext(StarContext); // 스크랩 아이템 가져오기
+  const [scrapCount, setScrapCount] = useState(0);
+  const [scrappedItems, setScrappedItems] = useState([]); // 스크랩된 아이템 상태 추가
 
   const navigation = useNavigation();
 
   const onRefresh = async () => {
     setRefreshing(true);
     // 데이터 새로고침 로직 추가 필요
+    await fetchScrapCount(); // 스크랩 개수 새로 고침
+    await fetchScrapItems(); // 스크랩한 아이템 새로 고침
     setRefreshing(false);
   };
 
@@ -54,9 +58,8 @@ const Profile = () => {
 
   useEffect(() => {
     const backAction = () => {
-      if (viewProfileModify || viewScrapped || viewPasswordModify) {
+      if (viewProfileModify || viewPasswordModify) {
         setViewProfileModify(false);
-        setViewScrapped(false);
         setViewPasswordModify(false); // 비밀번호 수정 상태 초기화
         return true;
       }
@@ -67,7 +70,7 @@ const Profile = () => {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
 
     return () => backHandler.remove();
-  }, [navigation, viewProfileModify, viewScrapped, viewPasswordModify]);
+  }, [navigation, viewProfileModify, viewPasswordModify]);
 
   const getRouteForItem = (item) => {
     if (item === "프로필 수정") {
@@ -106,6 +109,42 @@ const Profile = () => {
     }
   };
 
+  const fetchScrapCount = async () => {
+    const result = await getScraps(); // getScraps 호출
+    if (result.success) {
+      setScrapCount(result.data.length); // 스크랩된 정책 개수 업데이트
+    } else {
+      Alert.alert("오류", result.message); // 오류 메시지 표시
+    }
+  };
+
+  const fetchScrapItems = async () => {
+    const result = await getScraps(); // 스크랩 아이템 가져오기
+    if (result.success) {
+      setScrappedItems(result.data); // 스크랩된 아이템 상태 업데이트
+    } else {
+      Alert.alert("오류", result.message); // 오류 메시지 표시
+    }
+  };
+
+  useEffect(() => {
+    fetchScrapCount(); // 컴포넌트가 마운트될 때 스크랩 개수 가져오기
+    fetchScrapItems(); // 스크랩된 아이템 가져오기
+
+    const getUsername = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem("username"); // AsyncStorage에서 username 가져오기
+        if (storedUsername) {
+          setUsername(storedUsername); // 상태 업데이트
+        }
+      } catch (error) {
+        console.log("AsyncStorage 오류:", error); // 오류 처리
+      }
+    };
+
+    getUsername(); // username 가져오기
+  }, []);
+
   return (
     <SafeAreaView className="bg-white h-full w-full">
       <FlatList
@@ -130,7 +169,7 @@ const Profile = () => {
                     안녕하세요 <Text className="text-[#50c3fac4]">{username}</Text> 님,
                   </Text>
                   <Text className="font-pbold text-[20px] mt-[5px]">
-                    지금까지 <Text className="text-[#50c3fac4]">{scrappedCount}</Text>개 정책을
+                    지금까지 <Text className="text-[#50c3fac4]">{scrapCount}</Text>개 정책을
                     스크랩했어요!
                   </Text>
                   <TouchableOpacity activeOpacity={0.7} onPress={() => setViewScrapped(true)}>

@@ -1,15 +1,14 @@
 // LookScrap.jsx
-import { View, Text, FlatList, Image, RefreshControl, ScrollView, BackHandler } from "react-native";
-import React, { useState, useEffect, useRef, useContext } from "react";
+import { View, Text, FlatList, RefreshControl, SafeAreaView, BackHandler } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
 import { TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import styled from "styled-components/native";
 
 import { StarContext } from "./StarContext"; // StarContext import
 import HomeFrame from "../components/policyFrame/HomeFrame";
-
 import Bell from "../assets/icons/bell.svg";
+import { getScraps } from "./(api)/Calendor";
 
 const ButtonRow = styled.View`
   flex-direction: row;
@@ -21,7 +20,24 @@ const ButtonRow = styled.View`
 
 const LookScrap = () => {
   const navigation = useNavigation(); // useNavigation으로 navigation 객체 가져오기
-  const { scrappedItems } = useContext(StarContext); // 스크랩 아이템 가져오기
+  const { scrappedItems, setScrappedItems } = useContext(StarContext); // 스크랩 아이템 가져오기
+  const [refreshing, setRefreshing] = useState(false); // 새로고침 상태 추가
+
+  // 데이터 가져오기
+  const fetchScraps = async () => {
+    setRefreshing(true);
+    const result = await getScraps(); // getScraps 함수 호출
+    if (result.success) {
+      setScrappedItems(result.data); // 상태 업데이트
+    } else {
+      console.error(result.message); // 오류 메시지 출력
+    }
+    setRefreshing(false); // 새로고침 상태 종료
+  };
+
+  useEffect(() => {
+    fetchScraps(); // 컴포넌트가 마운트될 때 데이터 가져오기
+  }, []);
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -58,13 +74,17 @@ const LookScrap = () => {
                 <HomeFrame
                   title={item.title}
                   department={item.department}
-                  period={item.period}
+                  startDate={item.startDate}
+                  endDate={item.endDate}
                   categories={Array.isArray(item.categories) ? item.categories : [item.categories]}
                   views={item.views}
                   scrapCount={item.scrapCount}
+                  isScrapped={scrappedItems.some((scrapCount) => scrapCount.id === item.id)}
+                  toggleScrap={() => toggleScrap(item.id)}
                 />
               </TouchableOpacity>
             )}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchScraps} />}
           />
         )}
       </View>
