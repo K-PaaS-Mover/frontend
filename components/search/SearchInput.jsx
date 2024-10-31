@@ -49,7 +49,7 @@ const SearchInput = forwardRef(
           onChangeText={handleChangeText}
           onFocus={onFocus} // 포커스 시 호출
           onBlur={onBlur} // 포커스 해제 시 호출
-          onSubmitEditing={handleSearchSubmit} // 엔터 시 검색 실행
+          // onSubmitEditing={handleSearchSubmit} // 엔터 시 검색 실행
           {...props}
         />
       </View>
